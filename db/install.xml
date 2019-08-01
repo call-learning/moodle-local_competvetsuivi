@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/competvetsuivi/db" VERSION="20190801" COMMENT="XMLDB file for Moodle local/competvetsuivi"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_cvs_matrix" COMMENT="Matrix table : stores information about currently loaded matrix">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Matrix Fullname"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Matrix shortname"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The last time this matrix was modified"/>
+        <FIELD NAME="hash" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Matrix source file hash"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="hash_unique" UNIQUE="true" FIELDS="hash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_cvs_matrix_ue" COMMENT="List of UE for a given matrix">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_cvs_matrix_uegroup" COMMENT="Groups fo UE">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_cvs_matrix_uegroup_as" COMMENT="Matrix group assignment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="ueid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="mgroupid_fk" TYPE="foreign" FIELDS="groupid" REFTABLE="local_matrix_uegroup" REFFIELDS="id"/>
+        <KEY NAME="m_ueid_fk" TYPE="foreign" FIELDS="ueid" REFTABLE="local_cvs_matrix_ue" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_cvs_matrix_comp" COMMENT="Competencies elements">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="1024" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="path" TYPE="char" LENGTH="1024" NOTNULL="false" SEQUENCE="false" COMMENT="Path in the form of ancestorsid....parentid.currentid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="path_ix" UNIQUE="true" FIELDS="path"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
