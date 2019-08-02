@@ -15,29 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin administration pages are defined here.
+ * Exception for matrix related operation
  *
  * @package     local_competvetsuivi
- * @category    admin
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_competvetsuivi\matrix;
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-if ($hassiteconfig) {
-    $compvetmanagement = new admin_category(
-            'competvetmanagement',
-            get_string('competvetmanagement','local_competvetsuivi')
-    );
-    $pagedesc = get_string('managematrix', 'local_competvetsuivi');
-    $pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
-    $compvetmanagement->add('competvetmanagement',
-            new admin_externalpage(
-            'managematrix',
-            $pagedesc,
-            $pageurl)
-    );
+/**
+ * Class to represent a matrix
+ *
+ */
+class matrix_exception extends \moodle_exception {
 
-    $ADMIN->add('root', $compvetmanagement);
+    /**
+     * Constructor.
+     *
+     */
+    public function __construct($errorcode, $module = '', $link = '', $a = null, $debuginfo = null) {
+        parent::__construct($errorcode, $module, $link, $a, $debuginfo);
+    }
 }

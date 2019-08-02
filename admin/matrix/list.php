@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../config.php');
+require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
 require_once($CFG->libdir.'/adminlib.php');
@@ -34,7 +34,7 @@ admin_externalpage_setup('managematrix');
 $header = get_string('managematrix','local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
-$pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/managematrix.php');
+$pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
 
 $PAGE->set_url($pageurl);
 
@@ -42,5 +42,5 @@ $renderer = $PAGE->get_renderer('core');
 $renderable = new local_competvetsuivi\matrix\matrix_list_renderable();
 
 echo $OUTPUT->header();
-echo $renderer->render_from_template('local_competvetsuivi/matrix_list', $renderable);
+echo $renderer->render_from_template('local_competvetsuivi/matrix_list', $renderable->export_for_template($renderer));
 echo $OUTPUT->footer();

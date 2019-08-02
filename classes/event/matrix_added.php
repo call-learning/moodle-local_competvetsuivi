@@ -14,30 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * Plugin administration pages are defined here.
+ * Matrix Added event
  *
  * @package     local_competvetsuivi
- * @category    admin
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace local_competvetsuivi\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
-    $compvetmanagement = new admin_category(
-            'competvetmanagement',
-            get_string('competvetmanagement','local_competvetsuivi')
-    );
-    $pagedesc = get_string('managematrix', 'local_competvetsuivi');
-    $pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
-    $compvetmanagement->add('competvetmanagement',
-            new admin_externalpage(
-            'managematrix',
-            $pagedesc,
-            $pageurl)
-    );
+class matrix_added extends \core\event\base {
+    /**
+     * Init method.
+     *
+     * @return void
+     */
+    protected function init() {
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = 'local_cvs_matrix';
+    }
 
-    $ADMIN->add('root', $compvetmanagement);
 }

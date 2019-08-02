@@ -28,6 +28,7 @@ global $CFG;
 use renderable;
 use renderer_base;
 use templatable;
+use moodle_url;
 
 /**
  * Class to list all available matrix
@@ -51,8 +52,25 @@ class matrix_list_renderable implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         global $DB,$CFG;
-
         $context = new \stdClass();
+        $matrixes = $DB->get_records('local_cvs_matrix');
+        $context->matrix = [];
+        if ($matrixes) {
+            foreach($matrixes as $matrix) {
+                $matrix->editurl = new moodle_url(
+                        $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php',
+                        array('id' => $matrix->id)
+                );
+                $matrix->deleteurl = new moodle_url(
+                        $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/delete.php',
+                        array('id' => $matrix->id)
+                );
+
+                $context->matrix[] = $matrix;
+            }
+        }
+        $context->matrix = $matrixes;
+        $context->addactionurl = $CFG->wwwroot.'/local/competvetsuivi/admin/matrix/add.php';
         return $context;
     }
 }

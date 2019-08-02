@@ -19,3 +19,32 @@
 
     This template will render all competvet suivi matrix
 }}
+
+<div>
+    <div class="action">
+        <a href="{{{addactionurl}}}" class="btn btn-primary" role="button">{{#str}}addmatrix, local_competvetsuivi{{/str}}</a>
+    </div>
+    <div>
+        <table class="generaltable fullwidth">
+            <thead>
+            <tr>
+                <th scope="col">{{#str}}matrixname, local_competvetsuivi{{/str}}</th>
+                <th scope="col">{{#str}}matrixshortname, local_competvetsuivi{{/str}}</th>
+                <th scope="col">{{#str}}action{{/str}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#matrix}}
+                <tr>
+                    <td>{{matrix.fullname}}</td>
+                    <td>{{matrix.shortname}}</td>
+                    <td>
+                        <a href="{{matrix.editurl}}">{{# pix }} t/edit, core, {{# str }} editmatrix, local_competvetsuivi {{/ str }} {{/ pix }}</a>
+                        <a href="{{matrix.deleteurl}}">{{# pix }} t/delete, core, {{# str }} editmatrix, local_competvetsuivi {{/ str }} {{/ pix }}</a>
+                    </td>
+                </tr>
+            {{/matrix}}
+            </tbody>
+        </table>
+    </div>
+</div>
