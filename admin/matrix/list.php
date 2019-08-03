@@ -29,6 +29,7 @@ global $CFG;
 require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('managematrix');
+require_login();
 
 // Override pagetype to show blocks properly.
 $header = get_string('managematrix','local_competvetsuivi');

@@ -53,10 +53,10 @@ class matrix_list_renderable implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $DB,$CFG;
         $context = new \stdClass();
-        $matrixes = $DB->get_records('local_cvs_matrix');
+        $allmatrix = $DB->get_records('cvs_matrix');
         $context->matrix = [];
-        if ($matrixes) {
-            foreach($matrixes as $matrix) {
+        if ($allmatrix) {
+            foreach($allmatrix as $matrix) {
                 $matrix->editurl = new moodle_url(
                         $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php',
                         array('id' => $matrix->id)
@@ -69,7 +69,6 @@ class matrix_list_renderable implements renderable, templatable {
                 $context->matrix[] = $matrix;
             }
         }
-        $context->matrix = $matrixes;
         $context->addactionurl = $CFG->wwwroot.'/local/competvetsuivi/admin/matrix/add.php';
         return $context;
     }

@@ -22,7 +22,7 @@
 
 <div>
     <div class="action">
-        <a href="{{{addactionurl}}}" class="btn btn-primary" role="button">{{#str}}addmatrix, local_competvetsuivi{{/str}}</a>
+        <a href="{{{addactionurl}}}" class="btn btn-primary" role="button">{{#str}}matrix:add, local_competvetsuivi{{/str}}</a>
     </div>
     <div>
         <table class="generaltable fullwidth">
@@ -36,11 +36,11 @@
             <tbody>
             {{#matrix}}
                 <tr>
-                    <td>{{matrix.fullname}}</td>
-                    <td>{{matrix.shortname}}</td>
+                    <td>{{fullname}}</td>
+                    <td>{{shortname}}</td>
                     <td>
-                        <a href="{{matrix.editurl}}">{{# pix }} t/edit, core, {{# str }} editmatrix, local_competvetsuivi {{/ str }} {{/ pix }}</a>
-                        <a href="{{matrix.deleteurl}}">{{# pix }} t/delete, core, {{# str }} editmatrix, local_competvetsuivi {{/ str }} {{/ pix }}</a>
+                        <a href="{{editurl}}">{{# pix }} t/edit, core, {{# str }} matrix:edit, local_competvetsuivi {{/ str }} {{/ pix }}</a>
+                        <a href="{{deleteurl}}">{{# pix }} t/delete, core, {{# str }} matrix:delete, local_competvetsuivi {{/ str }} {{/ pix }}</a>
                     </td>
                 </tr>
             {{/matrix}}

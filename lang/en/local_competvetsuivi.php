@@ -33,10 +33,16 @@ $string['managematrix'] = 'Manage Matrix';
 
 $string['matrixname'] = 'Fullname';
 $string['matrixshortname'] = 'Shortname';
-$string['addmatrix'] = 'Add matrix';
 $string['matrix'] = 'Matrix';
 
 $string['matrixfileadd'] = 'Add a new matrix file.';
 $string['matrixfileadd_help'] = 'Add a new matrix file. This should be an Excel formatted file with specific data and structure.';
 
 $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file uploaded';
+$string['matrix:edit']= "Edit Matrix";
+$string['matrix:delete']= "Delete Matrix";
+$string['matrix:add'] = 'Add matrix';
+
+$string['matrixdeleted'] = 'Matrix Deleted';
+$string['matrixadded'] = 'Matrix Deleted';
+$string['matrixupdated'] = 'Matrix Updated';

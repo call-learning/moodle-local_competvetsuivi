@@ -34,7 +34,7 @@ global $CFG;
  *
  * @package local_competvetsuivi
  */
-class add_form extends moodleform {
+class add_edit_form extends moodleform {
 
     /**
      * The form definition.
@@ -42,6 +42,21 @@ class add_form extends moodleform {
     public function definition() {
         global $CFG, $DB;
         $mform = $this->_form;
+
+        $fullname = empty($this->_customdata['fullname']) ? '' : $this->_customdata['fullname'];
+        $shortname = empty($this->_customdata['shortname']) ? '' : $this->_customdata['shortname'];
+        $id = empty($this->_customdata['id']) ? '' : $this->_customdata['id'];
+        if ($id) {
+            $mform->addElement('hidden', 'id', $id);
+            $mform->setType('id', PARAM_INT);
+        }
+
+        $mform->addElement('text', 'fullname', get_string('matrixname', 'local_competvetsuivi'), $fullname);
+        $mform->setType('fullname', PARAM_ALPHAEXT);
+
+        $mform->addElement('text', 'shortname', get_string('matrixshortname', 'local_competvetsuivi'), $shortname);
+        $mform->setType('shortname', PARAM_ALPHAEXT);
+
         $mform->addElement(
                 'filepicker',
                 'matrixfile',

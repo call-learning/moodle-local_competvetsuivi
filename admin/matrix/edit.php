@@ -29,20 +29,42 @@ require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
 require_once($CFG->libdir.'/adminlib.php');
+require_once('add_edit_form.php');
 
 admin_externalpage_setup('managematrix');
+require_login();
+$id = required_param('id', PARAM_INT);
 
 // Override pagetype to show blocks properly.
-$header = get_string('addmatrix','local_competvetsuivi');
+$header = get_string('matrix:edit', 'local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
-$pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/add.php');
-
+$pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/add.php');
 $PAGE->set_url($pageurl);
 
-$renderer = $PAGE->get_renderer('core');
-$renderable = new matrix_list_renderable();
+$matrix = new \local_competvetsuivi\matrix\matrix($id);
+
+$matrixdata = array('fullname'=>$matrix->fullname, 'shortname'=>$matrix->shortname,'id'=>$matrix->id);
+$mform = new add_edit_form(null, array('fullname'=>$matrix->fullname, 'shortname'=>$matrix->shortname,'id'=>$matrix->id));
+$mform->set_data($matrixdata);
+
+$listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
+if ($mform->is_cancelled()) {
+    redirect($listpageurl);
+}
 
 echo $OUTPUT->header();
-echo $renderer->render_from_template('local_competvetsuivi/matrix_add', $renderable);
+if ($data = $mform->get_data()) {
+    $matrix->shortname = $data->shortname;
+    $matrix->fullname = $data->fullname;
+    $matrix->save();
+    $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
+    $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);
+    $event->trigger();
+
+    echo $OUTPUT->notification(get_string('matrixupdated', 'local_competvetsuivi'), 'notifysuccess');
+    echo $OUTPUT->single_button($listpageurl, get_string('continue'));
+} else {
+    $mform->display();
+}
 echo $OUTPUT->footer();

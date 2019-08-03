@@ -16,7 +16,7 @@
 
 
 /**
- * Matrix Added event
+ * Matrix Updated event
  *
  * @package     local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
@@ -26,7 +26,7 @@ namespace local_competvetsuivi\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-class matrix_added extends \core\event\base {
+class matrix_updated extends \core\event\base {
     /**
      * Init method.
      *

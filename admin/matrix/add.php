@@ -26,19 +26,20 @@ require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
-require_once('add_form.php');
+require_once('add_edit_form.php');
 
 admin_externalpage_setup('managematrix');
+require_login();
 
 // Override pagetype to show blocks properly.
-$header = get_string('addmatrix', 'local_competvetsuivi');
+$header = get_string('matrix:add', 'local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/add.php');
 
 $PAGE->set_url($pageurl);
 
-$mform = new add_form();
+$mform = new add_edit_form();
 $mform->set_data(array());
 
 $listurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
@@ -48,10 +49,10 @@ if ($mform->is_cancelled()) {
     // Add a new matrix
     $filename = $mform->get_new_filename('matrixfile');
     $tempfile = $mform->save_temp_file('matrixfile');
-    $ĥash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
+    $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
 
     try {
-        $matrix = \local_competvetsuivi\matrix\matrix::import_from_file($filename, $tempfile, $hash);
+        $matrix = \local_competvetsuivi\matrix\matrix::import_from_file($filename, $tempfile, $hash, $data->fullname, $data->shortname);
         $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
         $event = \local_competvetsuivi\event\matrix_added::create($eventparams);
         $event->trigger();
