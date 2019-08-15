@@ -27,39 +27,33 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Compet Vetsuivi Utils';
 
-/** Management  */
-$string['competvetmanagement'] = 'Compet Vetsuivi';
-$string['managematrix'] = 'Manage Competencies Matrix';
-
-$string['matrixname'] = 'Fullname';
-$string['matrixshortname'] = 'Shortname';
-$string['matrix'] = 'Matrix';
-
-$string['matrixfileadd'] = 'Add a new matrix file.';
-$string['matrixfileadd_help'] = 'Add a new matrix file. This should be an Excel formatted file with specific data and structure.';
-
-$string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file uploaded';
-$string['matrix:edit']= "Edit Matrix";
-$string['matrix:delete']= "Delete Matrix";
-$string['matrix:add'] = 'Add matrix';
-$string['matrix:list'] = 'All matrix';
-$string['matrix:view'] = 'View matrix {$a}';
 $string['competencies'] = 'Competencies';
-
-$string['matrixdeleted'] = 'Matrix Deleted';
-$string['matrixadded'] = 'Matrix Deleted';
-$string['matrixupdated'] = 'Matrix Updated';
-$string['matrixviewtitle'] = 'Viewing Matrix {$a}';
-
+$string['competvetgeneralsettings'] = 'General Settings';
+$string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['enablecompetvetsuivi'] = 'Enable Compet Vetsuivi Plugin';
 $string['enablecompetvetsuivi_help'] = 'Enable Compet Vetsuivi Plugin';
-$string['competvetgeneralsettings'] = 'General Settings';
-
-$string['userdatafilepath'] = 'Directory for User Data CSV files';
-$string['userdatafilepath_desc'] = 'Directory for User Data CSV files';
-$string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
-
+$string['managematrix'] = 'Manage Competencies Matrix';
+$string['matrix:add'] = 'Add matrix';
+$string['matrixadded'] = 'Matrix Deleted';
 $string['matrixcomptype:capability'] = 'Capability';
+$string['matrixcomptype:evaluation'] = 'Evaluation';
 $string['matrixcomptype:learning'] = 'Learning';
 $string['matrixcomptype:objectives'] = 'Objectives';
-$string['matrixcomptype:evaluation'] = 'Evaluation';
+$string['matrix:delete']= "Delete Matrix";
+$string['matrixdeleted'] = 'Matrix Deleted';
+$string['matrix:edit']= "Edit Matrix";
+$string['matrixfileadd'] = 'Add a new matrix file.';
+$string['matrixfileadd_help'] = 'Add a new matrix file. This should be an Excel formatted file with specific data and structure.';
+$string['matrix:list'] = 'All matrix';
+$string['matrix'] = 'Matrix';
+$string['matrixname'] = 'Fullname';
+$string['matrixshortname'] = 'Shortname';
+$string['matrixupdated'] = 'Matrix Updated';
+$string['matrixviewdatatitle'] = 'Viewing Matrix Data {$a->matrixname} for user {$a->username}';
+$string['matrix:viewdata'] = 'View matrix for user';
+$string['matrixviewtitle'] = 'Viewing Matrix {$a}';
+$string['matrix:view'] = 'View matrix {$a}';
+$string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file uploaded';
+$string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
+$string['userdatafilepath_desc'] = 'Directory for User Data CSV files';
+$string['userdatafilepath'] = 'Directory for User Data CSV files';

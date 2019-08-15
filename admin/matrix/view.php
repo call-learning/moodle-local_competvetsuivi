@@ -30,7 +30,6 @@ require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
-require_once('add_edit_form.php');
 
 admin_externalpage_setup('managematrix');
 require_login();

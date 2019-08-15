@@ -78,15 +78,21 @@ class userdata {
                     // The email is followed by the data itself
                     $userdatarow = array_splice($userrecord, $emailcolumnindex +1);
 
-                    // We combine the two array and render a json
+
                     $userdata =  new \stdClass();
                     $userdata->useremail = $useremail;
 
+                    $finaldatarow = array();
                     // Convert heading and content to a more useable one (like boolean)
                     foreach($userdatarow as $k=>$row) {
                         $userdatarow[$k] = $row ?1:0;
                     }
+                    // TODO: This is a hack: We either need to change the header in the user data source or the matrix
+                    $useddataheaders = array_map(function($label) {
+                            return str_replace('UE','UC',$label);
+                    }, $useddataheaders);
 
+                    // We combine the two array and render a json
                     $userdata->userdata = json_encode(array_combine($useddataheaders,$userdatarow));
 
                     $toupdate = $DB->get_field('cvs_userdata', 'id',array('useremail'=>$useremail));
@@ -115,6 +121,14 @@ class userdata {
         return true;
     }
 
+    public static function get_user_data($useremail) {
+        global $DB;
+        $data = $DB->get_record('cvs_userdata', array('useremail'=>$useremail));
+        if($data) {
+            $data = json_decode($data->userdata, true);
+        }
+        return $data;
+    }
     protected static function trim_headers(&$columnheaders) {
         foreach ($columnheaders as $i => $h) {
             $h = trim($h); // Remove whitespace.
@@ -122,4 +136,6 @@ class userdata {
             $columnheaders[$i] = $h;
         }
     }
+
+
 }
