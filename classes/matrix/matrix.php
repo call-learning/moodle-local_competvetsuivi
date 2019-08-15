@@ -42,6 +42,12 @@ class matrix {
     const MATRIX_COMP_TYPE_OBJECTIVES = 3;
     const MATRIX_COMP_TYPE_EVALUATION = 4;
 
+    const MATRIX_COMP_TYPE_NAMES = array(
+            1 => 'capability',
+            2 => 'learning',
+            3 => 'objectives',
+            4 => 'evaluation',
+    );
     const CLASS_TABLE = 'cvs_matrix';
 
     /** @var integer */
@@ -59,6 +65,21 @@ class matrix {
     /** @var integer */
     public $timemodified;
 
+    /** @var array of ue (see cvs_matrix_ue) */
+    public $ues;
+
+    /** @var array of comp (see cvs_matrix_comp) */
+    public $comp;
+
+    /**
+     * @var array of comp per ue (see cvs_matrix_comp_ue)
+     * So we have $comperue[<ueid>][<compid>] = <value>
+     * TODO: see if we need the opposite also (compid, uidi => val)
+     */
+    public $compuevalues;
+
+    protected $dataloaded = false;
+
     /**
      * Constructor.
      *
@@ -73,31 +94,113 @@ class matrix {
         $this->timemodified = $matrix->timemodified;
     }
 
-    function delete($withdependencies = false) {
+    public function delete($withdependencies = false) {
         global $DB;
         // Start a delegated transation here so it is all or nothing
         $delegatedtransaction = $DB->start_delegated_transaction();
         $DB->delete_records(static::CLASS_TABLE, array('id' => $this->id));
         if ($withdependencies) {
-
-            // Delete all related competencies values
-            $DB->delete_records_select('cvs_matrix_comp_ue',
-                    'compid IN (SELECT DISTINCT id FROM {cvs_matrix_comp} WHERE matrixid= :cmatrixid) OR 
-                    ueid IN (SELECT DISTINCT id FROM {cvs_matrix_ue} WHERE matrixid= :umatrixid)',
-                    array('cmatrixid' => $this->id, 'umatrixid' => $this->id));
-            // Then fully delete the rest
-            $DB->delete_records('cvs_matrix_ue', array('matrixid' => $this->id));
-            $DB->delete_records('cvs_matrix_comp', array('matrixid' => $this->id));
+            $this->delete_matrix_dependencies();
         }
         $DB->commit_delegated_transaction($delegatedtransaction);
     }
 
-    function save() {
+    /**
+     * Reset a matrix (used before loading a new one in place)
+     *
+     * @throws \dml_transaction_exception
+     */
+    public function reset_matrix() {
+        global $DB;
+        // Start a delegated transation here so it is all or nothing
+        $delegatedtransaction = $DB->start_delegated_transaction();
+        $this->delete_matrix_dependencies();
+        $DB->commit_delegated_transaction($delegatedtransaction);
+    }
+
+    protected function delete_matrix_dependencies() {
+        global $DB;
+        $DB->delete_records_select('cvs_matrix_comp_ue',
+                'compid IN (SELECT DISTINCT id FROM {cvs_matrix_comp} WHERE matrixid= :cmatrixid) OR 
+                    ueid IN (SELECT DISTINCT id FROM {cvs_matrix_ue} WHERE matrixid= :umatrixid)',
+                array('cmatrixid' => $this->id, 'umatrixid' => $this->id));
+        // Then fully delete the rest
+        $DB->delete_records('cvs_matrix_ue', array('matrixid' => $this->id));
+        $DB->delete_records('cvs_matrix_comp', array('matrixid' => $this->id));
+    }
+
+    public function save() {
         global $DB;
         $DB->update_record(static::CLASS_TABLE, $this);
     }
 
-    public static function import_from_file($filename, $filepath, $hash, $fullname, $shortname) {
+    public function load_data() {
+        global $DB;
+        $this->ues = $DB->get_records('cvs_matrix_ue', array('matrixid' => $this->id));
+        $this->comp = $DB->get_records('cvs_matrix_comp', array('matrixid' => $this->id));
+        $compuesql = "SELECT compue.id AS id, compue.ueid AS ueid, compue.compid AS compid, compue.type AS type, compue.value AS value
+        FROM {cvs_matrix_comp_ue} compue
+        LEFT JOIN {cvs_matrix_ue} ue ON ue.id = compue.ueid
+        LEFT JOIN {cvs_matrix_comp} comp ON comp.id = compue.compid
+        WHERE ue.matrixid = :matrixid_1  AND comp.matrixid = :matrixid_2
+        ";
+        $companduesvals = $DB->get_records_sql($compuesql, array('matrixid_1' => $this->id, 'matrixid_2' => $this->id));
+        $this->compuevalues = array();
+        foreach ($companduesvals as $cuv) {
+            if (empty($this->compuevalues[$cuv->ueid])) {
+                $this->compuevalues[$cuv->ueid] = array();
+            }
+            $value = new \stdClass();
+            $value->type = $cuv->type;
+            $value->value = $cuv->value;
+            if (empty($this->compuevalues[$cuv->ueid][$cuv->compid])) {
+                $this->compuevalues[$cuv->ueid][$cuv->compid] = array();
+            }
+            $this->compuevalues[$cuv->ueid][$cuv->compid][] = $value;
+        }
+        $this->dataloaded = true;
+    }
+
+    public function get_matrix_ues() {
+        if (!$this->dataloaded) {
+            throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
+        }
+        return $this->ues;
+    }
+
+    public function get_matrix_competencies() {
+        if (!$this->dataloaded) {
+            throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
+        }
+        return $this->comp;
+    }
+
+    public function get_values_for_ue_and_competency($ueid, $compid) {
+        if (!$this->dataloaded) {
+            throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
+        }
+        return $this->compuevalues[$ueid][$compid];
+    }
+
+    static public function comptype_to_string($comptypeid) {
+        return get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');
+    }
+
+    /**
+     * Import a matrix from a file and fills the relevant tables
+     *
+     * @param $filepath
+     * @param $hash
+     * @param $fullname
+     * @param $shortname
+     * @param $matrixobject existing matrix object as a generic stdClass
+     * @return \stdClass
+     * @throws \PHPExcel_Reader_Exception
+     * @throws \dml_exception
+     * @throws \dml_transaction_exception
+     * @throws matrix_exception
+     */
+    public static function import_from_file($filepath, $hash, $fullname, $shortname, &$matrixobject = null) {
         global $CFG, $DB;
         require_once("$CFG->libdir/phpexcel/PHPExcel/IOFactory.php");
         raise_memory_limit(MEMORY_HUGE);
@@ -116,21 +219,20 @@ class matrix {
         if (!$matrixsheet) {
             throw new matrix_exception('nomatrixerror', 'local_competvetsuivi', '', matrix::MATRIX_SHEET_PREFIX);
         }
-        $matrixobject = new \stdClass();
+        if (!$matrixobject) {
+            $matrixobject = new \stdClass();
+            $matrixobject->timemodified = time();
+            $matrixobject->fullname = $fullname;
+            $matrixobject->shortname = $shortname;
+            $matrixobject->id = $DB->insert_record(static::CLASS_TABLE, $matrixobject);
+        }
         $matrixobject->hash = $hash;
-        $matrixobject->timemodified = time();
-        $matrixobject->fullname = $fullname;
-        $matrixobject->shortname = $shortname;
         $columnsvsue = [];
         $competencies = [];
         $rowiterator = $matrixsheet->getRowIterator();
 
         // Start a delegated transation here so it is all or nothing
         $delegatedtransaction = $DB->start_delegated_transaction();
-
-        // Add the matrix to the table
-        $matrix = new \stdClass();
-        $matrixobject->id = $DB->insert_record(static::CLASS_TABLE, $matrixobject);
 
         // First extract the columns/UE names
         $previousuename = "";
@@ -154,7 +256,12 @@ class matrix {
             $ue->fullname = $previousuename; // We fill the array with the same value if null
             $ue->shortname = $previousuename;
             $ue->matrixid = $matrixobject->id;
-            $ue->id = $DB->insert_record('cvs_matrix_ue', $ue);
+            $existingue = $DB->get_record('cvs_matrix_ue', array('matrixid' => $matrixobject->id, 'fullname' => $ue->fullname));
+            if (!$existingue) {
+                $ue->id = $DB->insert_record('cvs_matrix_ue', $ue);
+            } else {
+                $ue = $existingue; // We don't insert the UE twice
+            }
             $columnsvsue[$cellheader->getColumn()] = array('ue' => $ue, 'type' => $COMP_TYPE_COLUMNS[$currentypecol]);
             $currentypecol++;
         }

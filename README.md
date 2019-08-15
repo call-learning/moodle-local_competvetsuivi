@@ -16,12 +16,12 @@ La synchronisation se fait de manière périodique par une tâche Moodle. Dans l
 un répertoire dans lequel on versera le fichier contenant la liste des utilisateur et la complétion de leur UE.
 Le fichier une fois traité est effacé. Ce qui permettra d'en verser un autre. Si aucun fichier n'est présent dans
 le répertoire, aucune action n'est menée.
-
-
+Cette tâche se déroule toute les 5 minutes. Cela conviendra si le volume de données n'est pas trop grand.
+Dans tous les cas cela peut être changé dans les paramètres de la tâche. 
 
 Alternativement on peut synchroniser la liste des utilisateurs par le script suivant:
 
-php local/competvetsuivi/cli/syncusers.php --file=<csv file>
+php local/competvetsuivi/cli/uploaduserdata.php --file=<csv file>
 
 # Gestion des matrices de compétences
 

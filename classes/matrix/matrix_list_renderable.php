@@ -65,6 +65,10 @@ class matrix_list_renderable implements renderable, templatable {
                         $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/delete.php',
                         array('id' => $matrix->id)
                 );
+                $matrix->viewurl = new moodle_url(
+                        $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/view.php',
+                        array('id' => $matrix->id)
+                );
 
                 $context->matrix[] = $matrix;
             }

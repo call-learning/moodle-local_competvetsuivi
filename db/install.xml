@@ -87,7 +87,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="useremail" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="This is the way we identify the user in the database. It should be unique. The length (100) is the same as in the user table"/>
-        <FIELD NAME="userdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="User data as a raw json matching uename with a grade, i.e. {&quot;uename&quot;:&quot;gradevalue&quot;}"/>
+        <FIELD NAME="compe" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="User data as a raw json matching uename with a grade, i.e. {&quot;uename&quot;:&quot;gradevalue&quot;}"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

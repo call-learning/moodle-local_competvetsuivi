@@ -39,8 +39,13 @@ $id = required_param('id', PARAM_INT);
 $header = get_string('matrix:edit', 'local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
-$pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/add.php');
+$pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php');
 $PAGE->set_url($pageurl);
+// Navbar
+$listpageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+$PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
+$PAGE->navbar->add($header, null);
+
 
 $matrix = new \local_competvetsuivi\matrix\matrix($id);
 
@@ -55,9 +60,21 @@ if ($mform->is_cancelled()) {
 
 echo $OUTPUT->header();
 if ($data = $mform->get_data()) {
+
+    $filename = $mform->get_new_filename('matrixfile');
+
     $matrix->shortname = $data->shortname;
     $matrix->fullname = $data->fullname;
-    $matrix->save();
+    // Save the file and reload the matrix
+    if ($filename) {
+        $matrix->reset_matrix();
+        $filename = $mform->get_new_filename('matrixfile');
+        $tempfile = $mform->save_temp_file('matrixfile');
+        $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
+        \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname, $matrix);
+
+    }
+    $matrix->save(); // Save shortname, fullname but also hash
     $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
     $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);
     $event->trigger();

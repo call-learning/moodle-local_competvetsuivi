@@ -29,7 +29,7 @@ $string['pluginname'] = 'Compet Vetsuivi Utils';
 
 /** Management  */
 $string['competvetmanagement'] = 'Compet Vetsuivi';
-$string['managematrix'] = 'Manage Matrix';
+$string['managematrix'] = 'Manage Competencies Matrix';
 
 $string['matrixname'] = 'Fullname';
 $string['matrixshortname'] = 'Shortname';
@@ -42,10 +42,14 @@ $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file upload
 $string['matrix:edit']= "Edit Matrix";
 $string['matrix:delete']= "Delete Matrix";
 $string['matrix:add'] = 'Add matrix';
+$string['matrix:list'] = 'All matrix';
+$string['matrix:view'] = 'View matrix {$a}';
+$string['competencies'] = 'Competencies';
 
 $string['matrixdeleted'] = 'Matrix Deleted';
 $string['matrixadded'] = 'Matrix Deleted';
 $string['matrixupdated'] = 'Matrix Updated';
+$string['matrixviewtitle'] = 'Viewing Matrix {$a}';
 
 $string['enablecompetvetsuivi'] = 'Enable Compet Vetsuivi Plugin';
 $string['enablecompetvetsuivi_help'] = 'Enable Compet Vetsuivi Plugin';
@@ -54,3 +58,8 @@ $string['competvetgeneralsettings'] = 'General Settings';
 $string['userdatafilepath'] = 'Directory for User Data CSV files';
 $string['userdatafilepath_desc'] = 'Directory for User Data CSV files';
 $string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
+
+$string['matrixcomptype:capability'] = 'Capability';
+$string['matrixcomptype:learning'] = 'Learning';
+$string['matrixcomptype:objectives'] = 'Objectives';
+$string['matrixcomptype:evaluation'] = 'Evaluation';

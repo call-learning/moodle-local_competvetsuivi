@@ -41,7 +41,12 @@ $header = get_string('matrix:add','local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/delete.php');
+// Navbar
 $listpageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+$PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
+$PAGE->navbar->add($header, null);
+
+
 $PAGE->set_url($pageurl);
 
 echo $OUTPUT->header();

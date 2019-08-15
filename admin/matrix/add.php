@@ -36,8 +36,12 @@ $header = get_string('matrix:add', 'local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/add.php');
-
 $PAGE->set_url($pageurl);
+// Navbar
+$listpageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+$PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
+$PAGE->navbar->add($header, null);
+
 
 $mform = new add_edit_form();
 $mform->set_data(array());
@@ -52,7 +56,7 @@ if ($mform->is_cancelled()) {
     $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
 
     try {
-        $matrix = \local_competvetsuivi\matrix\matrix::import_from_file($filename, $tempfile, $hash, $data->fullname, $data->shortname);
+        $matrix = \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname);
         $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
         $event = \local_competvetsuivi\event\matrix_added::create($eventparams);
         $event->trigger();
