@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/competvetsuivi/db" VERSION="20190803" COMMENT="XMLDB file for Moodle local/competvetsuivi"
+<XMLDB PATH="local/competvetsuivi/db" VERSION="20190815" COMMENT="XMLDB file for Moodle local/competvetsuivi"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -82,6 +82,19 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="cvs_userdata" COMMENT="This table contains user data as a raw copy of the use data imported. We have not split the table in multiple components as we just need to fetch the data for the user at runtime (from his/her email)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="useremail" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="This is the way we identify the user in the database. It should be unique. The length (100) is the same as in the user table"/>
+        <FIELD NAME="userdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="User data as a raw json matching uename with a grade, i.e. {&quot;uename&quot;:&quot;gradevalue&quot;}"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="useremail_ix" UNIQUE="true" FIELDS="useremail"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

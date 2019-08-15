@@ -15,17 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Plugin administration pages are defined here.
  *
  * @package     local_competvetsuivi
+ * @category    lib
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'local_competvetsuivi';
-$plugin->release = '0.1.0';
-$plugin->version = 2019080106;
-$plugin->requires = 2018051700;
-$plugin->maturity = MATURITY_ALPHA;

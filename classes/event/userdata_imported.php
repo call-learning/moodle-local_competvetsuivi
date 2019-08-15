@@ -14,18 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * Plugin version and other meta-data are defined here.
+ * User data imported
  *
  * @package     local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace local_competvetsuivi\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_competvetsuivi';
-$plugin->release = '0.1.0';
-$plugin->version = 2019080106;
-$plugin->requires = 2018051700;
-$plugin->maturity = MATURITY_ALPHA;
+class userdata_imported extends \core\event\base {
+    /**
+     * Init method.
+     *
+     * @return void
+     */
+    protected function init() {
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
+    }
+
+}

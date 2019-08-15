@@ -28,16 +28,42 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $compvetmanagement = new admin_category(
             'competvetmanagement',
-            get_string('competvetmanagement','local_competvetsuivi')
+            get_string('competvetmanagement', 'local_competvetsuivi')
     );
+
+    $globalsettings = new admin_settingpage('competvetgeneralsettings',
+            new lang_string('competvetgeneralsettings', 'local_competvetsuivi'),
+            array('local/competvetsuivi:managesettings'),
+            empty($CFG->enablecompetvetsuivi));
+
+    $globalsettings->add(new admin_setting_configfile('local_competvetsuivi/userdatafilepath',
+                    new lang_string('userdatafilepath', 'local_competvetsuivi'),
+                    new lang_string('userdatafilepath_desc', 'local_competvetsuivi'),
+                    '/tmp/usermatrix/')
+    );
+
+    $compvetmanagement->add('competvetmanagement', $globalsettings);
+
     $pagedesc = get_string('managematrix', 'local_competvetsuivi');
-    $pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+    $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
+
     $compvetmanagement->add('competvetmanagement',
             new admin_externalpage(
-            'managematrix',
-            $pagedesc,
-            $pageurl)
+                    'managematrix',
+                    $pagedesc,
+                    $pageurl,
+                    array('local/competvetsuivi:managesettings'),
+                    empty($CFG->enablecompetvetsuivi)
+            )
     );
 
     $ADMIN->add('root', $compvetmanagement);
+
+    // Create a global Advanced Feature Toggle
+    $optionalsubsystems = $ADMIN->locate('optionalsubsystems');
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enablecompetvetsuivi',
+                    new lang_string('enablecompetvetsuivi', 'local_competvetsuivi'),
+                    new lang_string('enablecompetvetsuivi_help', 'local_competvetsuivi'),
+                    1)
+    );
 }

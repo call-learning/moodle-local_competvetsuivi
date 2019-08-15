@@ -46,3 +46,11 @@ $string['matrix:add'] = 'Add matrix';
 $string['matrixdeleted'] = 'Matrix Deleted';
 $string['matrixadded'] = 'Matrix Deleted';
 $string['matrixupdated'] = 'Matrix Updated';
+
+$string['enablecompetvetsuivi'] = 'Enable Compet Vetsuivi Plugin';
+$string['enablecompetvetsuivi_help'] = 'Enable Compet Vetsuivi Plugin';
+$string['competvetgeneralsettings'] = 'General Settings';
+
+$string['userdatafilepath'] = 'Directory for User Data CSV files';
+$string['userdatafilepath_desc'] = 'Directory for User Data CSV files';
+$string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
