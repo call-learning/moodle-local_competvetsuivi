@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_competvetsuivi';
-$plugin->release = '0.1.0';
-$plugin->version = 2019080106;
+$plugin->release = '0.2.0';
+$plugin->version = 2019080109;
 $plugin->requires = 2018051700;
 $plugin->maturity = MATURITY_ALPHA;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/competvetsuivi/db" VERSION="20190815" COMMENT="XMLDB file for Moodle local/competvetsuivi"
+<XMLDB PATH="local/competvetsuivi/db" VERSION="20190903" COMMENT="XMLDB file for Moodle local/competvetsuivi"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -95,6 +95,19 @@
       <INDEXES>
         <INDEX NAME="useremail_ix" UNIQUE="true" FIELDS="useremail"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="cvs_matrix_cohorts" COMMENT="Cohort assignments for matrix">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="matrixid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cohortid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="matrixid_fk" TYPE="foreign" FIELDS="matrixid" REFTABLE="cvs_matrix" REFFIELDS="id"/>
+        <KEY NAME="cohortid_fk" TYPE="foreign" FIELDS="cohortid" REFTABLE="cohort" REFFIELDS="id"/>
+        <KEY NAME="matrix_cohort_ux" TYPE="unique" FIELDS="matrixid, cohortid"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

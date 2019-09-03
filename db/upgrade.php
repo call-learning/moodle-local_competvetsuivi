@@ -45,5 +45,30 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
     // Documentation for the XMLDB Editor can be found at:
     // https://docs.moodle.org/dev/XMLDB_editor
 
+    if ($oldversion < 2019080109) {
+
+        // Define table cvs_matrix_cohorts to be created.
+        $table = new xmldb_table('cvs_matrix_cohorts');
+
+        // Adding fields to table cvs_matrix_cohorts.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('matrixid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('cohortid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table cvs_matrix_cohorts.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('matrixid_fk', XMLDB_KEY_FOREIGN, ['matrixid'], 'cvs_matrix', ['id']);
+        $table->add_key('cohortid_fk', XMLDB_KEY_FOREIGN, ['cohortid'], 'cohort', ['id']);
+        $table->add_key('matrix_cohort_ux', XMLDB_KEY_UNIQUE, ['matrixid', 'cohortid']);
+
+        // Conditionally launch create table for cvs_matrix_cohorts.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Competvetsuivi savepoint reached.
+        upgrade_plugin_savepoint(true, 2019080109, 'local', 'competvetsuivi');
+    }
+
     return true;
 }
