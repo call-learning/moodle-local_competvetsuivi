@@ -134,6 +134,13 @@ class matrix {
         $DB->update_record(static::CLASS_TABLE, $this);
     }
 
+    /**
+     * Load matrix data
+     * The competencies are sorted by path
+     *
+     * @throws \dml_exception
+     *
+     */
     public function load_data() {
         global $DB;
         $this->ues = $DB->get_records('cvs_matrix_ue', array('matrixid' => $this->id));
@@ -143,6 +150,7 @@ class matrix {
         LEFT JOIN {cvs_matrix_ue} ue ON ue.id = compue.ueid
         LEFT JOIN {cvs_matrix_comp} comp ON comp.id = compue.compid
         WHERE ue.matrixid = :matrixid_1  AND comp.matrixid = :matrixid_2
+        ORDER BY comp.path ASC
         ";
         $companduesvals = $DB->get_records_sql($compuesql, array('matrixid_1' => $this->id, 'matrixid_2' => $this->id));
         $this->compuevalues = array();
@@ -273,15 +281,15 @@ class matrix {
             $competency = new \stdClass();
             $comptext = $celliterator->current()->getValue();
             $compmatch = [];
-            if (preg_match('/^(\w+)\.([0-9.]+)\s+(.+)/', $comptext, $compmatch)) {
+            if (preg_match('/^(\w+)\.([0-9.]*)\s+(.+)/', $comptext, $compmatch)) {
                 $competencypath = explode('.', rtrim($compmatch[2], '.'));
 
                 $competencyrootsn = strtoupper($compmatch[1]);
-                $compsnformat = '%s-%s';
                 // We need to search for parent's shortname in the database so we obtain the real path
-                $seachparentshortname = sprintf($compsnformat,
-                        $competencyrootsn,
-                        join('.', array_slice($competencypath, 0, count($competencypath) - 1)));
+                $seachparentshortname = join('.', array_slice($competencypath, 0, count($competencypath) - 1));
+                $seachparentshortname = "{$competencyrootsn}"
+                        .($seachparentshortname?'.': '')
+                        ."$seachparentshortname";
 
                 $parentcomp = $DB->get_record('cvs_matrix_comp',
                         array('shortname' => $seachparentshortname, 'matrixid' => $matrixobject->id));
@@ -289,11 +297,17 @@ class matrix {
                 $competency = new \stdClass();
                 $competency->description = $compmatch[3];
                 $competency->descriptionformat = FORMAT_PLAIN;
-                $competency->fullname = sprintf($compsnformat, $competencyrootsn, join('.', $competencypath));
-                $competency->shortname = sprintf($compsnformat, $competencyrootsn, join('.', $competencypath));
+                $competency->shortname = join('.', $competencypath);
+                $competency->shortname = "{$competencyrootsn}"
+                        .($competency->shortname?'.': '')
+                        ."{$competency->shortname}";
+                $competency->fullname = $competency->shortname . ' ' . $compmatch[3];
+                if (strlen($competency->fullname)) {
+                    $competency->fullname = trim(\core_text::substr($competency->fullname, 0, 252)) . '...';
+                }
                 $competency->id = $DB->insert_record('cvs_matrix_comp', $competency);
                 $competency->matrixid = $matrixobject->id;
-                $competency->path = '.' . $competency->id;
+                $competency->path = '/' . $competency->id;
                 if ($parentcomp) {
                     $competency->path = $parentcomp->path . $competency->path;
                 }

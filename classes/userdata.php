@@ -104,10 +104,10 @@ class userdata {
                     }
                 }
             } else {
-                $returnedvalue = array('missingcsvheader' => $columnerror);
+                $returnvalue = array('missingcsvheader' => $columnerror);
             }
         } else {
-            $returnedvalue = array('importerror' => $importer->get_error());
+            $returnvalue = array('importerror' => $importer->get_error());
         }
 
         $importer->cleanup();

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Compet Vetsuivi Utils';
 
 $string['competencies'] = 'Competencies';
+$string['competencyfullname'] = 'Full Name';
 $string['competvetgeneralsettings'] = 'General Settings';
 $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['enablecompetvetsuivi'] = 'Enable Compet Vetsuivi Plugin';

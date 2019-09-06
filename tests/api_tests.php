@@ -42,7 +42,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_competvetsuivi_api_test_testcase extends advanced_testcase {
+class api_tests extends advanced_testcase {
 
     // Write the tests here as public funcions.
 
