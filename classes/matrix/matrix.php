@@ -183,13 +183,36 @@ class matrix {
         return $this->comp;
     }
 
-    public function get_values_for_ue_and_competency($ueid, $compid) {
+    public function get_values_for_ue_and_competency($ueid, $compid, $recursive=false) {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
-        return $this->compuevalues[$ueid][$compid];
+        $currentvalue = $this->compuevalues[$ueid][$compid];
+        if ($recursive) {
+            foreach($this->get_child_competency($compid) as $cmp) {
+                $childvalues = $this->get_values_for_ue_and_competency($ueid, $cmp->id, false);
+                foreach($childvalues as $val){
+                    foreach($currentvalue as $key => $cv) {
+                        if ($cv->type == $val->type) {
+                            $currentvalue[$key]->value = $cv->value + $val->value;
+                        }
+                    }
+                }
+            }
+        }
+        return $currentvalue;
     }
 
+    public function get_child_competency($compid) {
+        global $DB;
+        $comps = [];
+        $comppath = $DB->get_field('cvs_matrix_comp', 'path', array('id'=>$compid));
+        if ($comppath) {
+            $params = ['comppath'=> "%{$comppath}/%"];
+            $comps = $DB->get_records_select('cvs_matrix_comp', $DB->sql_like('path',':comppath'), $params);
+        }
+        return $comps;
+    }
     static public function comptype_to_string($comptypeid) {
         return get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');
     }

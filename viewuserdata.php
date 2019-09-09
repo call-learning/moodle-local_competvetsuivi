@@ -25,6 +25,7 @@
 
 use local_competvetsuivi\matrix\matrix_list_renderable;
 use local_competvetsuivi\matrix\matrix;
+use local_competvetsuivi\utils;
 
 require_once(__DIR__ . '/../../config.php');
 
@@ -75,23 +76,15 @@ $competencies = $matrix->get_matrix_competencies();
 
 foreach ($competencies as $comp) {
     // For each competency regroup all finished ues and values
-    $type = array();
-    foreach ($matrixues as $ue) {
-        $values = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id);
-        if (!empty($userdata[$ue->shortname])) {
-            foreach ($values as $ueval) {
-                if (empty($type[$ueval->type])) {
-                    $type[$ueval->type] = array();
-                }
-                $type[$ueval->type][] = $ueval->value;
-            }
-        }
-    }
+    $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $comp, $userdata);
     $cells = array(new html_table_cell($comp->shortname), new html_table_cell($comp->fullname));
     foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypeid => $comptypname) {
         $celltext = "";
-        if (!empty($type[$comptypeid])) {
-            $celltext = join(',', $type[$comptypeid]);
+        if (key_exists($comptypeid, $possiblevsactual)) {
+            $currentuserdata = array_map(function($val) {
+                return intval($val->userval) * intval($val->possibleval);
+            }, $possiblevsactual[$comptypeid]);
+            $celltext = join(',', $currentuserdata);
         }
         $cells[] = new html_table_cell($celltext);
     }

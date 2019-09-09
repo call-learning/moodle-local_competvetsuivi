@@ -25,6 +25,29 @@
 namespace local_competvetsuivi;
 
 
-class utils {
+use local_competvetsuivi\matrix\matrix;
 
+class utils {
+    public static function get_possible_vs_actual_values(matrix $matrix,$comp, $userdata, $recursive = false) {
+        $matrixues = $matrix->get_matrix_ues();
+        $possiblevsactual = array();
+        foreach ($matrixues as $ue) {
+            $values = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id, $recursive);
+
+            foreach ($values as $ueval) {
+                $data = new \stdClass();
+                $data->possibleval = $ueval->value;
+                $data->userval = 0;
+                $data->ue = $ue->shortname;
+                if (!empty($userdata[$ue->shortname])) {
+                    $data->userval = $userdata[$ue->shortname];
+                }
+                if (empty($possiblevsactual[$ueval->type])) {
+                    $possiblevsactual[$ueval->type] = array();
+                }
+                $possiblevsactual[$ueval->type][] = $data;
+            }
+        }
+        return $possiblevsactual;
+    }
 }

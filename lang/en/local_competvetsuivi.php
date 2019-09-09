@@ -31,6 +31,7 @@ $string['competencies'] = 'Competencies';
 $string['competencyfullname'] = 'Full Name';
 $string['competvetgeneralsettings'] = 'General Settings';
 $string['competvetmanagement'] = 'Compet Vetsuivi';
+$string['currentprogress'] = 'Current Progress';
 $string['enablecompetvetsuivi'] = 'Enable Compet Vetsuivi Plugin';
 $string['enablecompetvetsuivi_help'] = 'Enable Compet Vetsuivi Plugin';
 $string['managematrix'] = 'Manage Competencies Matrix';
@@ -62,3 +63,4 @@ $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file upload
 $string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
 $string['userdatafilepath_desc'] = 'Directory for User Data CSV files';
 $string['userdatafilepath'] = 'Directory for User Data CSV files';
+
