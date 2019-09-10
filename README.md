@@ -39,7 +39,19 @@ Elle pourra:
 
 ## Importation des données de matrice
 
+## Visualisation des données (temporaire)
 
+Pour voir les données attachées à une matrice, deux pages sont présentes:
+
+* [URLDUSITE]/local/competvetsuivi/viewuserdata.php?id=[IDUTILISATEUR]&matrixid=[IDMATRICE]
+* [URLDUSITE]/local/competvetsuivi/viewusergraph.php?id=[IDUTILISATEUR]&matrixid=[IDMATRICE]
+
+L'identifiant de la matrice peut s'obtenir sur la liste des matrice en examinant la matrice:
+* [URLDUSITE]/local/competvetsuivi/admin/matrix/list.php et en cliquant sur la matrice on a l'URL suivante:
+[URLDUSITE]/local/competvetsuivi/admin/matrix/view.php?id=[IDMATRICE]
+* Si on va sur la liste des utilisateur et on clique sur un utilisateur pour voir le profil on peut obtenir l'ID de l'utilisateur
+en regardant son profil.
+ 
 
 ## License ##
 

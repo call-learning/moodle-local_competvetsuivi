@@ -43,9 +43,9 @@ class matrix {
     const MATRIX_COMP_TYPE_EVALUATION = 4;
 
     const MATRIX_COMP_TYPE_NAMES = array(
-            1 => 'capability',
-            2 => 'learning',
-            3 => 'objectives',
+            1 => 'knowledge',
+            2 => 'ability',
+            3 => 'objective',
             4 => 'evaluation',
     );
     const CLASS_TABLE = 'cvs_matrix';
