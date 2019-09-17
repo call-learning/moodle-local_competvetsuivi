@@ -1,0 +1,4 @@
+.bullet-cvs .marker { }
+.bullet-cvs .tick line { stroke-width: .5px; }
+.bullet-cvs .title { font-size: 14px; font-weight: bold; }
+.bullet-cvs .label { text-anchor: middle; font-variant: small-caps; fill:gray; text-shadow: black 0 1px;  }

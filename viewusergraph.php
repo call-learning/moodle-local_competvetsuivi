@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Matrix management page
+ * Data view Page
  *
  * @package     local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
@@ -54,21 +54,9 @@ $PAGE->set_url($pageurl);
 $userdata = local_competvetsuivi\userdata::get_user_data($user->email);
 $matrix->load_data();
 
-// ChartJS
-$chartjspath = '/local/competvetsuivi/lib/js/Chart/Chart';
-if ($CFG->debugdeveloper) {
-    $chartjspath .= '.min';
-}
-$PAGE->requires->js($chartjspath . '.js', true);
-$PAGE->requires->css($chartjspath . '.css', true);
-// End ChartJS
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('matrixviewdatatitle', 'local_competvetsuivi',
         array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
-$table = new html_table();
-$table->attributes['class'] = 'generaltable boxaligncenter flexible-wrap';
-
 $matrixues = $matrix->get_matrix_ues();
 $uenames = array_map(function($ue) {
     return $ue->fullname;
@@ -76,124 +64,83 @@ $uenames = array_map(function($ue) {
 $uenamexues =
         array_combine($uenames, $matrixues); // We have now an array with UE names => ue, it is now easier to get info from each ue
 
-$arrayheader = array(get_string('competencies', 'local_competvetsuivi'),
-        get_string('competencyfullname', 'local_competvetsuivi'));
-$arrayheader[] = get_string('currentprogress', 'local_competvetsuivi');
-$arrayheader[] = get_string('currentprogress', 'local_competvetsuivi');
-
-$table->head = $arrayheader;
-
 $competencies = $matrix->get_matrix_competencies();
 
-$chartjsscript = array(); // Collection of javascript to append at then end of the output
-//We should use bullet chart (see http://nvd3.org/examples/bullet.html)
-// Or with ChartJS https://jsfiddle.net/usrntq5d/
 $barchartoptions = [
         "scales" => [
                 "yAxes" => [
                         [
-                                "barThickness" => 30,
+                                "barPercentage" => 1.0,
                                 "stacked" => true,
                         ],
                 ],
-        ],
-        "xAxes" => [
-                [
-                        "stacked" => false,
+                "xAxes" => [
+                        [
+                                "stacked" => false,
+                                "ticks" => [
+                                        "beginAtZero" => true,
+                                        "max" => 1.0,
+                                        "min" => 0,
+                                ]
+                        ]
                 ]
         ],
-        "legend" => false,
+    //"legend" => false,
+        "backgroundColor" => [
+                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 'rgba(255, 99, 132, 0.2)',
+                matrix::MATRIX_COMP_TYPE_ABILITY => 'rgba(54, 162, 235, 0.2)'
+        ],
 ];
 
-$competenciesstrandsnames = [];
+$competenciesstrandsnames = matrix::get_all_competencies_strands();
+$competenciesstrandsnames = array_slice($competenciesstrandsnames, 0, 2); // Only get the first two
+$context = new stdClass();
+$context->competencygraphs = [];
 
-foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypname) {
-    $competenciesstrandsnames[] = get_string('matrixcomptype:' . $comptypname, 'local_competvetsuivi');
-}
+$treegraph = new local_competvetsuivi\output\comp_tree_graph();
+/*
+    var data = [
+                {
+                    "groupshortname":"S1",
+                    "groupname":"Semester 1",
+                    "rlabels": ["Connaissances", "Capacité"],
+                    "results":[1.5, 1],
+                    "maxresults":[1.5, 1.5]
+                },
+                {
+                    "groupshortname":"S2",
+                    "groupname":"Semester 2",
+                    "rlabels": ["Connaissances", "Capacité"],
+                    "results":[0.5,0.5],
+                    "maxresults":[1.5, 0.5]
+                }
+            ];
+
+*/
 
 foreach ($competencies as $comp) {
-    $cells = array(new html_table_cell($comp->shortname), new html_table_cell($comp->fullname));
-    list($possibledataset, $currentuserdataset) = chartingutils::get_comp_dataset($matrix, $comp, $userdata);
-    $celltext = "";
 
-    // Horizontal bar
-    $chartuid = \html_writer::random_id($comp->shortname);
-    $celltext .= \html_writer::div(
-            \html_writer::tag('canvas', '', array('id' => $chartuid)),
-            '',
-            array("style" => "position: relative; width:25vw")
-    );
-    $hbarscriptdata = (object) [
-            'uid' => $chartuid,
-            'type'=> 'horizontalBar',
-            'data' => [
-                    'labels' => $competenciesstrandsnames,
-                    "datasets" => [
-                            [
-                                    "data" => $currentuserdataset,
-                                    "backgroundColor" => "rgba(155, 0, 132, 0.5)",
-                            ],
-                            [
-                                    "data" => $possibledataset,
-                                    "backgroundColor" => "rgba(0, 0, 255, 0.2)",
-                            ]
+    // Get the UE for each semester
+    $data = [];
+    for ($semester = 1; $semester < 7; $semester ++) {
+        $ueselection = ueutils::get_ues_for_semester($semester, $matrix);
+        list($progressspertrand, $maxperstrand) =
+                chartingutils::get_comp_progress($matrix, $comp, $userdata, array('knowledge', 'ability'), $ueselection);
+        $data[] = [
+                'groupshortname' => 'S' . $semester,
+                'groupname' => 'Semester' . $semester,
+                "rlabels" => ["Connaissances", "Capacité"],
+                "results" => array_values($progressspertrand),
+                "maxresults" => array_values($maxperstrand)
+        ];
 
-                    ]
-            ],
-            'options' => $barchartoptions,
-    ];
-    $chartjsscript[] = $hbarscriptdata;
-
-    $cells[] = new html_table_cell($celltext);
-
-    $celltext = "";
-
-    // Radar
-    $chartuid = \html_writer::random_id($comp->shortname);
-    $celltext .= \html_writer::div(
-            \html_writer::tag('canvas', '', array('id' => $chartuid)),
-            '',
-            array("style" => "position: relative; width:25vw")
-    );
-    $hbarscriptdata = (object) [
-            'uid' => $chartuid,
-            'type'=> 'radar',
-            'data' => [
-                    'labels' => $competenciesstrandsnames,
-                    "datasets" => [
-                            [
-                                    "data" => $currentuserdataset,
-                                    "backgroundColor" => "rgba(155, 0, 132, 0.5)",
-                            ],
-                            [
-                                    "data" => $possibledataset,
-                                    "backgroundColor" => "rgba(0, 0, 255, 0.2)",
-                            ]
-
-                    ]
-            ],
-            'options' => $barchartoptions,
-    ];
-    $chartjsscript[] = $hbarscriptdata;
-
-    $cells[] = new html_table_cell($celltext);
-
-    $table->data[] = new html_table_row($cells);
+    }
+    $treegraph->add_competency_progressbar_graph(
+            $comp,
+            $data,
+            $barchartoptions,
+            $comp->shortname);
 }
-echo html_writer::table($table);
-$code = "";
-foreach ($chartjsscript as $cjs) {
-    $options = json_encode($cjs);
-    $code .= "\n
-    var ctx = document.getElementById('{$cjs->uid}').getContext('2d');
-    Chart.plugins.register({
-      afterDatasetsUpdate: function(chart) {
-        Chart.helpers.each(chart.getDatasetMeta(0).data, function(rectangle, index) {
-          rectangle._view.width = rectangle._model.height = 15;
-        });
-      },
-    })
-    var chart = new Chart(ctx, $options); \n";
-}
-echo \html_writer::script($code);
+$renderer = $PAGE->get_renderer('local_competvetsuivi');
+echo $renderer->render($treegraph);
 echo $OUTPUT->footer();

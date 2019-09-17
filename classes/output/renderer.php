@@ -15,25 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Generic tools
+ * Compet vet suivi
  *
  * @package     local_competvetsuivi
- * @category    generic tools
+ * @category    Compet vet suivi renderer
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace local_competvetsuivi;
+namespace local_competvetsuivi\output;
 
+defined('MOODLE_INTERNAL') || die;
 
-class ueutils {
-    const FIRST_SEMESTER = 51;
-    public static function get_ues_for_semester($semester, $matrix) {
-        $uelist = $matrix->ues;
-        return array_filter($uelist, function($ue) use ($semester) {
-            // For now it is a guess work but it should be coming from the database as a group of UEs
-            return floor(((intval(substr($ue->shortname, 2))- static::FIRST_SEMESTER)/10)+1 )== $semester  ;
-
-        });
-
+class renderer extends \plugin_renderer_base {
+    public function render_chartitem(chart_item $item) {
+        $data = $item->export_for_template($this);
+        return parent::render_from_template('local_competvetsuivi/chartitem', $data);
     }
 }

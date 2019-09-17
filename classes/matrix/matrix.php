@@ -37,8 +37,8 @@ global $CFG;
 class matrix {
     const MATRIX_SHEET_PREFIX = 'matrice';
 
-    const MATRIX_COMP_TYPE_CAPABILITY = 1;
-    const MATRIX_COMP_TYPE_LEARNING = 2;
+    const MATRIX_COMP_TYPE_KNOWLEDGE = 1;
+    const MATRIX_COMP_TYPE_ABILITY = 2;
     const MATRIX_COMP_TYPE_OBJECTIVES = 3;
     const MATRIX_COMP_TYPE_EVALUATION = 4;
 
@@ -48,6 +48,15 @@ class matrix {
             3 => 'objective',
             4 => 'evaluation',
     );
+
+    // Warning: max values are not the one we think: they are from max to min (so 1 is max, 2, is middle and 3 is min, 0 is min too!!)
+    public const MAX_VALUE_PER_STRAND = [
+            matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 3, // This is the maximum value possible
+            matrix::MATRIX_COMP_TYPE_ABILITY => 30,
+            matrix::MATRIX_COMP_TYPE_OBJECTIVES => 300,
+            matrix::MATRIX_COMP_TYPE_EVALUATION => 3000
+    ];
+
     const CLASS_TABLE = 'cvs_matrix';
 
     /** @var integer */
@@ -137,7 +146,7 @@ class matrix {
     /**
      * Load matrix data
      * The competencies are sorted by path
-     *
+     * Data is also normalised so 0 is transformed to the max value
      * @throws \dml_exception
      *
      */
@@ -160,7 +169,7 @@ class matrix {
             }
             $value = new \stdClass();
             $value->type = $cuv->type;
-            $value->value = $cuv->value;
+            $value->value = $cuv->value == 0? matrix::MAX_VALUE_PER_STRAND[$cuv->type]:$cuv->value; // Normalize value
             if (empty($this->compuevalues[$cuv->ueid][$cuv->compid])) {
                 $this->compuevalues[$cuv->ueid][$cuv->compid] = array();
             }
@@ -183,18 +192,37 @@ class matrix {
         return $this->comp;
     }
 
+    /**
+     * Get recursively the possible (maximum) values for this competency
+     *
+     * @param $ueid
+     * @param $compid
+     * @param bool $recursive
+     * @return mixed
+     * @throws matrix_exception
+     */
     public function get_values_for_ue_and_competency($ueid, $compid, $recursive=false) {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
         $currentvalue = $this->compuevalues[$ueid][$compid];
+
         if ($recursive) {
             foreach($this->get_child_competency($compid) as $cmp) {
                 $childvalues = $this->get_values_for_ue_and_competency($ueid, $cmp->id, false);
                 foreach($childvalues as $val){
                     foreach($currentvalue as $key => $cv) {
                         if ($cv->type == $val->type) {
-                            $currentvalue[$key]->value = $cv->value + $val->value;
+                            /*
+                             *  Here this is a bit complicated due to the range chosen
+                             *  For example with the Knowledge strand:
+                             *  * 0 or 3 is None
+                             *  * 1 is max value
+                             *  * 2 is middle value
+                             *  So when calculating the aggregated for a given value we take he min
+                             *  except when it is equal to 0
+                             */
+                            $currentvalue[$key]->value = min($val->value, $cv->value);
                         }
                     }
                 }
@@ -255,7 +283,8 @@ class matrix {
             $matrixobject->timemodified = time();
             $matrixobject->fullname = $fullname;
             $matrixobject->shortname = $shortname;
-            $matrixobject->id = $DB->insert_record(static::CLASS_TABLE, $matrixobject);
+            $id = $DB->insert_record(static::CLASS_TABLE, $matrixobject);
+            $matrixobject->id = $id;
         }
         $matrixobject->hash = $hash;
         $columnsvsue = [];
@@ -269,8 +298,8 @@ class matrix {
         $previousuename = "";
 
         // Match between column id and type
-        $COMP_TYPE_COLUMNS = [matrix::MATRIX_COMP_TYPE_CAPABILITY,
-                matrix::MATRIX_COMP_TYPE_LEARNING,
+        $COMP_TYPE_COLUMNS = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE,
+                matrix::MATRIX_COMP_TYPE_ABILITY,
                 matrix::MATRIX_COMP_TYPE_OBJECTIVES,
                 matrix::MATRIX_COMP_TYPE_EVALUATION];
         $currentypecol = 0;
@@ -356,6 +385,14 @@ class matrix {
         $DB->commit_delegated_transaction($delegatedtransaction);
         return $matrixobject;
 
+    }
+
+    public static function get_all_competencies_strands() {
+        $competenciesstrandsnames = [];
+        foreach (static::MATRIX_COMP_TYPE_NAMES as $comptypname) {
+            $competenciesstrandsnames[] = get_string('matrixcomptype:' . $comptypname, 'local_competvetsuivi');
+        }
+        return $competenciesstrandsnames;
     }
 }
 

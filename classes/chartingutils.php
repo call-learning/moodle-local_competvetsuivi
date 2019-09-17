@@ -28,42 +28,58 @@ namespace local_competvetsuivi;
 use local_competvetsuivi\matrix\matrix;
 
 class chartingutils {
-
-    public const MAX_VALUE_PER_STRAND = [
-            matrix::MATRIX_COMP_TYPE_CAPABILITY => 1,
-            matrix::MATRIX_COMP_TYPE_LEARNING => 10,
-            matrix::MATRIX_COMP_TYPE_OBJECTIVES => 100,
-            matrix::MATRIX_COMP_TYPE_EVALUATION => 1000
-    ];
-
-    public static function get_comp_dataset($matrix, $currentcomp, $userdata) {
+    /**
+     * Get  progress vs possible value per strand for the selection of ue
+     *
+     * @param $matrix
+     * @param $currentcomp
+     * @param $userdata
+     * @param array $strands
+     * @return array
+     */
+    public static function get_comp_progress($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
         // For each competency regroup all finished ues and values
-        $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $currentcomp, $userdata, true);
+        $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $currentcomp, $userdata, $ueselection, true);
+        $progressperstrand = [];
+        $maxperstrand = [];
         foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypeid => $comptypname) {
+            if (key_exists($comptypeid, $possiblevsactual)
+                    && (in_array($comptypname, $strands)
+                            || empty($strands))) {
+                $progressperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
+                        function($acc, $val) use ($comptypeid) {
+                            $progress = 0;
+                            $strandfactor = $val->possibleval / (matrix::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
+                            switch ($strandfactor) {
+                                case 1 :
+                                    $progress = 1;
+                                    break;
+                                case 2:
+                                    $progress = 0.5;
+                                    break;
+                            }
+                            return $acc + $progress*$val->userval; // Previous value
+                        },
+                        0);
 
-            // Show per semester
-            //            for ($semester = 0; $semester < 8; $semester++) { // TODO : rewrite this part
-            //                $uelist = ueutils::get_ues_for_semester($semester, $matrix); //
-            // Write the chart
-            $currentuserdata = 0;
-            $possibleuserdata = 0;
-            if (key_exists($comptypeid, $possiblevsactual)) {
-                $currentuserdata = array_reduce($possiblevsactual[$comptypeid],
-                        function($acc, $val) {
-                            return $acc + intval($val->userval) * intval($val->possibleval);
+                $maxperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
+                        function($acc, $val) use ($comptypeid) {
+                            $max = 0;
+                            $strandfactor = $val->possibleval / (matrix::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
+                            switch ($strandfactor) {
+                                case 1 :
+                                    $max = 1;
+                                    break;
+                                case 2:
+                                    $max = 0.5;
+                                    break;
+                            }
+                            return $acc + $max; // Previous value
                         },
                         0);
-                $possibleuserdata = array_reduce(
-                        $possiblevsactual[$comptypeid],
-                        function($acc, $val) {
-                            return $acc + intval($val->possibleval);
-                        },
-                        0);
+
             }
-            $possibledataset[] = $possibleuserdata / static::MAX_VALUE_PER_STRAND[$comptypeid];
-            $currentuserdataset[] = $currentuserdata / static::MAX_VALUE_PER_STRAND[$comptypeid];
         }
-        return array($possibledataset, $currentuserdataset);
+        return array($progressperstrand, $maxperstrand);
     }
-
 }
