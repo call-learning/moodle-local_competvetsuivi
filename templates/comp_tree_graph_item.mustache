@@ -20,19 +20,14 @@
   CompetVetSuivi graph tree template
 
 }}
-<div id="t{{uniqid}}" >
-    {{#rootitems}}
+<span class="accordion-head">
+    <span>{{cfullname}}</span>
+    {{#graph}}
+        {{> local_competvetsuivi/chart_item }}
+    {{/graph}}
+</span>
+<div class="sub-accordion">
+    {{#children}}
         {{> local_competvetsuivi/comp_tree_graph_item }}
-    {{/rootitems}}
+    {{/children}}
 </div>
-{{#js}}
-    require(['jquery', 'jqueryui'], function($) {
-        var uid = 't{{uniqid}}';
-        $( '#'+uid ).accordion({
-            collapsible: true,
-            header: "span.accordion-head",
-            heightStyle: "content",
-            active: false
-        });
-    });
-{{/js}}

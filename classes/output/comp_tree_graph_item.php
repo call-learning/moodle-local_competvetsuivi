@@ -24,47 +24,28 @@
  */
 
 namespace local_competvetsuivi\output;
-
 use local_competvetsuivi\matrix\matrix;
 use renderer_base;
 use stdClass;
 use templatable;
 
-class comp_tree_graph implements \renderable, templatable {
-    public $items;
-    public $rootitems;
+class comp_tree_graph_item implements \renderable, templatable {
+    public $graph;
+    public $children;
+    public $comp;
 
-    public function __construct() {
-        $this->items = array();
-        $this->rootitems = array();
+    public function __construct($comp, $progressdata) {
+        $barchartoptions['title'] = [$comp->fullname];
+        $this->graph = new chart_item($comp,$progressdata, array());
+        $this->children = array();
+        $this->comp = $comp;
     }
-
-    public function add_item($comp, $progressdata) {
-        $this->items[] = new comp_tree_graph_item($comp, $progressdata);
+    public function clear_children() {
+        $this->children = array();
     }
-
-    public function order_children() {
-        $this->rootitems = array();
-        foreach ($this->items as $it) {
-            $it->clear_children();
-        }
-        foreach ($this->items as $it) {
-            $parentpath = explode('/', $it->comp->path);
-            $parentpath = array_filter($parentpath, function($el) { return $el;});
-            $parentpathln = count($parentpath);
-            if ($parentpathln <= 1) {
-                $this->rootitems[] = $it;
-            } else {
-                foreach ($this->items as $itbis) {
-                    if ($parentpath[$parentpathln - 1] == $itbis->comp->id) {
-                        $itbis->add_children($it);
-                        break;
-                    }
-                }
-            }
-        }
+    public function add_children(comp_tree_graph_item $item) {
+        $this->children[] = $item;
     }
-
     /**
      * Function to export the renderer data in a format that is suitable for a
      * mustache template. This means:
@@ -75,11 +56,13 @@ class comp_tree_graph implements \renderable, templatable {
      * @return stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        $this->order_children();
         $exportablecontext = new \stdClass();
-        $exportablecontext->rootitems = array();
-        foreach ($this->rootitems as $item) {
-            $exportablecontext->rootitems[] = $item->export_for_template($output);
+        $exportablecontext->graph = $this->graph->export_for_template($output);
+        $exportablecontext->cshortname = $this->comp->shortname;
+        $exportablecontext->cfullname = $this->comp->fullname;
+        $exportablecontext->children = array();
+        foreach ($this->children as $c) {
+            $exportablecontext->children[] = $c->export_for_template($output);
         }
         return $exportablecontext;
     }

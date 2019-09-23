@@ -63,4 +63,6 @@ $string['nomatrixerror'] = 'Pas de feuille avec le préfixe ${a} dans le fichier
 $string['userdatacsvuploadtask'] = 'Importer les données utilisateurs en CSV';
 $string['userdatafilepath_desc'] = 'Répertoire avec les données utilisateurs en CSV. Les fichiers seront effacés une fois importés';
 $string['userdatafilepath'] = 'Répertoire avec les données utilisateurs en CSV';
+$string['semester'] = 'Semestre';
+$string['semester:x'] = 'Semestre {$a}';
 

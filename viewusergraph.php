@@ -119,7 +119,6 @@ $treegraph = new local_competvetsuivi\output\comp_tree_graph();
 */
 
 foreach ($competencies as $comp) {
-
     // Get the UE for each semester
     $data = [];
     for ($semester = 1; $semester < 7; $semester ++) {
@@ -128,14 +127,15 @@ foreach ($competencies as $comp) {
                 chartingutils::get_comp_progress($matrix, $comp, $userdata, array('knowledge', 'ability'), $ueselection);
         $data[] = [
                 'groupshortname' => 'S' . $semester,
-                'groupname' => 'Semester' . $semester,
-                "rlabels" => ["Connaissances", "Capacité"],
+                'groupname' => get_string('semester:x','local_competvetsuivi',$semester),
+                "rlabels" => [
+                        get_string('matrixcomptype:knowledge','local_competvetsuivi'),
+                        get_string('matrixcomptype:ability','local_competvetsuivi')],
                 "results" => array_values($progressspertrand),
                 "maxresults" => array_values($maxperstrand)
         ];
-
     }
-    $treegraph->add_competency_progressbar_graph(
+    $treegraph->add_item(
             $comp,
             $data,
             $barchartoptions,
