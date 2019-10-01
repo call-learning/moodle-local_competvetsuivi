@@ -29,15 +29,19 @@
 
   Example context (json):
   {
+    compid : competency id
+    uniqueidentifier: unique identifier for this graph
+    type : graph type (bullet, progress)
+    data: data
   }
 
 }}
 
-<svg id="g{{uniqid}}{{compid}}" class="chart-item bullet" data-graph-type="{{type}}" width="100%"></svg>
+<svg id="{{uniqueidentifier}}" class="chart-item bullet" data-graph-type="{{type}}" width="100%"></svg>
 
 {{#js}}
     require(['local_competvetsuivi/config', 'local_competvetsuivi/d3-utils'], function(config, d3utils) {
-        var uid = 'g{{uniqid}}{{compid}}';
-        var d3chart = d3utils.bullet_charts(uid,{{{data}}});
+        var uid = '{{uniqueidentifier}}';
+        var d3chart = d3utils.{{type}}_charts(uid,{{{data}}});
     });
 {{/js}}

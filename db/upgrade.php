@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/upgradelib.php');
+require_once(__DIR__ . '/upgradelib.php');
 
 /**
  * Execute local_competvetsuivi upgrade from the given old version.
@@ -68,6 +68,24 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
 
         // Competvetsuivi savepoint reached.
         upgrade_plugin_savepoint(true, 2019080109, 'local', 'competvetsuivi');
+    }
+
+    if ($oldversion < 2019080110) {
+        $table = new xmldb_table('cvs_userdata');
+        $field = new xmldb_field('lastseenunit',
+                XMLDB_TYPE_TEXT,
+                '255',
+                null,
+                null,
+                null,
+                null,
+                'userdata');
+
+        // Conditionally launch add field currentueid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_plugin_savepoint(true, 2019080110, 'local', 'competvetsuivi');
     }
 
     return true;

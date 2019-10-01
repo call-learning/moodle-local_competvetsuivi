@@ -35,11 +35,19 @@ global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_login();
 
-$userid = required_param('id', PARAM_INT);
-$matrixid = required_param('matrixid', PARAM_INT);
-$matrix = new \local_competvetsuivi\matrix\matrix($matrixid);
+$userid = optional_param('userid', 0,PARAM_INT);
+$matrixid = optional_param('matrixid', 0,PARAM_INT);
+$currentcompid = optional_param('competencyid', false, PARAM_INT);
 $userid = $userid ? $userid : $USER->id;
 $user = \core_user::get_user($userid);
+
+if(!$matrixid) {
+    $matrixid = utils::get_matrixid_for_user($user->id);
+    if ($matrixid) {
+        print_error('nocohortforuser');
+    }
+}
+$matrix = new \local_competvetsuivi\matrix\matrix($matrixid);
 
 // Override pagetype to show blocks properly.
 $header = get_string('matrix:viewdata',
@@ -57,90 +65,24 @@ $matrix->load_data();
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('matrixviewdatatitle', 'local_competvetsuivi',
         array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
-$matrixues = $matrix->get_matrix_ues();
-$uenames = array_map(function($ue) {
-    return $ue->fullname;
-}, $matrixues);
-$uenamexues =
-        array_combine($uenames, $matrixues); // We have now an array with UE names => ue, it is now easier to get info from each ue
 
-$competencies = $matrix->get_matrix_competencies();
+$strandlist = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY);
+$lastseenue = local_competvetsuivi\userdata::get_user_last_ue_name($user->email);
+$currentsemester = ueutils::get_current_semester_index($lastseenue, $matrix);
 
-$barchartoptions = [
-        "scales" => [
-                "yAxes" => [
-                        [
-                                "barPercentage" => 1.0,
-                                "stacked" => true,
-                        ],
-                ],
-                "xAxes" => [
-                        [
-                                "stacked" => false,
-                                "ticks" => [
-                                        "beginAtZero" => true,
-                                        "max" => 1.0,
-                                        "min" => 0,
-                                ]
-                        ]
-                ]
-        ],
-    //"legend" => false,
-        "backgroundColor" => [
-                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 'rgba(255, 99, 132, 0.2)',
-                matrix::MATRIX_COMP_TYPE_ABILITY => 'rgba(54, 162, 235, 0.2)'
-        ],
-];
-
-$competenciesstrandsnames = matrix::get_all_competencies_strands();
-$competenciesstrandsnames = array_slice($competenciesstrandsnames, 0, 2); // Only get the first two
-$context = new stdClass();
-$context->competencygraphs = [];
-
-$treegraph = new local_competvetsuivi\output\comp_tree_graph();
-/*
-    var data = [
-                {
-                    "groupshortname":"S1",
-                    "groupname":"Semester 1",
-                    "rlabels": ["Connaissances", "Capacité"],
-                    "results":[1.5, 1],
-                    "maxresults":[1.5, 1.5]
-                },
-                {
-                    "groupshortname":"S2",
-                    "groupname":"Semester 2",
-                    "rlabels": ["Connaissances", "Capacité"],
-                    "results":[0.5,0.5],
-                    "maxresults":[1.5, 0.5]
-                }
-            ];
-
-*/
-
-foreach ($competencies as $comp) {
-    // Get the UE for each semester
-    $data = [];
-    for ($semester = 1; $semester < 7; $semester ++) {
-        $ueselection = ueutils::get_ues_for_semester($semester, $matrix);
-        list($progressspertrand, $maxperstrand) =
-                chartingutils::get_comp_progress($matrix, $comp, $userdata, array('knowledge', 'ability'), $ueselection);
-        $data[] = [
-                'groupshortname' => 'S' . $semester,
-                'groupname' => get_string('semester:x','local_competvetsuivi',$semester),
-                "rlabels" => [
-                        get_string('matrixcomptype:knowledge','local_competvetsuivi'),
-                        get_string('matrixcomptype:ability','local_competvetsuivi')],
-                "results" => array_values($progressspertrand),
-                "maxresults" => array_values($maxperstrand)
-        ];
-    }
-    $treegraph->add_item(
-            $comp,
-            $data,
-            $barchartoptions,
-            $comp->shortname);
+$currentcomp = null;
+if ($currentcompid) {
+    $currentcomp = $matrix->comp[$currentcompid];
 }
+
+$progress_overview = new \local_competvetsuivi\output\competency_progress_overview(
+        $currentcomp,
+        $matrix,
+        $strandlist,
+        $userdata,
+        $currentsemester
+);
+
 $renderer = $PAGE->get_renderer('local_competvetsuivi');
-echo $renderer->render($treegraph);
+echo $renderer->render($progress_overview);
 echo $OUTPUT->footer();

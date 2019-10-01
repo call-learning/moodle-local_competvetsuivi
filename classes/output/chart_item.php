@@ -41,12 +41,14 @@ class chart_item implements \renderable, templatable {
 
     public function __construct($competency,
             $data,
-            $options) {
+            $charttype = 'progress',
+            $options = array()) {
         $this->compid = $competency->id;
         $this->fullname = $competency->fullname;
         $this->shortname = $competency->shortname;
         $this->complevel = substr_count($competency->path, '/');
         $this->comppath = $competency->path;
+        $this->type  = $charttype;
         $this->data = $data;
         $this->options = $options;
     }
@@ -70,6 +72,7 @@ class chart_item implements \renderable, templatable {
         $exportablecontext->type = $this->type;
         $exportablecontext->data = json_encode($this->data, true);
         $exportablecontext->options = json_encode($this->options, true);
+        $exportablecontext->uniqueidentifier = \html_writer::random_id('comp'.$this->compid);
         return $exportablecontext;
     }
 }

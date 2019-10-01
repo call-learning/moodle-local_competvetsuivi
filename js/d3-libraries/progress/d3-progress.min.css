@@ -1,8 +1,51 @@
-.progress-cvs .marker circle { fill: #3874a9;}
-.progress-cvs .marker.active circle { fill: #333333;}
-.progress-cvs .label { text-anchor: middle; font-variant: small-caps; fill:gray; text-shadow: black 0 1px;  }
-.progress-cvs .background-bar { fill: #edeff1;}
-.progress-cvs .marker text {fill: white; text-anchor: middle; dominant-baseline: middle;}
+.progress-cvs .marker {
+    fill: #3874a9;
+}
 
-.progress-cvs rect.bar-0 { fill: #3991de;}
-.progress-cvs rect.bar-1 { fill: #c7dff5;}
+.progress-cvs .marker.active {
+    fill: #333333;
+}
+
+.progress-cvs .label {
+    text-anchor: middle;
+    font-variant: small-caps;
+    fill: gray;
+    text-shadow: black 0 1px;
+}
+
+.progress-cvs .background-bar {
+    fill: #edeff1;
+}
+
+.progress-cvs .marker-text {
+    fill: white;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    font-weight: bold;
+}
+
+.progress-cvs .axisgraph {
+    color: #696b6d;
+}
+
+.progress-cvs .axismarker {
+    color: #2b2d2f;
+    font-weight: bold;
+}
+
+/*Four types of competencies */
+.progress-cvs .competency-type-bar-1 {
+    fill: #3991de;
+}
+
+.progress-cvs .competency-type-bar-2 {
+    fill: #c7dff5;
+}
+
+.progress-cvs .competency-type-bar-3 {
+    fill: #f5f4d5;
+}
+
+.progress-cvs .competency-type-bar-4 {
+    fill: #f5d1ce;
+}

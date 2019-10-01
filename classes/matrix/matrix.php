@@ -35,6 +35,7 @@ global $CFG;
  *
  */
 class matrix {
+    const UC_PREFIX = ['UC','UE'];
     const MATRIX_SHEET_PREFIX = 'matrice';
 
     const MATRIX_COMP_TYPE_KNOWLEDGE = 1;
@@ -43,10 +44,10 @@ class matrix {
     const MATRIX_COMP_TYPE_EVALUATION = 4;
 
     const MATRIX_COMP_TYPE_NAMES = array(
-            1 => 'knowledge',
-            2 => 'ability',
-            3 => 'objective',
-            4 => 'evaluation',
+            matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 'knowledge',
+            matrix::MATRIX_COMP_TYPE_ABILITY => 'ability',
+            matrix::MATRIX_COMP_TYPE_OBJECTIVES => 'objective',
+            matrix::MATRIX_COMP_TYPE_EVALUATION => 'evaluation',
     );
 
     // Warning: max values are not the one we think: they are from max to min (so 1 is max, 2, is middle and 3 is min, 0 is min too!!)
@@ -147,6 +148,7 @@ class matrix {
      * Load matrix data
      * The competencies are sorted by path
      * Data is also normalised so 0 is transformed to the max value
+     *
      * @throws \dml_exception
      *
      */
@@ -169,7 +171,7 @@ class matrix {
             }
             $value = new \stdClass();
             $value->type = $cuv->type;
-            $value->value = $cuv->value == 0? matrix::MAX_VALUE_PER_STRAND[$cuv->type]:$cuv->value; // Normalize value
+            $value->value = $cuv->value == 0 ? matrix::MAX_VALUE_PER_STRAND[$cuv->type] : $cuv->value; // Normalize value
             if (empty($this->compuevalues[$cuv->ueid][$cuv->compid])) {
                 $this->compuevalues[$cuv->ueid][$cuv->compid] = array();
             }
@@ -178,6 +180,11 @@ class matrix {
         $this->dataloaded = true;
     }
 
+    /**
+     * Get UEs for this matrix
+     * @return array
+     * @throws matrix_exception
+     */
     public function get_matrix_ues() {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
@@ -185,6 +192,11 @@ class matrix {
         return $this->ues;
     }
 
+    /**
+     * Get the list of attached competencies for this matrix
+     * @return array
+     * @throws matrix_exception
+     */
     public function get_matrix_competencies() {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
@@ -201,17 +213,17 @@ class matrix {
      * @return mixed
      * @throws matrix_exception
      */
-    public function get_values_for_ue_and_competency($ueid, $compid, $recursive=false) {
+    public function get_values_for_ue_and_competency($ueid, $compid, $recursive = false) {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
         $currentvalue = $this->compuevalues[$ueid][$compid];
 
         if ($recursive) {
-            foreach($this->get_child_competency($compid) as $cmp) {
+            foreach ($this->get_child_competencies($compid) as $cmp) {
                 $childvalues = $this->get_values_for_ue_and_competency($ueid, $cmp->id, false);
-                foreach($childvalues as $val){
-                    foreach($currentvalue as $key => $cv) {
+                foreach ($childvalues as $val) {
+                    foreach ($currentvalue as $key => $cv) {
                         if ($cv->type == $val->type) {
                             /*
                              *  Here this is a bit complicated due to the range chosen
@@ -231,16 +243,49 @@ class matrix {
         return $currentvalue;
     }
 
-    public function get_child_competency($compid) {
+    /**
+     * Get all direct child competencies or direct child competencies
+     *
+     * @param $compid
+     * @param $matrix
+     * @return array
+     * @throws \dml_exception
+     */
+    public function get_child_competencies($compid=0, $directchildonly = false) {
         global $DB;
-        $comps = [];
-        $comppath = $DB->get_field('cvs_matrix_comp', 'path', array('id'=>$compid));
-        if ($comppath) {
-            $params = ['comppath'=> "%{$comppath}/%"];
-            $comps = $DB->get_records_select('cvs_matrix_comp', $DB->sql_like('path',':comppath'), $params);
+        $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded
+        if ($compid && key_exists($compid, $complist)) {
+            $rootcomp = $complist[$compid];
+        } else {
+            $rootcomp = null;
         }
+
+        $comps = array_filter($complist, function($comp) use ($rootcomp, $directchildonly) {
+            $currentpath = $rootcomp ? $rootcomp->path . '/' : '/';
+            if (strpos($comp->path, $currentpath) === 0) {
+                return !$directchildonly  || substr_count($comp->path, "/", strlen($currentpath)) == 0;
+            } else {
+                return false;
+            }
+        });
         return $comps;
     }
+
+    /**
+     * Get all direct child competencies or direct child competencies
+     *
+     * @param $compid
+     * @param $matrix
+     * @return array
+     * @throws \dml_exception
+     */
+    public function has_children($comp) {
+        global $DB;
+        $children = $this->get_child_competencies($comp->id);
+        return !empty($children);
+    }
+
+
     static public function comptype_to_string($comptypeid) {
         return get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');
     }
@@ -294,83 +339,59 @@ class matrix {
         // Start a delegated transation here so it is all or nothing
         $delegatedtransaction = $DB->start_delegated_transaction();
 
-        // First extract the columns/UE names
-        $previousuename = "";
+        list($firstuecolumn, $lastuecolumn) =
+                static::get_matrix_layout_from_file($rowiterator->current(), $matrixobject, $columnsvsue);
 
-        // Match between column id and type
-        $COMP_TYPE_COLUMNS = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE,
-                matrix::MATRIX_COMP_TYPE_ABILITY,
-                matrix::MATRIX_COMP_TYPE_OBJECTIVES,
-                matrix::MATRIX_COMP_TYPE_EVALUATION];
-        $currentypecol = 0;
-
-        foreach ($rowiterator->current()->getCellIterator() as $cellheader) {
-            if ($cellheader->getColumn() == "A") {
-                continue;  // We ignore the first column
-            }
-            if ($cellheader->getValue()) {
-                $previousuename = $cellheader->getValue(); // We fill the array with the same value if null
-                $currentypecol = 0;
-            }
-            $ue = new \stdClass();
-            $ue->fullname = $previousuename; // We fill the array with the same value if null
-            $ue->shortname = $previousuename;
-            $ue->matrixid = $matrixobject->id;
-            $existingue = $DB->get_record('cvs_matrix_ue', array('matrixid' => $matrixobject->id, 'fullname' => $ue->fullname));
-            if (!$existingue) {
-                $ue->id = $DB->insert_record('cvs_matrix_ue', $ue);
-            } else {
-                $ue = $existingue; // We don't insert the UE twice
-            }
-            $columnsvsue[$cellheader->getColumn()] = array('ue' => $ue, 'type' => $COMP_TYPE_COLUMNS[$currentypecol]);
-            $currentypecol++;
-        }
-        $rowiterator->next();
+        // Then we iterate through the rest of the worksheet
+        $rowiterator->seek(4); // We start at row 4
         while ($rowiterator->valid()) { // We don't use foreach as it will call rewind on the iterator
             $row = $rowiterator->current();
             $celliterator = $row->getCellIterator();
             // Get the competency first column
-            $competency = new \stdClass();
-            $comptext = $celliterator->current()->getValue();
-            $compmatch = [];
-            if (preg_match('/^(\w+)\.([0-9.]*)\s+(.+)/', $comptext, $compmatch)) {
-                $competencypath = explode('.', rtrim($compmatch[2], '.'));
-
-                $competencyrootsn = strtoupper($compmatch[1]);
-                // We need to search for parent's shortname in the database so we obtain the real path
-                $seachparentshortname = join('.', array_slice($competencypath, 0, count($competencypath) - 1));
-                $seachparentshortname = "{$competencyrootsn}"
-                        .($seachparentshortname?'.': '')
-                        ."$seachparentshortname";
-
-                $parentcomp = $DB->get_record('cvs_matrix_comp',
-                        array('shortname' => $seachparentshortname, 'matrixid' => $matrixobject->id));
-
-                $competency = new \stdClass();
-                $competency->description = $compmatch[3];
-                $competency->descriptionformat = FORMAT_PLAIN;
-                $competency->shortname = join('.', $competencypath);
-                $competency->shortname = "{$competencyrootsn}"
-                        .($competency->shortname?'.': '')
-                        ."{$competency->shortname}";
-                $competency->fullname = $competency->shortname . ' ' . $compmatch[3];
-                if (strlen($competency->fullname)) {
-                    $competency->fullname = trim(\core_text::substr($competency->fullname, 0, 252)) . '...';
-                }
-                $competency->id = $DB->insert_record('cvs_matrix_comp', $competency);
-                $competency->matrixid = $matrixobject->id;
-                $competency->path = '/' . $competency->id;
-                if ($parentcomp) {
-                    $competency->path = $parentcomp->path . $competency->path;
-                }
-                $DB->update_record('cvs_matrix_comp', $competency); // Update path
+            $compref = rtrim(strtoupper($celliterator->current()->getValue()),'.'); // First column is the reference for the competency
+            if (!$compref) {
+                break; // We finished
             }
+            // We should have the reference in the first column
+            // And the description in the second
+            $competencypath = explode('.', $compref);
+
+            // We need to search for parent's shortname in the database so we obtain the real path
+            $seachparentshortname = join('.', array_slice($competencypath, 0, count($competencypath) - 1));
+
+            $parentcomp = $DB->get_record('cvs_matrix_comp',
+                    array('shortname' => $seachparentshortname, 'matrixid' => $matrixobject->id));
+
+            // Now get the next column value for description
+            $celliterator->seek('B');
+            $description = $celliterator->current()->getValue();
+            $competency = new \stdClass();
+            $competency->description = $description;
+            $competency->descriptionformat = FORMAT_PLAIN;
+            $competency->shortname = join('.', $competencypath);
+            $competency->fullname = $description;
+            if (strlen($competency->fullname)) {
+                $competency->fullname = trim(\core_text::substr($competency->fullname, 0, 252)) . '...';
+            }
+            $competency->id = $DB->insert_record('cvs_matrix_comp', $competency);
+            $competency->matrixid = $matrixobject->id;
+            $competency->path = '/' . $competency->id;
+            if ($parentcomp) {
+                $competency->path = $parentcomp->path . $competency->path;
+            }
+            $DB->update_record('cvs_matrix_comp', $competency); // Update path
+
             if (!empty($competency->id)) {
+                // We skip all other columns until the first column containing the UC/UE
+                $celliterator->seek($firstuecolumn);
                 // This row has a valid competency, so we can now examine the rest of the cells
-                $celliterator->next();
                 while ($celliterator->valid()) {
                     $cell = $celliterator->current();
+                    if ($cell->getColumn() == $lastuecolumn) {
+                        break; // We arrived to the last UE column
+                    }
                     $matchingue = $columnsvsue[$cell->getColumn()];
+
                     $compue = new \stdClass();
                     $compue->ueid = $matchingue['ue']->id;
                     $compue->compid = $competency->id;
@@ -387,12 +408,81 @@ class matrix {
 
     }
 
-    public static function get_all_competencies_strands() {
-        $competenciesstrandsnames = [];
-        foreach (static::MATRIX_COMP_TYPE_NAMES as $comptypname) {
-            $competenciesstrandsnames[] = get_string('matrixcomptype:' . $comptypname, 'local_competvetsuivi');
+    /**
+     * Build up UE information and return the first column where an UE is found
+     *
+     * @param $firstrow
+     * @param $matrixobject
+     * @throws \dml_exception
+     */
+    protected static function get_matrix_layout_from_file($firstrow, &$matrixobject, &$columnsvsue) {
+        global $DB;
+        // First extract the columns/UE names
+        $previousuename = "";
+
+        // Match between column id and type
+        $COMP_TYPE_COLUMNS = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE,
+                matrix::MATRIX_COMP_TYPE_ABILITY,
+                matrix::MATRIX_COMP_TYPE_OBJECTIVES,
+                matrix::MATRIX_COMP_TYPE_EVALUATION];
+        $currentypecol = 0;
+
+        $firstuecolumn = "";
+        $lastuecolumn = "";
+        // First we get the UE names
+        foreach ($firstrow->getCellIterator() as $cellheader) {
+            // First we are in search mode for the first UE/UC
+
+            if (!$firstuecolumn) {
+                $value = $cellheader->getValue();
+                if (in_array(substr($value, 0, 2), static::UC_PREFIX)) {
+                    // Then we found the first UC
+                    $firstuecolumn = $cellheader->getColumn();
+                }
+            }
+            // Then we can continue;
+            if ($firstuecolumn) {
+                if ($cellheader->getValue()) {
+                    $previousuename = $cellheader->getValue(); // We fill the array with the same value if null
+                    $currentypecol = 0;
+                } else {
+                    if ($currentypecol > 3) {
+                        $lastuecolumn = $cellheader->getColumn();
+                        break; // We come at the end of the columns
+                    }
+                }
+                $ue = new \stdClass();
+                $ue->fullname = $previousuename; // We fill the array with the same value if null
+                $ue->shortname = $previousuename;
+                $ue->matrixid = $matrixobject->id;
+                $existingue = $DB->get_record('cvs_matrix_ue', array('matrixid' => $matrixobject->id, 'fullname' => $ue->fullname));
+                if (!$existingue) {
+                    $ue->id = $DB->insert_record('cvs_matrix_ue', $ue);
+                } else {
+                    $ue = $existingue; // We don't insert the UE twice
+                }
+                $columnsvsue[$cellheader->getColumn()] = array('ue' => $ue, 'type' => $COMP_TYPE_COLUMNS[$currentypecol]);
+                $currentypecol++;
+            }
         }
-        return $competenciesstrandsnames;
+        return array($firstuecolumn, $lastuecolumn);
+    }
+
+    public static function get_all_competency_types_names() {
+        $competenciestypesnames = [];
+        foreach (static::MATRIX_COMP_TYPE_NAMES as $comptypname) {
+            $competenciestypesnames[] = get_string('matrixcomptype:' . $comptypname, 'local_competvetsuivi');
+        }
+        return $competenciestypesnames;
+    }
+
+    public static function get_competency_type_name($competencytypeid) {
+        $comptypename = "";
+        if (key_exists($competencytypeid, static::MATRIX_COMP_TYPE_NAMES)) {
+            $comptypename =
+                    get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$competencytypeid], 'local_competvetsuivi');
+        }
+        return $comptypename;
     }
 }
 

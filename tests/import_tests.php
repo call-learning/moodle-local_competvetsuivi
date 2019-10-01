@@ -77,6 +77,9 @@ class import_tests extends advanced_testcase {
         $filename = dirname(__FILE__) . '/files/userdata_sample.csv';
         $status = userdata::import_user_data_from_file($filename);
         $user = $DB->get_record('cvs_userdata',array('useremail'=>'Etudiant-143@ecole.fr'));
-        $this->assertEquals($user->compe, '');
+        $userdata = json_decode($user->userdata);
+        $this->assertEquals(1,$userdata->UC53);
+        $this->assertEquals(0,$userdata->UC52);
+        $this->assertEquals($user->lastseenunit, 'UC55');
     }
 }

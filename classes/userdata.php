@@ -30,14 +30,14 @@ use csv_import_reader;
 class userdata {
 
     const MAIL_COLUMN_NAME = 'Mail'; // TODO add this as a plugin parameter
-
+    const LAST_UNIT_SEEN = 'LastUnitSeen'; // TODO This will be the new column if we need to check for last seen unit
     /**
      * Do a couple of checks on the file at hand to see if it contains the right data
      *
      * @param $filename
      */
     public static function check_file_valid($filename) {
-        $fileexists = file_exist($filename);
+        $fileexists = file_exists($filename);
         $filemimetypecheck = $fileexists && mime_content_type($filename) == 'text/csv';
         return $fileexists && $filemimetypecheck;
     }
@@ -72,6 +72,10 @@ class userdata {
                 $importer->init();
                 $emailcolumnindex = array_search(static::MAIL_COLUMN_NAME,$headers);
                 $useddataheaders = array_splice($headers, $emailcolumnindex +1);
+                // TODO: This is a hack: We either need to change the header in the user data source or the matrix
+                $useddataheaders = array_map(function($label) {
+                    return str_replace('UE','UC',$label);
+                }, $useddataheaders);
 
                 while ($userrecord = $importer->next()) {
                     $useremail = $userrecord[$emailcolumnindex]; // Get user email
@@ -83,14 +87,15 @@ class userdata {
                     $userdata->useremail = $useremail;
 
                     $finaldatarow = array();
+                    $userdata->lastseenunit = $useddataheaders[0];
                     // Convert heading and content to a more useable one (like boolean)
                     foreach($userdatarow as $k=>$row) {
+                        if ($row !== "") {
+                            $userdata->lastseenunit = $useddataheaders[$k];
+                        }
                         $userdatarow[$k] = $row ?1:0;
                     }
-                    // TODO: This is a hack: We either need to change the header in the user data source or the matrix
-                    $useddataheaders = array_map(function($label) {
-                            return str_replace('UE','UC',$label);
-                    }, $useddataheaders);
+
 
                     // We combine the two array and render a json
                     $userdata->userdata = json_encode(array_combine($useddataheaders,$userdatarow));
@@ -125,10 +130,21 @@ class userdata {
         global $DB;
         $data = $DB->get_record('cvs_userdata', array('useremail'=>$useremail));
         if($data) {
-            $data = json_decode($data->userdata, true);
+            return json_decode($data->userdata, true);
         }
-        return $data;
+        return false;
     }
+
+    public static function get_user_last_ue_name($useremail) {
+        global $DB;
+        $data = $DB->get_record('cvs_userdata', array('useremail'=>$useremail));
+
+        if($data) {
+            return $data->lastseenunit;
+        }
+        return "";
+    }
+
     protected static function trim_headers(&$columnheaders) {
         foreach ($columnheaders as $i => $h) {
             $h = trim($h); // Remove whitespace.

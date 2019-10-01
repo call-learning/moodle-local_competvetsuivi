@@ -63,5 +63,6 @@ $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file upload
 $string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
 $string['userdatafilepath_desc'] = 'Directory for User Data CSV files. Once uploaded the files will be deleted.';
 $string['userdatafilepath'] = 'Directory for User Data CSV files';
+$string['rootcomp'] = 'Root Competencies';
 $string['semester'] = 'Semester';
 $string['semester:x'] = 'Semester {$a}';

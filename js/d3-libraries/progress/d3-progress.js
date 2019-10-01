@@ -1,10 +1,10 @@
 // https://github.com/call-learning/d3-progress.git v1.0.0 Copyright 2019 Laurent David
     //  https://github.com/call-learning/d3-progress v1.0.0. Copyright 2019 SAS CALL Learning
 (function (global, factory) {
-typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-axis'), require('d3-scale'), require('d3-format'), require('d3-transition')) :
-typeof define === 'function' && define.amd ? define(['exports', 'd3-axis', 'd3-scale', 'd3-format', 'd3-transition'], factory) :
-(global = global || self, factory(global.d3 = global.d3 || {}, global.d3, global.d3, global.d3));
-}(this, function (exports, d3Axis, d3Scale, d3Format) { 'use strict';
+typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-axis'), require('d3-scale'), require('d3-transition')) :
+typeof define === 'function' && define.amd ? define(['exports', 'd3-axis', 'd3-scale', 'd3-transition'], factory) :
+(global = global || self, factory(global.d3 = global.d3 || {}, global.d3, global.d3));
+}(this, function (exports, d3Axis, d3Scale) { 'use strict';
 
 /**
  * Make a data structure to hold a progress bar with markers
@@ -14,13 +14,14 @@ function progress () {
   let data = {};
   let width = 960;
   let height = 100;
-  let graphMargins = { top: 10, right: 5, bottom: 20, left: 15 }; // Absolute margins
+  let graphMargins = { top: 10, right: 5, bottom: 30, left: 15 }; // Absolute margins
   let graphWidth = function () { return width - graphMargins.left - graphMargins.right; };
   let graphHeight = function () { return height - graphMargins.top - graphMargins.bottom; };
   let marginW = 0.1;
   let marginH = 0.1;
 
   let ticksValues = [0, 0.25, 0.50, 0.75, 1];
+
   // For each small multiple…
   function progressCVS (svgitem) {
 
@@ -47,41 +48,62 @@ function progress () {
 
     // Draw xscale (tick 0.25)
 
-
-    let displayedValues = new Set(ticksValues);
-    data.markers.forEach(function(d) {
-      displayedValues.add(d.value);
+    let markervalues = data.markers.map(function (d) {
+      return d.value;
     });
-    const axis = wrap.append('g').attr('class', 'axis');
-    axis.attr('transform', `translate(0,${extentY})`).call(
+
+    const tickFormat = function (val) {return Math.round(val * 100);};
+    const tickSize = graphMargins.bottom/3;
+
+    // Add both axes
+    const axismarker = wrap.append('g').attr('class', 'axismarker');
+    axismarker.attr('transform', `translate(0,${extentY})`).call(
       d3Axis.axisBottom(scaleX)
-        .tickValues(Array.from(displayedValues).sort())
-        .tickFormat(d3Format.format('.0%'))
+        .tickValues(markervalues.sort())
+        .tickFormat(tickFormat)
+        .tickSize(tickSize)
     );
-    axis.attr('font-size', graphMargins*0.8); // 80% of the margin
+
+    const axisgraph = wrap.append('g').attr('class', 'axisgraph');
+    axisgraph.attr('transform', `translate(0,${extentY})`).call(
+      d3Axis.axisBottom(scaleX)
+        .tickValues(ticksValues)
+        .tickFormat(tickFormat)
+        .tickSize(tickSize)
+    );
+    // Fixup style
+    axisgraph.select('.domain').remove();
+    axismarker.select('.domain').remove();
+    axisgraph.attr('font-size', tickSize); // 80% of the margin
+    axismarker.attr('font-size', tickSize); // 80% of the margin
+
     // Draw grey background
     graphWrap.append('rect')
       .attr('class', 'background-bar')
       .attr('width', extentX)
       .attr('height', extentY)
+      .attr('rx', extentY * marginH)
+      .attr('ry', extentY * marginH)
       .attr('x', 0)
       .attr('y', 0);
 
     // Draw results
-    let barHeight = function (index) { return extentY * (1 - marginH * index * 4); };
+    let barHeight = function (index) { return extentY * (1 - marginH * (index + 1) * 4); };
     let barMiddlePosition = function (index) { return extentY / 2 - barHeight(index) / 2; };
 
     graphWrap.selectAll('rect.results')
       .data(data.results)
       .enter()
       .append('rect')
-      .attr('class', function (_d, index) { return 'results bar-' + index;})
+      .attr('class', function (d) { return 'results competency-type-bar-' + ((d.type)?d.type:1);})
       .attr('width', function (r) { return scaleX(r.value);})
       .attr('height', function (_d, index) {return barHeight(index);})
+      .attr('rx', extentY * marginH)
+      .attr('rx', extentY * marginH)
       .attr('x', 0)
       .attr('y', function (_d, index) { return barMiddlePosition(index);});
     // Draw markers
-    let circleRadius = function (data) { return extentY * (1 - marginH * (data.active ? 2 : 4)) / 2; };
+    let circleRadius = function (data) { return extentY * (1 - marginH * (data.active ? 2 : 4)) / 3; };
 
     let marker = graphWrap.selectAll('g.marker')
       .data(data.markers)
@@ -100,7 +122,8 @@ function progress () {
       .attr('x', function (r) { return scaleX(r.value);})
       .attr('y', extentY / 2)
       .text(function (d) {return d.label;})
-      .attr('font-size',extentY/2);
+      .attr('class', 'marker-text')
+      .attr('font-size', extentY * (1 - marginH) / 3);
   }
 
   progressCVS.width = function (_) {

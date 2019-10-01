@@ -27,8 +27,4 @@ namespace local_competvetsuivi\output;
 defined('MOODLE_INTERNAL') || die;
 
 class renderer extends \plugin_renderer_base {
-    public function render_chartitem(chart_item $item) {
-        $data = $item->export_for_template($this);
-        return parent::render_from_template('local_competvetsuivi/chartitem', $data);
-    }
 }

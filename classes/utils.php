@@ -22,13 +22,14 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace local_competvetsuivi;
 
+namespace local_competvetsuivi;
 
 use local_competvetsuivi\matrix\matrix;
 
 class utils {
-    public static function get_possible_vs_actual_values(matrix $matrix,$comp, $userdata, $ueselection=null, $recursive = false) {
+    public static function get_possible_vs_actual_values(matrix $matrix, $comp, $userdata, $ueselection = null,
+            $recursive = false) {
         if (!$ueselection) {
             $matrixues = $matrix->get_matrix_ues();
         } else {
@@ -56,4 +57,22 @@ class utils {
         return $possiblevsactual;
     }
 
+    /**
+     * Get used matrix for user
+     * We take the first one in the list but really we should throw an error or a warning
+     * TODO: Alert admin when user are assigned to several cohorts
+     * @param $userid
+     */
+    public static function get_matrixid_for_user($userid) {
+        global $CFG;
+        require_once($CFG->dirroot.'/cohort/lib.php');
+        $cohorts = cohort_get_user_cohorts($userid);
+        $matrixid = 0;
+        if ($cohorts) {
+            global $DB;
+            $cohort = reset($cohorts);
+            $matrixid = $DB->get_field('cvs_matrix_cohorts','matrixid',array('cohortid'=>$cohort->id));
+        }
+        return $matrixid;
+    }
 }
