@@ -48,32 +48,14 @@ class chartingutils {
                             || empty($strands))) {
                 $progressperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
                         function($acc, $val) use ($comptypeid) {
-                            $progress = 0;
-                            $strandfactor = $val->possibleval / (matrix::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
-                            switch ($strandfactor) {
-                                case 1 :
-                                    $progress = 1;
-                                    break;
-                                case 2:
-                                    $progress = 0.5;
-                                    break;
-                            }
+                            $progress = chartingutils::get_real_value_from_strand($comptypeid, $val->possibleval);
                             return $acc + $progress * $val->userval; // Previous value
                         },
                         0);
 
                 $maxperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
                         function($acc, $val) use ($comptypeid) {
-                            $max = 0;
-                            $strandfactor = $val->possibleval / (matrix::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
-                            switch ($strandfactor) {
-                                case 1 :
-                                    $max = 1;
-                                    break;
-                                case 2:
-                                    $max = 0.5;
-                                    break;
-                            }
+                            $max = chartingutils::get_real_value_from_strand($comptypeid, $val->possibleval);
                             return $acc + $max; // Previous value
                         },
                         0);
@@ -83,52 +65,70 @@ class chartingutils {
         return array($progressperstrand, $maxperstrand);
     }
 
+    public static function get_real_value_from_strand($comptypeid, $currentval) {
+        $value = 0;
+        $strandfactor =  $currentval / (matrix::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
+        switch ($strandfactor) {
+            case 1 :
+                $value = 1;
+                break;
+            case 2:
+                $value = 0.5;
+                break;
+        }
+        return $value;
+    }
+
+
     public const INITIAL_SEMESTER = 5;
-    public static function get_data_for_progressbar($matrix, $comp, $comptypeid, $userdata, $currentsemester) {
-        // Init array
-        $userprogress = [];
-        $maxprogress = [];
-        // We get the cumulated progress for each semester (if they have any progress) with a marker for the maximum possible progress
-        for ($semester = 1; $semester <= ueutils::get_semester_count(); $semester++) {
-            $ueselection = ueutils::get_ues_for_semester($semester, $matrix);
-            list($progressspertrand, $maxperstrand) =
-                    chartingutils::get_comp_progress($matrix, $comp, $userdata, array($comptypeid), $ueselection);
+    public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester) {
+        $alldata = [];
+        foreach ($strandlist as $comptypeid) {
+            // Init array
+            $userprogress = [];
+            $maxprogress = [];
+            // We get the cumulated progress for each semester (if they have any progress) with a marker for the maximum possible progress
+            for ($semester = 1; $semester <= ueutils::get_semester_count(); $semester++) {
+                $ueselection = ueutils::get_ues_for_semester($semester, $matrix);
+                list($progressspertrand, $maxperstrand) =
+                        chartingutils::get_comp_progress($matrix, $comp, $userdata, array($comptypeid), $ueselection);
 
-            $userprogress[$semester] = reset($progressspertrand);
-            $maxprogress[$semester] = reset($maxperstrand);
-        }
-        $data = new \stdClass();
-        $data->results = [];
-        $data->markers = [];
-
-        // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
-        $res = new \stdClass();
-        $res->label = matrix::comptype_to_string($comptypeid);
-        $res->type = $comptypeid;
-        $maximumscore = array_sum($maxprogress);
-        if ($maximumscore == 0) {
-            $res->value = 0;
-        } else {
-            $res->value = array_sum($userprogress) / $maximumscore;
-        }
-        $data->results[] = $res;
-
-        // Now the markers: we place them for each semester that have a max progress > 0 and it is cumulative
-        // Here we will place the markers. Calculation of their position is 100% of the accumulated semester
-        $accumlator =0;
-        $data->markers = [];
-        $accumulator = 0;
-        $maximumprogress =  array_sum($maxprogress);
-        for($semester = 1; $semester <= ueutils::get_semester_count(); $semester++) {
-            $accumulator  += $maxprogress[$semester];
-            if ($maxprogress[$semester]) {
-                $marker = new \stdClass();
-                $marker->label = intval($semester) + static::INITIAL_SEMESTER;
-                $marker->value = $accumulator / $maximumprogress;
-                $marker->active = $semester > $currentsemester;
-                $data->markers[] = $marker;
+                $userprogress[$semester] = reset($progressspertrand);
+                $maxprogress[$semester] = reset($maxperstrand);
             }
+            $data = new \stdClass();
+            $data->markers = [];
+
+            // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
+            $res = new \stdClass();
+            $res->label = matrix::comptype_to_string($comptypeid);
+            $res->type = $comptypeid;
+            $maximumscore = array_sum($maxprogress);
+            if ($maximumscore == 0) {
+                $res->value = 0;
+            } else {
+                $res->value = array_sum($userprogress) / $maximumscore;
+            }
+            $data->result = $res;
+
+            // Now the markers: we place them for each semester that have a max progress > 0 and it is cumulative
+            // Here we will place the markers. Calculation of their position is 100% of the accumulated semester
+            $accumlator = 0;
+            $data->markers = [];
+            $accumulator = 0;
+            $maximumprogress = array_sum($maxprogress);
+            for ($semester = 1; $semester <= ueutils::get_semester_count(); $semester++) {
+                $accumulator += $maxprogress[$semester];
+                if ($maxprogress[$semester]) {
+                    $marker = new \stdClass();
+                    $marker->label = intval($semester) + static::INITIAL_SEMESTER;
+                    $marker->value = $accumulator / $maximumprogress;
+                    $marker->active = $semester > $currentsemester;
+                    $data->markers[] = $marker;
+                }
+            }
+            $alldata[] = $data;
         }
-        return $data;
+        return $alldata ;
     }
 }

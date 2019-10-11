@@ -192,6 +192,30 @@ class matrix {
         return $this->ues;
     }
 
+    public function get_matrix_ue_by_criteria($propertyname, $propertyvalue) {
+        if (!$this->dataloaded) {
+            throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
+        }
+        if ($propertyname == 'shortname') {
+            $matchingues = array_filter($this->ues, function($ue) use ($propertyname, $propertyvalue) {
+                $currentvalue = $ue->$propertyname;
+
+                foreach(static::UC_PREFIX as $prefix) {
+                    $currentvalue = strtr($currentvalue, $prefix, '');
+                    $propertyvalue = strtr($propertyvalue, $prefix, '');
+                }
+                return $currentvalue == $propertyvalue;
+            });
+        } else {
+            $matchingues = array_filter($this->ues, function($ue) use ($propertyname, $propertyvalue) {
+                return $ue->$propertyname == $propertyvalue;
+            });
+        }
+        if (!$matchingues || count($matchingues)>1) {
+            throw new matrix_exception('foundtoomanymatchingue', 'local_competvetsuivi');
+        }
+        return reset($matchingues);
+    }
     /**
      * Get the list of attached competencies for this matrix
      * @return array
@@ -217,8 +241,17 @@ class matrix {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
-        $currentvalue = $this->compuevalues[$ueid][$compid];
-
+        $currentvalue = null;
+        if (!isset($this->compuevalues[$ueid]) || !isset($this->compuevalues[$ueid][$compid])) {
+            $currentvalue = [];
+            foreach (array_keys(static::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+                $currentvalue[$strandid] = new \stdClass();
+                $currentvalue[$strandid]->type = $strandid;
+                $currentvalue[$strandid]->value = 3;
+            }
+        } else {
+            $currentvalue = $this->compuevalues[$ueid][$compid];
+        }
         if ($recursive) {
             foreach ($this->get_child_competencies($compid) as $cmp) {
                 $childvalues = $this->get_values_for_ue_and_competency($ueid, $cmp->id, false);

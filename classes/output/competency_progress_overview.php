@@ -53,13 +53,10 @@ class competency_progress_overview implements \renderable, templatable {
         $rootcompid = $rootcomp ? $rootcomp->id : 0;
         $this->childrencomps = $matrix->get_child_competencies($rootcompid, true);
         foreach ($this->childrencomps as $comp) {
-            $this->compcharts[$comp->id] = [];
-            foreach ($strandlist as $comptypeid) {
-                $this->compcharts[$comp->id][$comptypeid] =
-                        new chart_item($comp,
-                                chartingutils::get_data_for_progressbar($matrix, $comp, $comptypeid, $userdata, $currentsemester)
-                        );
-            }
+            $this->compcharts[$comp->id] =
+                    new chart_item(
+                            chartingutils::get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester)
+                    );
         }
         $defaultlinkbuilder = function($competency) {
             global $FULLME;
@@ -132,7 +129,7 @@ class competency_progress_overview implements \renderable, templatable {
             foreach ($this->strandlist as $comptypeid) {
                 $stranddata = new \stdClass();
                 $stranddata->strandname = matrix::get_competency_type_name($comptypeid);
-                $stranddata->graphdata = $this->compcharts[$c->id][$comptypeid]->export_for_template($output);
+                $stranddata->graphdata = $this->compcharts[$c->id]->export_for_template($output);
                 $compitem->comptypesgraphs[] = $stranddata;
             }
             $exportablecontext->compitems[] = $compitem;

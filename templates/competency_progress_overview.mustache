@@ -38,7 +38,7 @@
             "competency_link": competency link to the page,
             "comptypegraphs": graphdata per strand as an array
                         [
-                        { "strandname" : "Competency", "graphdata": graphdata (graph data (see chart_item.mustache)) } , ...
+                        { } , ...
                         ]
 
     ]
@@ -59,15 +59,21 @@
         <div class="progress-cvs float-right">
             {{#comp_types}}
                 <svg width="3em" height="3em">
-                    <g>
-                        <circle class="competency-type-bar-{{comp_type_id}}" cx="1em" cy="1em" r="0.5em"/>
+                    <g class="comptype-{{comp_type_id}}">
+                        <g class="marker">
+                            <circle  cx="1em" cy="1em" r="0.5em"/>
+                        </g>
                     </g>
                 </svg>
                 <span>{{comp_type_name}}</span>
             {{/comp_types}}
             <svg width="3em" height="3em">
-                <circle class="marker active" cx="1em" cy="1em" r="1em"/>
-                <text x="1em" y="1em" class="marker-text" font-size="1em">1</text>
+                <g class="comptype-1">
+                    <g class="marker">
+                        <circle cx="1em" cy="1em" r="1em"/>
+                        <text x="1em" y="1em" font-size="1em">1</text>
+                    </g>
+                </g>
             </svg>
             <span>Milestone</span>
         </div>
@@ -81,9 +87,7 @@
                     {{#competency_link}}
                         <a href="{{competency_link}}">
                     {{/competency_link}}
-
                     {{competency_fn}}
-
                     {{#competency_link}}
                         </a>
                     {{/competency_link}}

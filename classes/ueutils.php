@@ -25,6 +25,8 @@
 
 namespace local_competvetsuivi;
 
+use local_competvetsuivi\matrix\matrix;
+
 class ueutils {
 
     const FIRST_UE_SEMESTER = 51;
@@ -91,4 +93,52 @@ class ueutils {
         }
         return $semester;
     }
+
+    public static function get_ue_vs_competencies($matrix, $ue, $rootcompid = 0, $samesemesteronly=false) {
+
+        $allcomps = $matrix->get_child_competencies($rootcompid);
+
+        $uevalues = [];
+        $allues = [];
+
+        if ($samesemesteronly) {
+            $semester = self::get_semester_for_ue($ue->id);
+            $allues = self::get_ues_for_semester($semester, $matrix);
+        } else {
+            $allues= $matrix->get_matrix_ues();
+        }
+        foreach ($allcomps as $comp) {
+            foreach ($allues as $ue) {
+                $currentuevals = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id, false);
+                foreach ($currentuevals as $strandval) {
+                    $strandid = $strandval->type;
+                    if (!key_exists($ue->id, $uevalues)) {
+                        $uevalues[$ue->id] = [];
+                    }
+                    if (!isset($uevalues[$ue->id][$strandid])) {
+                        $uevalues[$ue->id][$strandid] = 0;
+                    }
+                    $uevalues[$ue->id][$strandid] += chartingutils::get_real_value_from_strand($strandid,
+                            $strandval->value);
+                }
+            }
+        }
+        $maxuevalues = [];
+        foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+            $maxuevalues[$strandid] = 0;
+        }
+        $maxuevalues = array_reduce($uevalues,  function ($carry, $item) {
+            foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+                $carry[$strandid] += $item[$strandid];
+            }
+            return $carry;
+        }, $maxuevalues);
+        $results = [];
+        foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+            $results[$strandid] = $maxuevalues[$strandid] ? $uevalues[$ue->id][$strandid] / $maxuevalues[$strandid] : 0;
+        }
+
+        return $results;
+    }
+
 }

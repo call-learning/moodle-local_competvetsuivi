@@ -30,24 +30,14 @@ use stdClass;
 use templatable;
 
 class chart_item implements \renderable, templatable {
-    public $compid;
-    public $fullname;
-    public $shortname;
     public $type;
     public $data;
     public $options;
-    public $complevel;
-    public $comppath;
 
-    public function __construct($competency,
+    public function __construct(
             $data,
             $charttype = 'progress',
             $options = array()) {
-        $this->compid = $competency->id;
-        $this->fullname = $competency->fullname;
-        $this->shortname = $competency->shortname;
-        $this->complevel = substr_count($competency->path, '/');
-        $this->comppath = $competency->path;
         $this->type  = $charttype;
         $this->data = $data;
         $this->options = $options;
@@ -64,15 +54,10 @@ class chart_item implements \renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $exportablecontext = new \stdClass();
-        $exportablecontext->compid = $this->compid;
-        $exportablecontext->fullname = $this->fullname;
-        $exportablecontext->shortname = $this->shortname;
-        $exportablecontext->complevel = $this->complevel;
-        $exportablecontext->comppath = $this->comppath;
         $exportablecontext->type = $this->type;
         $exportablecontext->data = json_encode($this->data, true);
         $exportablecontext->options = json_encode($this->options, true);
-        $exportablecontext->uniqueidentifier = \html_writer::random_id('comp'.$this->compid);
+        $exportablecontext->uniqueidentifier = \html_writer::random_id('chart'.$this->type);
         return $exportablecontext;
     }
 }

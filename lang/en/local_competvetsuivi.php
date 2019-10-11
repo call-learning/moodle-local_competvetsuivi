@@ -57,7 +57,9 @@ $string['matrixupdated'] = 'Matrix Updated';
 $string['matrixviewdatatitle'] = 'Viewing Matrix Data {$a->matrixname} for user {$a->username}';
 $string['matrix:viewdata'] = 'View matrix for user';
 $string['matrixviewtitle'] = 'Viewing Matrix {$a}';
-
+$string['matrixuevscomp:viewgraphs'] = 'View Matrix VS Competencies';
+$string['matrixuevscomptitle'] = 'Contribution of {$a->uename} the competencies and acquired knowledge';
+$string['matrixuevscompgraphtitle'] = 'Contribution of {$a->uename} to the general progression';
 $string['matrix:view'] = 'View matrix {$a}';
 $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file uploaded';
 $string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
