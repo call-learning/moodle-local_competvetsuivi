@@ -91,7 +91,9 @@ class competency_progress_overview implements \renderable, templatable {
         if ($this->rootcomp) {
             $allcompsid = explode('/', $this->rootcomp->path);
             // Here array_values is necessary if not the json transformation will think breadcrumbs is an object and not an array
-            $allcompsid = array_values(array_filter($allcompsid, function($val) { return $val != "";}));
+            $allcompsid = array_values(array_filter($allcompsid, function($val) {
+                return $val != "";
+            }));
             $allcomps = $this->matrix->get_matrix_competencies();
             $linkbuilder = $this->linkbuilder;
 
@@ -125,13 +127,9 @@ class competency_progress_overview implements \renderable, templatable {
             if ($this->matrix->has_children($c)) {
                 $compitem->competency_link = ($this->linkbuilder)($c)->out(false);
             }
-            $compitem->comptypesgraphs = [];
-            foreach ($this->strandlist as $comptypeid) {
-                $stranddata = new \stdClass();
-                $stranddata->strandname = matrix::get_competency_type_name($comptypeid);
-                $stranddata->graphdata = $this->compcharts[$c->id]->export_for_template($output);
-                $compitem->comptypesgraphs[] = $stranddata;
-            }
+            $stranddata = new \stdClass();
+            $stranddata->graphdata = $this->compcharts[$c->id]->export_for_template($output);
+            $compitem->compvsuegraphdata = $this->compcharts[$c->id]->export_for_template($output);;
             $exportablecontext->compitems[] = $compitem;
         }
         return $exportablecontext;

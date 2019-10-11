@@ -102,7 +102,7 @@ class ueutils {
         $allues = [];
 
         if ($samesemesteronly) {
-            $semester = self::get_semester_for_ue($ue->id);
+            $semester = self::get_semester_for_ue($ue);
             $allues = self::get_ues_for_semester($semester, $matrix);
         } else {
             $allues= $matrix->get_matrix_ues();

@@ -59,7 +59,8 @@ $string['matrix:viewdata'] = 'Voir la matrice pour l\'utilisateur';
 $string['matrixviewtitle'] = 'Voir la matrice {$a}';
 $string['matrixuevscomp:viewgraphs'] = 'UC vs Competencies';
 $string['matrixuevscomptitle'] = 'Contribution de l\'UC {$a->uename} dans les compétences et capacités';
-$string['matrixuevscompgraphtitle'] = 'Contribution de {$a->uename} à la progression générale';
+$string['matrixuevscompgraphtitle:global'] = 'Contribution de {$a->uename} à la progression générale';
+$string['matrixuevscompgraphtitle:semester'] = 'Contribution de {$a->uename} au semestre';
 
 $string['matrix:view'] = 'Voir la matrice {$a}';
 $string['nomatrixerror'] = 'Pas de feuille avec le préfixe ${a} dans le fichier uploadé';

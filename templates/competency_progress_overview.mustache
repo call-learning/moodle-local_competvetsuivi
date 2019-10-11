@@ -36,7 +36,7 @@
             "competency_fn": competency fullname,
             "competency_sn": competency shortname,
             "competency_link": competency link to the page,
-            "comptypegraphs": graphdata per strand as an array
+            "compvsuegraphdata": graphdata per strand as an array
                         [
                         { } , ...
                         ]
@@ -49,9 +49,9 @@
 <div>
     <div>
         <span>
-        {{#breadcrumbs}}
+            {{#breadcrumbs}}
                 <a href="{{link}}">{{name}}</a> /
-        {{/breadcrumbs}}
+            {{/breadcrumbs}}
         </span>
     </div>
     <div>
@@ -61,7 +61,7 @@
                 <svg width="3em" height="3em">
                     <g class="comptype-{{comp_type_id}}">
                         <g class="marker">
-                            <circle  cx="1em" cy="1em" r="0.5em"/>
+                            <circle cx="1em" cy="1em" r="0.5em"/>
                         </g>
                     </g>
                 </svg>
@@ -85,29 +85,24 @@
             <div class="row">
                 <div class="col-12">
                     {{#competency_link}}
-                        <a href="{{competency_link}}">
+                    <a href="{{competency_link}}">
                     {{/competency_link}}
                     {{competency_fn}}
                     {{#competency_link}}
-                        </a>
+                    </a>
                     {{/competency_link}}
                 </div>
             </div>
             <div class="row">
-                <div class="col-2">
-                    <div>{{competency_sn}}</div>
-                </div>
-                <div class="col-10">
+                <div class="col-12">
                     <div>
-                        {{#comptypesgraphs}}
-                            {{#graphdata}}
-                                <div class="row">
-                                    <div class="col-12">
-                                        {{> local_competvetsuivi/chart_item }}
-                                    </div>
+                        {{#compvsuegraphdata}}
+                            <div class="row">
+                                <div class="col-12">
+                                    {{> local_competvetsuivi/chart_item }}
                                 </div>
-                            {{/graphdata}}
-                        {{/comptypesgraphs}}
+                            </div>
+                        {{/compvsuegraphdata}}
                     </div>
                 </div>
             </div>

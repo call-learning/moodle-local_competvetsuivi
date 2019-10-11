@@ -51,19 +51,22 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
             },
             progress_charts: function (svgid, data) {
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
+                var thisutils = this;
+                $(document).ready( function() {
+                        var svgselector = '#' + svgid;
+                        var svgelement = $(svgselector).first();
+                        var padding = Object.assign(data.padding || {}, thisutils.default_padding);
+                        var width = svgelement.width() - padding.left - padding.right;
+                        var height = svgelement.height() - padding.top - padding.bottom;
 
-                var svgselector = '#' + svgid;
-                var svgelement = $(svgselector).first();
-                var padding = Object.assign(data.padding || {}, this.default_padding);
-                var width = svgelement.width() - padding.left - padding.right;
-                var height = svgelement.height() - padding.top - padding.bottom;
-
-                var chart = d3progress.progress()
-                    .width(width)
-                    .height(height)
-                    .data(data);
-                d3.select(svgselector)
-                    .call(chart);
+                        var chart = d3progress.progress()
+                            .width(width)
+                            .height(height)
+                            .data(data);
+                        d3.select(svgselector)
+                            .call(chart);
+                    }
+                );
             },
             load_css: function (path) {
                 var link = document.createElement('link');

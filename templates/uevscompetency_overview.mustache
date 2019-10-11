@@ -28,7 +28,7 @@
 
   Example context (json):
   {
-    "ue_fullname": the fullname of the current competency,
+    "graph_title": the fullname of the current competency,
     "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
     "compvsuegraphdata": graphdata per strand as an array
                         [
@@ -42,7 +42,7 @@
 }}
 <div>
     <div>
-        <h3>{{#str}}matrixuevscompgraphtitle, local_competvetsuivi, {"uename": {{# quote }}{{ue_fullname}}{{/ quote }} }{{/str}}</h3>
+        <h3>{{graph_title}}</h3>
         <div class="progress-cvs">
             {{#comp_types}}
                 <svg width="3em" height="3em">

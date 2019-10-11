@@ -45,15 +45,15 @@ class uevscompetency_overview implements \renderable, templatable {
             $ueid,
             $strandlist,
             $rootcompid = 0,
-            $samesemesteronly = false
-        ) {
+            $samesemesteronly = true
+    ) {
         $this->strandlist = $strandlist;
         $this->rootcompid = $rootcompid;
         $this->matrix = $matrix;
         $this->ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
         $results = ueutils::get_ue_vs_competencies($matrix, $this->ue, $rootcompid, $samesemesteronly);
         $chartdata = [];
-        foreach($strandlist as $st) {
+        foreach ($strandlist as $st) {
             // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
             $data = new \stdClass();
             $res = new \stdClass();
@@ -64,6 +64,7 @@ class uevscompetency_overview implements \renderable, templatable {
             $data->result = $res;
             $chartdata [] = $data;
         }
+        $this->samesemesteronly = $samesemesteronly;
         $this->uechart = new chart_item($chartdata);
     }
 
@@ -79,7 +80,14 @@ class uevscompetency_overview implements \renderable, templatable {
         global $FULLME;
         // TODO : fix this, we should have a way to override
         $exportablecontext = new \stdClass();
-        $exportablecontext->ue_fullname = $this->ue->fullname;
+        if ($this->samesemesteronly) {
+            $exportablecontext->graph_title = get_string('matrixuevscompgraphtitle:semester', 'local_competvetsuivi',
+                    array('uename' => $this->ue->fullname));
+        } else {
+            $exportablecontext->graph_title = get_string('matrixuevscompgraphtitle:global', 'local_competvetsuivi',
+                    array('uename' => $this->ue->fullname));
+        }
+
         $exportablecontext->comp_types = array_map(function($comptypeid) {
             return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
         }, $this->strandlist);
