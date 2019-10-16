@@ -80,7 +80,7 @@ class chartingutils {
     }
 
 
-    public const INITIAL_SEMESTER = 5;
+    const INITIAL_SEMESTER = 5;
     public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester) {
         $alldata = [];
         foreach ($strandlist as $comptypeid) {

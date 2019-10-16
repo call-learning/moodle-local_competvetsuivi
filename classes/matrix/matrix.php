@@ -51,7 +51,7 @@ class matrix {
     );
 
     // Warning: max values are not the one we think: they are from max to min (so 1 is max, 2, is middle and 3 is min, 0 is min too!!)
-    public const MAX_VALUE_PER_STRAND = [
+    const MAX_VALUE_PER_STRAND = [
             matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 3, // This is the maximum value possible
             matrix::MATRIX_COMP_TYPE_ABILITY => 30,
             matrix::MATRIX_COMP_TYPE_OBJECTIVES => 300,
