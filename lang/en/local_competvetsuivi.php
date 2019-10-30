@@ -50,6 +50,7 @@ $string['matrixfileadd_help'] = 'Add a new matrix file. This should be an Excel 
 $string['matrix:list'] = 'All matrix';
 $string['matrix'] = 'Matrix';
 $string['matrixname'] = 'Fullname';
+$string['matrixassignedcohorts'] =  'Cohorts';
 $string['matrixcohortsassignment'] = 'Matrix Cohort Assignment';
 $string['matrixcohortsassignment_help'] = 'A1low to assign one or several cohort of users to a matrix';
 $string['matrixshortname'] = 'Shortname';

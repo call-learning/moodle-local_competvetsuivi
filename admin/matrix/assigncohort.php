@@ -68,10 +68,7 @@ if ($data = $mform->get_data()) {
     $DB->delete_records('cvs_matrix_cohorts', array('matrixid'=>$matrix->id));
 
     foreach($data->matrixcohortsassignment as $cohortid) {
-        $assignment = new \stdClass();
-        $assignment->matrixid = $matrix->id;
-        $assignment->cohortid = $cohortid;
-        $DB->insert_record('cvs_matrix_cohorts', $assignment);
+        \local_competvetsuivi\utils::assign_matrix_cohort($matrix->id, $cohortid);
     }
     $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
     $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);

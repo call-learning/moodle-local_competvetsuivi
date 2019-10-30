@@ -50,6 +50,7 @@ $string['matrixfileadd_help'] = 'Uploader un fichier de matrice. Ce doit-être u
 $string['matrix:list'] = 'Toutes les matrices';
 $string['matrix'] = 'Matrice';
 $string['matrixname'] = 'Nom complet';
+$string['matrixassignedcohorts'] =  'Cohorts';
 $string['matrixcohortsassignment'] = 'Affectation d\'une matrice a une cohorte';
 $string['matrixcohortsassignment_help'] = 'Permet d\'ajouter un ou plusieurs utilisateurs à une matrice via les cohortes';
 $string['matrixshortname'] = 'Nom court';
