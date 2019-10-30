@@ -52,17 +52,17 @@ class add_edit_form extends moodleform {
         }
 
         $mform->addElement('text', 'fullname', get_string('matrixname', 'local_competvetsuivi'), $fullname);
-        $mform->setType('fullname', PARAM_ALPHAEXT);
+        $mform->setType('fullname', PARAM_TEXT);
 
         $mform->addElement('text', 'shortname', get_string('matrixshortname', 'local_competvetsuivi'), $shortname);
-        $mform->setType('shortname', PARAM_ALPHAEXT);
+        $mform->setType('shortname', PARAM_TEXT);
 
         $mform->addElement(
                 'filepicker',
                 'matrixfile',
                 get_string('matrixfileadd', 'local_competvetsuivi'),
                 null,
-                array('accepted_types' => array('spreadsheet'))); // See lib/classes/filetypes.php
+                array('accepted_types' => array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))); // See lib/classes/filetypes.php
         $mform->addHelpButton('matrixfile', 'matrixfileadd', 'local_competvetsuivi');
         $mform->setType('matrixfile', PARAM_FILE);
 

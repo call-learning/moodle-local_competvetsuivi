@@ -57,7 +57,9 @@ if ($hassiteconfig) {
             )
     );
 
-    $ADMIN->add('root', $compvetmanagement);
+    if (!empty($CFG->enablecompetvetsuivi)) {
+        $ADMIN->add('root', $compvetmanagement);
+    }
 
     // Create a global Advanced Feature Toggle
     $optionalsubsystems = $ADMIN->locate('optionalsubsystems');

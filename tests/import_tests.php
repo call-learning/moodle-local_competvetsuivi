@@ -49,7 +49,7 @@ class import_tests extends advanced_testcase {
 
     public function test_import_matrix() {
         $this->resetAfterTest();
-        $filename = dirname(__FILE__) . '/files/matrix_sample.xlsx';
+        $filename = dirname(__FILE__) . '/fixtures/matrix_sample.xlsx';
         $content = file_get_contents($filename);
         $hash = sha1($content);
         $matrixobject = matrix::import_from_file(
@@ -74,7 +74,7 @@ class import_tests extends advanced_testcase {
     public function test_import_users() {
         global $DB;
         $this->resetAfterTest();
-        $filename = dirname(__FILE__) . '/files/userdata_sample.csv';
+        $filename = dirname(__FILE__) . '/fixtures/userdata_sample.csv';
         $status = userdata::import_user_data_from_file($filename);
         $user = $DB->get_record('cvs_userdata',array('useremail'=>'Etudiant-143@ecole.fr'));
         $userdata = json_decode($user->userdata);
