@@ -45,7 +45,6 @@ class matrix_list_renderable implements renderable, templatable {
 
     /**
      * Export this data so it can be used as the context for a mustache template.
-     * This will export list of course sorted by category
      *
      * @param \renderer_base $output
      * @return stdClass

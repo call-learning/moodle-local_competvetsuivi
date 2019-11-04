@@ -31,18 +31,19 @@ if ($hassiteconfig) {
             get_string('competvetmanagement', 'local_competvetsuivi')
     );
 
-    $globalsettings = new admin_settingpage('competvetgeneralsettings',
-            new lang_string('competvetgeneralsettings', 'local_competvetsuivi'),
-            array('local/competvetsuivi:managesettings'),
-            empty($CFG->enablecompetvetsuivi));
 
-    $globalsettings->add(new admin_setting_configfile('local_competvetsuivi/userdatafilepath',
-                    new lang_string('userdatafilepath', 'local_competvetsuivi'),
-                    new lang_string('userdatafilepath_desc', 'local_competvetsuivi'),
-                    '/tmp/usermatrix/')
+
+    $pagedesc = get_string('competvetuserdatamgmt', 'local_competvetsuivi');
+    $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/userdata.php');
+    $compvetmanagement->add('competvetmanagement',
+            new admin_externalpage(
+                    'userdatamgmt',
+                    $pagedesc,
+                    $pageurl,
+                    array('local/competvetsuivi:managesettings'),
+                    empty($CFG->enablecompetvetsuivi)
+            )
     );
-
-    $compvetmanagement->add('competvetmanagement', $globalsettings);
 
     $pagedesc = get_string('managematrix', 'local_competvetsuivi');
     $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');

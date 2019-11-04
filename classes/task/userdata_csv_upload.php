@@ -22,6 +22,7 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_competvetsuivi\task;
 
 use context_system;
@@ -57,7 +58,7 @@ class userdata_csv_upload extends \core\task\scheduled_task {
     public static function process_userdata_csv() {
         $userdatafilepath = get_config('local_competvetsuivi', 'userdatafilepath');
         if (is_dir($userdatafilepath)) {
-            $filetoprocess =  null;
+            $filetoprocess = null;
             foreach (glob("{$userdatafilepath}/*.csv") as $filename) {
                 if (userdata::check_file_valid($filename)) {
                     $filetoprocess = $filename;
@@ -67,11 +68,6 @@ class userdata_csv_upload extends \core\task\scheduled_task {
                     if ($status === true) {
                         unlink($filename);
                     }
-                    // Send an event
-                    $eventparams = array('context' => context_system::instance(),
-                            'other'=>array('filename'=>$filename,'status'=>$status));
-                    $event = \local_competvetsuivi\event\userdata_imported::create($eventparams);
-                    $event->trigger();
                     break;
                 }
             }

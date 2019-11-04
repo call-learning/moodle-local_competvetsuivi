@@ -38,4 +38,33 @@ class matrix_added extends \core\event\base {
         $this->data['objecttable'] = 'cvs_matrix';
     }
 
+    /**
+     * Returns localised event name.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public static function get_name() {
+        return get_string('matrixadded', 'local_competvetsuivi');
+    }
+
+    /**
+     * Returns non-localised event description with id's for admin use only.
+     *
+     * @return string
+     */
+    public function get_description() {
+        $filename = s($this->other['filename']);
+        $inserted = s($this->other['inserted']);
+        $updated = s($this->other['updated']);
+        return "CSV User data has been imported ({$filename}), ({$updated}) modified and ({$inserted}) inserted.";
+    }
+    /**
+     * Get the backup/restore table mapping for this event.
+     *
+     * @return string
+     */
+    public static function get_objectid_mapping() {
+        return array('db' => 'cvs_matrix', 'restore' => 'cvs_matrix');
+    }
 }

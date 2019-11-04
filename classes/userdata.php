@@ -31,10 +31,12 @@ class userdata {
 
     const MAIL_COLUMN_NAME = 'Mail'; // TODO add this as a plugin parameter
     const LAST_UNIT_SEEN = 'LastUnitSeen'; // TODO This will be the new column if we need to check for last seen unit
+
     /**
      * Do a couple of checks on the file at hand to see if it contains the right data
      *
      * @param $filename
+     * @return bool
      */
     public static function check_file_valid($filename) {
         $fileexists = file_exists($filename);
@@ -49,6 +51,8 @@ class userdata {
      *
      * @param $filename
      * @return true or a list of error (langstrings + eventual parameters) as an array
+     * @throws \coding_exception
+     * @throws \dml_exception
      */
     public static function import_user_data_from_file($filename) {
         global $CFG, $DB;
@@ -70,46 +74,54 @@ class userdata {
             if (($columnerror = self::check_columns($headers)) === true) {
 
                 $importer->init();
-                $emailcolumnindex = array_search(static::MAIL_COLUMN_NAME,$headers);
-                $useddataheaders = array_splice($headers, $emailcolumnindex +1);
+                $emailcolumnindex = array_search(static::MAIL_COLUMN_NAME, $headers);
+                $useddataheaders = array_splice($headers, $emailcolumnindex + 1);
                 // TODO: This is a hack: We either need to change the header in the user data source or the matrix
                 $useddataheaders = array_map(function($label) {
-                    return str_replace('UE','UC',$label);
+                    return str_replace('UE', 'UC', $label);
                 }, $useddataheaders);
 
+                $inserteduser = 0;
+                $updateduser = 0;
                 while ($userrecord = $importer->next()) {
                     $useremail = $userrecord[$emailcolumnindex]; // Get user email
                     // The email is followed by the data itself
-                    $userdatarow = array_splice($userrecord, $emailcolumnindex +1);
+                    $userdatarow = array_splice($userrecord, $emailcolumnindex + 1);
 
-
-                    $userdata =  new \stdClass();
+                    $userdata = new \stdClass();
                     $userdata->useremail = $useremail;
 
                     $finaldatarow = array();
                     $userdata->lastseenunit = $useddataheaders[0];
                     // Convert heading and content to a more useable one (like boolean)
-                    foreach($userdatarow as $k=>$row) {
+                    foreach ($userdatarow as $k => $row) {
                         if ($row !== "") {
                             $userdata->lastseenunit = $useddataheaders[$k];
                         }
-                        $userdatarow[$k] = $row ?1:0;
+                        $userdatarow[$k] = $row ? 1 : 0;
                     }
 
-
                     // We combine the two array and render a json
-                    $userdata->userdata = json_encode(array_combine($useddataheaders,$userdatarow));
+                    $userdata->userdata = json_encode(array_combine($useddataheaders, $userdatarow));
 
-                    $toupdate = $DB->get_field('cvs_userdata', 'id',array('useremail'=>$useremail));
+                    $toupdate = $DB->get_field('cvs_userdata', 'id', array('useremail' => $useremail));
                     if ($toupdate) {
                         $userdata->id = $toupdate;
                         $DB->update_record('cvs_userdata', $userdata);
+                        $inserteduser++;
                     } else {
                         $DB->insert_record('cvs_userdata', $userdata);
+                        $updateduser++;
                     }
                 }
+
+                // Send an event after importation
+                $eventparams = array('context' => \context_system::instance(),
+                        'other' => array('filename' => $filename, 'inserted' => $inserteduser, 'updated' => $updateduser));
+                $event = \local_competvetsuivi\event\userdata_imported::create($eventparams);
+                $event->trigger();
             } else {
-                $returnvalue = array('missingcsvheader' => $columnerror);
+                $returnvalue = array('importerror' => get_string('csvloaderror', 'error', $columnerror));
             }
         } else {
             $returnvalue = array('importerror' => $importer->get_error());
@@ -128,8 +140,8 @@ class userdata {
 
     public static function get_user_data($useremail) {
         global $DB;
-        $data = $DB->get_record('cvs_userdata', array('useremail'=>$useremail));
-        if($data) {
+        $data = $DB->get_record('cvs_userdata', array('useremail' => $useremail));
+        if ($data) {
             return json_decode($data->userdata, true);
         }
         return false;
@@ -137,9 +149,9 @@ class userdata {
 
     public static function get_user_last_ue_name($useremail) {
         global $DB;
-        $data = $DB->get_record('cvs_userdata', array('useremail'=>$useremail));
+        $data = $DB->get_record('cvs_userdata', array('useremail' => $useremail));
 
-        if($data) {
+        if ($data) {
             return $data->lastseenunit;
         }
         return "";
@@ -152,6 +164,5 @@ class userdata {
             $columnheaders[$i] = $h;
         }
     }
-
 
 }

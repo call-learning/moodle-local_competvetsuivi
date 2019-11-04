@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Matrix Updated event
  *
@@ -22,6 +21,7 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_competvetsuivi\event;
 
 defined('MOODLE_INTERNAL') || die();
@@ -36,6 +36,25 @@ class matrix_updated extends \core\event\base {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'cvs_matrix';
+    }
+
+    /**
+     * Returns localised event name.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public static function get_name() {
+        return get_string('matrixupdated', 'local_competvetsuivi');
+    }
+
+    /**
+     * Get the backup/restore table mapping for this event.
+     *
+     * @return string
+     */
+    public static function get_objectid_mapping() {
+        return array('db' => 'cvs_matrix', 'restore' => 'cvs_matrix');
     }
 
 }

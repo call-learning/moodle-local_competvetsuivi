@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * User data imported
  *
@@ -22,7 +21,10 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_competvetsuivi\event;
+
+use core\event\base;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,4 +39,33 @@ class userdata_imported extends \core\event\base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
+    /**
+     * Returns localised event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('userdataimported', 'local_competvetsuivi');
+    }
+
+    /**
+     * Returns non-localised event description with id's for admin use only.
+     *
+     * @return string
+     */
+    public function get_description() {
+        $filename = s($this->other['filename']);
+        $inserted = s($this->other['inserted']);
+        $updated = s($this->other['updated']);
+        return "CSV User data has been imported ({$filename}), ({$updated}) modified and ({$inserted}) inserted.";
+    }
+
+    /**
+     * Get the backup/restore table mapping for this event.
+     *
+     * @return string
+     */
+    public static function get_objectid_mapping() {
+        return base::NOT_MAPPED;
+    }
 }
