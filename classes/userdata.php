@@ -40,7 +40,7 @@ class userdata {
      */
     public static function check_file_valid($filename) {
         $fileexists = file_exists($filename);
-        $filemimetypecheck = $fileexists && mime_content_type($filename) == 'text/csv';
+        $filemimetypecheck = $fileexists && in_array(mime_content_type($filename), array('text/csv', 'text/plain'));
         return $fileexists && $filemimetypecheck;
     }
 
@@ -108,10 +108,10 @@ class userdata {
                     if ($toupdate) {
                         $userdata->id = $toupdate;
                         $DB->update_record('cvs_userdata', $userdata);
-                        $inserteduser++;
+                        $updateduser++;
                     } else {
                         $DB->insert_record('cvs_userdata', $userdata);
-                        $updateduser++;
+                        $inserteduser++;
                     }
                 }
 
