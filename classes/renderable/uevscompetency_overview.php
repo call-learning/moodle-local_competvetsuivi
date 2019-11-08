@@ -23,33 +23,52 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_competvetsuivi\output;
+namespace local_competvetsuivi\renderable;
 
 use local_competvetsuivi\matrix\matrix;
-use local_competvetsuivi\utils;
+use local_competvetsuivi\ueutils;
 use renderer_base;
 use stdClass;
 use templatable;
-use local_competvetsuivi\chartingutils;
 
-class competency_progress_overview extends graph_overview_base implements \renderable, templatable {
-    const PARAM_COMPID = 'competencypid'; // Used to build URL (see graph_overview_base methods)
+class uevscompetency_overview extends graph_overview_base implements \renderable, templatable {
+    const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait)
+
+    protected $ue = null;
 
     public function __construct(
-            $rootcomp,
             $matrix,
+            $ueid,
             $strandlist,
-            $userdata,
-            $currentsemester,
-            $linkbuildercallback = null) {
+            $rootcomp = null,
+            $samesemesteronly = true,
+            $linkbuildercallback = null
+    ) {
         $this->init($matrix, $strandlist, $rootcomp, $linkbuildercallback);
-        foreach ($this->childrencomps as $comp) {
-            $this->charts[$comp->id] =
-                    new chart_item(
-                            chartingutils::get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester)
-                    );
-        }
+        $rootcompid = $rootcomp ? $rootcomp->id : 0;
 
+        $this->ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
+        $results = ueutils::get_ue_vs_competencies($matrix, $this->ue, $rootcompid, $samesemesteronly);
+        foreach (array_keys($results) as $compid) {
+            $chartdata = [];
+            foreach ($strandlist as $st) {
+                // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
+                $data = new \stdClass();
+                $res = new \stdClass();
+                $res->label = matrix::comptype_to_string($st);
+                $res->type = $st;
+                $res->value = $results[$compid][$st];
+                $data->markers = [];
+                $data->result = $res;
+                if ($res->value > 0) {
+                    $chartdata [] = $data;
+                }
+            }
+            if (!empty($chartdata)) {
+                $this->charts[$compid] = new chart_item($chartdata);
+            }
+        }
+        $this->samesemesteronly = $samesemesteronly;
 
     }
 
@@ -60,8 +79,6 @@ class competency_progress_overview extends graph_overview_base implements \rende
      *
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
      * @return stdClass|array
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     public function export_for_template(renderer_base $output) {
         $exportablecontext = $this->get_intial_exportable_context($output);

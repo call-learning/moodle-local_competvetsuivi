@@ -35,7 +35,7 @@ require_login();
 
 $matrixid = optional_param('matrixid', 0,PARAM_INT);
 $ueid = optional_param('ueid', 0, PARAM_INT);
-$compidparamname = local_competvetsuivi\output\uevscompetency_overview::PARAM_COMPID;
+$compidparamname = local_competvetsuivi\renderable\uevscompetency_overview::PARAM_COMPID;
 $currentcompid = optional_param($compidparamname, false, PARAM_INT);
 
 if(!$matrixid || !$DB->record_exists(matrix::CLASS_TABLE, array('id'=>$matrixid))) {
@@ -72,7 +72,7 @@ if ($currentcompid) {
     $currentcomp = $matrix->comp[$currentcompid];
 }
 
-$progress_overview = new \local_competvetsuivi\output\uevscompetency_overview(
+$progress_overview = new \local_competvetsuivi\renderable\uevscompetency_overview(
         $matrix,
         $ueid,
         $strandlist,

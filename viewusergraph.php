@@ -37,7 +37,7 @@ require_login();
 
 $userid = optional_param('userid', 0,PARAM_INT);
 $matrixid = optional_param('matrixid', 0,PARAM_INT);
-$compidparamname = local_competvetsuivi\output\competency_progress_overview::PARAM_COMPID;
+$compidparamname = local_competvetsuivi\renderable\competency_progress_overview::PARAM_COMPID;
 $currentcompid = optional_param($compidparamname, false, PARAM_INT);
 $userid = $userid ? $userid : $USER->id;
 $user = \core_user::get_user($userid);
@@ -76,7 +76,7 @@ if ($currentcompid) {
     $currentcomp = $matrix->comp[$currentcompid];
 }
 
-$progress_overview = new \local_competvetsuivi\output\competency_progress_overview(
+$progress_overview = new \local_competvetsuivi\renderable\competency_progress_overview(
         $currentcomp,
         $matrix,
         $strandlist,

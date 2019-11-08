@@ -23,15 +23,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_competvetsuivi\output;
+namespace local_competvetsuivi\renderable;
 
 use local_competvetsuivi\matrix\matrix;
-use local_competvetsuivi\ueutils;
-use local_competvetsuivi\utils;
 use renderer_base;
-use stdClass;
-use templatable;
-use local_competvetsuivi\chartingutils;
+
 
 abstract class graph_overview_base {
     const PARAM_COMPID = 'TOBEDEFINED'; // Used to build URL (see graph_overview_trait)

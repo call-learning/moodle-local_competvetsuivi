@@ -27,14 +27,13 @@ namespace local_competvetsuivi\renderable;
 use renderable;
 use renderer_base;
 use templatable;
-use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 /**
  * Class to list all available matrix
  *
  */
-class userdata_log_renderable implements renderable, templatable {
+class userdata_log implements renderable, templatable {
 
     /**
      * Export this data so it can be used as the context for a mustache template.
