@@ -36,7 +36,7 @@
             "competency_fn": competency fullname,
             "competency_sn": competency shortname,
             "competency_link": competency link to the page,
-            "compvsuegraphdata": graphdata per strand as an array
+            "graphdata": graphdata per strand as an array
                         [
                         { } , ...
                         ]
@@ -47,61 +47,8 @@
 
 }}
 <div>
-    <div class="row cvs-breadcrumb">
-        <div class="col-12">
-        <span>
-            {{#breadcrumbs}}
-                <a href="{{link}}">{{name}}</a> /
-            {{/breadcrumbs}}
-        </span>
-        </div>
-    </div>
-    <div class="row pt-3 pb-3">
-        <div class="col-sm-4">
-            <h3>{{comp_fullname}}</h3>
-        </div>
-
-        <div class="progress-cvs col-8">
-            <div class="row">
-
-                {{#comp_types}}
-                    <div class="col-4">
-                        <div class="d-flex flex-column justify-content-center">
-                            <div>
-                                <svg width="1.5em" height="1.5em">
-                                    <g class="comptype-{{comp_type_id}}">
-                                        <g class="marker">
-                                            <circle cx="0.75em" cy="0.75em" r="0.5em"/>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </div>
-                            <div>
-                                <span>{{comp_type_name}}</span>
-                            </div>
-                        </div>
-                    </div>
-                {{/comp_types}}
-                <div class="col-4">
-                    <div class="flex-column justify-content-center">
-                        <div>
-                            <svg width="1.5em" height="1.5em">
-                                <g class="comptype-1">
-                                    <g class="marker">
-                                        <circle cx="0.75em" cy="0.75em" r="0.5em"/>
-                                        <text x="0.75em" y="0.75em" class="marker-text">1</text>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <div>
-                            <span>{{#str}}milestone, local_competvetsuivi{{/str}}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{< local_competvetsuivi/graph_header}}
+    {{/ local_competvetsuivi/graph_header}}
     {{#compitems}}
         <div class="row mb-1 mt-1">
             <div class="col-sm-4">
@@ -121,12 +68,10 @@
                 </div>
             </div>
             <div class="col-sm-8">
-                {{#compvsuegraphdata}}
+                {{#graphdata}}
                     {{> local_competvetsuivi/chart_item }}
-                {{/compvsuegraphdata}}
+                {{/graphdata}}
             </div>
         </div>
-
     {{/compitems}}
-
 </div>

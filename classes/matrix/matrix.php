@@ -211,7 +211,10 @@ class matrix {
                 return $ue->$propertyname == $propertyvalue;
             });
         }
-        if (!$matchingues || count($matchingues)>1) {
+        if (!$matchingues) {
+            throw new matrix_exception('foundnomatchingue', 'local_competvetsuivi');
+        }
+        if (count($matchingues) > 1) {
             throw new matrix_exception('foundtoomanymatchingue', 'local_competvetsuivi');
         }
         return reset($matchingues);

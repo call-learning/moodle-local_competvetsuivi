@@ -37,7 +37,8 @@ require_login();
 
 $userid = optional_param('userid', 0,PARAM_INT);
 $matrixid = optional_param('matrixid', 0,PARAM_INT);
-$currentcompid = optional_param('competencyid', false, PARAM_INT);
+$compidparamname = local_competvetsuivi\output\competency_progress_overview::PARAM_COMPID;
+$currentcompid = optional_param($compidparamname, false, PARAM_INT);
 $userid = $userid ? $userid : $USER->id;
 $user = \core_user::get_user($userid);
 

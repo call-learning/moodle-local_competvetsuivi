@@ -33,39 +33,45 @@ use stdClass;
 use templatable;
 use local_competvetsuivi\chartingutils;
 
-class uevscompetency_overview implements \renderable, templatable {
-    protected $uechart;
-    public $rootcompid = null;
-    protected $strandlist = null;
-    protected $matrix = null;
+class uevscompetency_overview extends graph_overview_base implements \renderable, templatable {
+    const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait)
+
     protected $ue = null;
 
     public function __construct(
             $matrix,
             $ueid,
             $strandlist,
-            $rootcompid = 0,
-            $samesemesteronly = true
+            $rootcomp = null,
+            $samesemesteronly = true,
+            $linkbuildercallback = null
     ) {
-        $this->strandlist = $strandlist;
-        $this->rootcompid = $rootcompid;
-        $this->matrix = $matrix;
+        $this->init($matrix, $strandlist, $rootcomp, $linkbuildercallback);
+        $rootcompid = $rootcomp ? $rootcomp->id : 0;
+
         $this->ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
         $results = ueutils::get_ue_vs_competencies($matrix, $this->ue, $rootcompid, $samesemesteronly);
-        $chartdata = [];
-        foreach ($strandlist as $st) {
-            // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
-            $data = new \stdClass();
-            $res = new \stdClass();
-            $res->label = matrix::comptype_to_string($st);
-            $res->type = $st;
-            $res->value = $results[$st];
-            $data->markers = [];
-            $data->result = $res;
-            $chartdata [] = $data;
+        foreach (array_keys($results) as $compid) {
+            $chartdata = [];
+            foreach ($strandlist as $st) {
+                // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
+                $data = new \stdClass();
+                $res = new \stdClass();
+                $res->label = matrix::comptype_to_string($st);
+                $res->type = $st;
+                $res->value = $results[$compid][$st];
+                $data->markers = [];
+                $data->result = $res;
+                if ($res->value > 0) {
+                    $chartdata [] = $data;
+                }
+            }
+            if (!empty($chartdata)) {
+                $this->charts[$compid] = new chart_item($chartdata);
+            }
         }
         $this->samesemesteronly = $samesemesteronly;
-        $this->uechart = new chart_item($chartdata);
+
     }
 
     /**
@@ -77,21 +83,7 @@ class uevscompetency_overview implements \renderable, templatable {
      * @return stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        global $FULLME;
-        // TODO : fix this, we should have a way to override
-        $exportablecontext = new \stdClass();
-        if ($this->samesemesteronly) {
-            $exportablecontext->graph_title = get_string('matrixuevscompgraphtitle:semester', 'local_competvetsuivi',
-                    array('uename' => $this->ue->fullname));
-        } else {
-            $exportablecontext->graph_title = get_string('matrixuevscompgraphtitle:global', 'local_competvetsuivi',
-                    array('uename' => $this->ue->fullname));
-        }
-
-        $exportablecontext->comp_types = array_map(function($comptypeid) {
-            return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
-        }, $this->strandlist);
-        $exportablecontext->compvsuegraphdata = $this->uechart->export_for_template($output);
+        $exportablecontext = $this->get_intial_exportable_context($output);
         return $exportablecontext;
     }
 }

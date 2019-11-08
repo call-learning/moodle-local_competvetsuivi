@@ -32,14 +32,8 @@ use stdClass;
 use templatable;
 use local_competvetsuivi\chartingutils;
 
-class competency_progress_overview implements \renderable, templatable {
-    protected $compcharts;
-    protected $linkbuilder = null;
-    public $rootcomp = null;
-    public $childrencomps = array();
-    protected $strandlist = null;
-    protected $matrix = null;
-    const MAX_FULLNAME_LN = 100;
+class competency_progress_overview extends graph_overview_base implements \renderable, templatable {
+    const PARAM_COMPID = 'competencypid'; // Used to build URL (see graph_overview_base methods)
 
     public function __construct(
             $rootcomp,
@@ -48,23 +42,15 @@ class competency_progress_overview implements \renderable, templatable {
             $userdata,
             $currentsemester,
             $linkbuildercallback = null) {
-        $this->rootcomp = $rootcomp;
-        $this->strandlist = $strandlist;
-
-        $rootcompid = $rootcomp ? $rootcomp->id : 0;
-        $this->childrencomps = $matrix->get_child_competencies($rootcompid, true);
+        $this->init($matrix, $strandlist, $rootcomp, $linkbuildercallback);
         foreach ($this->childrencomps as $comp) {
-            $this->compcharts[$comp->id] =
+            $this->charts[$comp->id] =
                     new chart_item(
                             chartingutils::get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester)
                     );
         }
-        $defaultlinkbuilder = function($competency) {
-            global $FULLME;
-            return new \moodle_url($FULLME, array('competencyid' => $competency->id));
-        };
-        $this->linkbuilder = $linkbuildercallback ? $linkbuildercallback : $defaultlinkbuilder;
-        $this->matrix = $matrix;
+
+
     }
 
     /**
@@ -78,66 +64,7 @@ class competency_progress_overview implements \renderable, templatable {
      * @throws \moodle_exception
      */
     public function export_for_template(renderer_base $output) {
-        global $FULLME;
-        // TODO : fix this, we should have a way to override
-        $exportablecontext = new \stdClass();
-        $exportablecontext->comp_fullname = $this->rootcomp ?
-                $this->rootcomp->fullname : get_string('rootcomp', 'local_competvetsuivi');
-
-        $exportablecontext->comp_types = array_map(function($comptypeid) {
-            return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
-        }, $this->strandlist);
-
-        $exportablecontext->breadcrumbs = array();
-
-        // Build breadcrump
-        if ($this->rootcomp) {
-            $allcompsid = explode('/', $this->rootcomp->path);
-            // Here array_values is necessary if not the json transformation will think breadcrumbs is an object and not an array
-            $allcompsid = array_values(array_filter($allcompsid, function($val) {
-                return $val != "";
-            }));
-            $allcomps = $this->matrix->get_matrix_competencies();
-            $linkbuilder = $this->linkbuilder;
-
-            $exportablecontext->breadcrumbs = array_map(
-                    function($compid) use ($allcomps, $linkbuilder) {
-                        $comp = $allcomps[$compid];
-                        return (object) [
-                                'name' => $comp->shortname,
-                                'link' => ($linkbuilder)($comp)->out(false),
-                        ];
-                    },
-                    $allcompsid
-            );
-
-            // TODO we rely on a parameter competencyid that could be different in different context/
-            // we need to abstract this
-            $homeurl = new  \moodle_url($FULLME);
-            $homeurl->remove_params('competencyid');
-            array_unshift($exportablecontext->breadcrumbs, (object) [
-                    'name' => get_string('home'),
-                    'link' => $homeurl->out(false),
-            ]);
-        }
-        $exportablecontext->compitems = [];
-        foreach ($this->childrencomps as $c) {
-            $compitem = new \stdClass();
-            $compitem->competency_fn = $c->fullname;
-            if (strlen($compitem->competency_fn)> self::MAX_FULLNAME_LN ) {
-                $compitem->competency_fn = trim(\core_text::substr($compitem->competency_fn, 0, self::MAX_FULLNAME_LN)) . '...';
-            }
-            $compitem->competency_sn = $c->shortname;
-
-            $compitem->competency_link = null;
-            if ($this->matrix->has_children($c)) {
-                $compitem->competency_link = ($this->linkbuilder)($c)->out(false);
-            }
-            $stranddata = new \stdClass();
-            $stranddata->graphdata = $this->compcharts[$c->id]->export_for_template($output);
-            $compitem->compvsuegraphdata = $this->compcharts[$c->id]->export_for_template($output);;
-            $exportablecontext->compitems[] = $compitem;
-        }
+        $exportablecontext = $this->get_intial_exportable_context($output);
         return $exportablecontext;
     }
 }

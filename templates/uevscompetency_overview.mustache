@@ -39,32 +39,58 @@
   }
 
 
+
+    Example context (json):
+    {
+    "comp_fullname": the fullname of the current competency,
+    "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
+    "breadcrumb": [ {'name': , 'link'}
+    "compitems" : [
+        {
+            "competency_fn": competency fullname,
+            "competency_sn": competency shortname,
+            "competency_link": competency link to the page,
+            "compvsuegraphdata": graphdata per strand as an array
+                        [
+                        { } , ...
+                        ]
+
+        ]
+    }
+
+
 }}
+
+
+
+
 <div>
-    <div>
-        <h3>{{graph_title}}</h3>
-        <div class="progress-cvs">
-            {{#comp_types}}
-                <svg width="3em" height="3em">
-                    <g class="comptype-{{comp_type_id}}">
-                        <g class="marker">
-                            <circle cx="1em" cy="1em" r="0.5em"/>
-                        </g>
-                    </g>
-                </svg>
-                <span>{{comp_type_name}}</span>
-            {{/comp_types}}
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    <div class="container">
-        {{#compvsuegraphdata}}
-            <div class="row">
-                <div class="col-12">
-                    {{> local_competvetsuivi/chart_item }}
+    {{< local_competvetsuivi/graph_header}}
+        {{$has_no_milestone}}{{/has_no_milestone}}
+    {{/ local_competvetsuivi/graph_header}}
+    {{#compitems}}
+        <div class="row mb-1 mt-1">
+            <div class="col-sm-4">
+                <div class="flex-column">
+                    <div class="competency-namelink">
+                        {{#competency_link}}
+                        <a href="{{competency_link}}">
+                        {{/competency_link}}
+                        {{competency_fn}}
+                        {{#competency_link}}
+                        </a>
+                        {{/competency_link}}
+                    </div>
+                    <div class="competency-sn">
+                        {{competency_sn}}
+                    </div>
                 </div>
             </div>
-        {{/compvsuegraphdata}}
-    </div>
-
+            <div class="col-sm-8">
+                {{#graphdata}}
+                    {{> local_competvetsuivi/chart_item }}
+                {{/graphdata}}
+            </div>
+        </div>
+    {{/compitems}}
 </div>

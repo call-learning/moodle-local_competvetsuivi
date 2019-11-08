@@ -30,8 +30,10 @@ use local_competvetsuivi\matrix\matrix;
 class ueutils {
 
     const FIRST_UE_SEMESTER = 51;
+
     /**
      * Calculate the semester number for the given UE/UC
+     *
      * @param $ue
      * @return float|int
      */
@@ -45,6 +47,7 @@ class ueutils {
 
     /**
      * Get all UEs/UCs contained in a semester
+     *
      * @param $semester
      * @param $matrix
      * @return array
@@ -61,6 +64,7 @@ class ueutils {
 
     /**
      * Get the number of semester. This will probably be overrident when using groups
+     *
      * @return int
      */
     public static function get_semester_count() {
@@ -68,8 +72,10 @@ class ueutils {
     }
 
     const YEAR_START_MONTH = 9; // September
+
     /**
      * Get current semester from the name (shortname) of the last seen UC/UE
+     *
      * @param $lastseenue
      * @param $matrix
      * @return float|int
@@ -94,50 +100,68 @@ class ueutils {
         return $semester;
     }
 
-    public static function get_ue_vs_competencies($matrix, $ue, $rootcompid = 0, $samesemesteronly=false) {
+    /**
+     * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
+     * Results are for each competency and then each strands covered by the UE.
+     *
+     * @param $matrix : ue
+     * @param $ue : given ue
+     * @param int $rootcompid root competency id to start with. If null we take the macro competencies
+     * @param bool $samesemesteronly only in the same semester
+     * @return array
+     */
+    public static function get_ue_vs_competencies($matrix, $currentue, $rootcompid = 0, $samesemesteronly = false) {
 
-        $allcomps = $matrix->get_child_competencies($rootcompid);
+        $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
         $uevalues = [];
-        $allues = [];
 
+        // Restrict UE to semester or not
         if ($samesemesteronly) {
-            $semester = self::get_semester_for_ue($ue);
+            $semester = self::get_semester_for_ue($currentue);
             $allues = self::get_ues_for_semester($semester, $matrix);
         } else {
-            $allues= $matrix->get_matrix_ues();
+            $allues = $matrix->get_matrix_ues();
         }
+        // Go through all competencies and find out about the contribution of each UE to this competency
         foreach ($allcomps as $comp) {
+            if (!key_exists($comp->id, $uevalues)) {
+                $uevalues[$comp->id] = [];
+            }
             foreach ($allues as $ue) {
-                $currentuevals = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id, false);
+                $currentuevals = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id, true);
                 foreach ($currentuevals as $strandval) {
                     $strandid = $strandval->type;
-                    if (!key_exists($ue->id, $uevalues)) {
-                        $uevalues[$ue->id] = [];
+                    if (!key_exists($ue->id, $uevalues[$comp->id])) {
+                        $uevalues[$comp->id][$ue->id] = [];
                     }
-                    if (!isset($uevalues[$ue->id][$strandid])) {
-                        $uevalues[$ue->id][$strandid] = 0;
+                    if (!isset($uevalues[$comp->id][$ue->id][$strandid])) {
+                        $uevalues[$comp->id][$ue->id][$strandid] = 0;
                     }
-                    $uevalues[$ue->id][$strandid] += chartingutils::get_real_value_from_strand($strandid,
+                    $uevalues[$comp->id][$ue->id][$strandid] += chartingutils::get_real_value_from_strand($strandid,
                             $strandval->value);
                 }
             }
         }
-        $maxuevalues = [];
-        foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
-            $maxuevalues[$strandid] = 0;
-        }
-        $maxuevalues = array_reduce($uevalues,  function ($carry, $item) {
-            foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
-                $carry[$strandid] += $item[$strandid];
-            }
-            return $carry;
-        }, $maxuevalues);
+        // Now calculate the results for each comp
         $results = [];
-        foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
-            $results[$strandid] = $maxuevalues[$strandid] ? $uevalues[$ue->id][$strandid] / $maxuevalues[$strandid] : 0;
+        foreach ($allcomps as $comp) {
+            // Now we have the max value for each ue and each strand, we calculate the range (0, max)
+            // First initialize the array
+            $maxuevalues = array_fill_keys(array_keys(matrix::MATRIX_COMP_TYPE_NAMES), 0);
+            // Then for each UE add its contribution to the semester/cursus so we have the max contributed
+            $maxuevalues = array_reduce($uevalues[$comp->id], function($carry, $item) {
+                foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+                    $carry[$strandid] += $item[$strandid];
+                }
+                return $carry;
+            }, $maxuevalues);
+            // Now for the current UE, just calculate its contribution
+            foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+                $results[$comp->id][$strandid] =
+                        $maxuevalues[$strandid] ? $uevalues[$comp->id][$currentue->id][$strandid] / $maxuevalues[$strandid] : 0;
+            }
         }
-
         return $results;
     }
 
