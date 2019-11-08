@@ -39,6 +39,7 @@ class competency_progress_overview implements \renderable, templatable {
     public $childrencomps = array();
     protected $strandlist = null;
     protected $matrix = null;
+    const MAX_FULLNAME_LN = 100;
 
     public function __construct(
             $rootcomp,
@@ -73,6 +74,8 @@ class competency_progress_overview implements \renderable, templatable {
      *
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
      * @return stdClass|array
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
     public function export_for_template(renderer_base $output) {
         global $FULLME;
@@ -121,6 +124,9 @@ class competency_progress_overview implements \renderable, templatable {
         foreach ($this->childrencomps as $c) {
             $compitem = new \stdClass();
             $compitem->competency_fn = $c->fullname;
+            if (strlen($compitem->competency_fn)> self::MAX_FULLNAME_LN ) {
+                $compitem->competency_fn = trim(\core_text::substr($compitem->competency_fn, 0, self::MAX_FULLNAME_LN)) . '...';
+            }
             $compitem->competency_sn = $c->shortname;
 
             $compitem->competency_link = null;

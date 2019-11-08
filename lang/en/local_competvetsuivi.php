@@ -66,6 +66,7 @@ $string['matrixuevscomptitle'] = 'Contribution of {$a->uename} the competencies 
 $string['matrixuevscompgraphtitle:global'] = 'Contribution of {$a->uename} to the general progression';
 $string['matrixuevscompgraphtitle:semester'] = 'Contribution of {$a->uename} to semester';
 $string['matrix:view'] = 'View matrix {$a}';
+$string['milestone'] = 'Target leve at the end of Semester(n)';
 $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file uploaded';
 $string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
 $string['userdataimported'] = 'User Data Imported';

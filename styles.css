@@ -1,0 +1,19 @@
+/* Default stylesheet for CompetVet Suivi, will be overridden if necessary in theme */
+
+.cvs-breadcrumb, .cvs-breadcrumb a {
+    background: black;
+    color: white;
+}
+
+.competency-namelink {
+    font-weight: bolder;
+}
+
+.competency-sn {
+    color: gray;
+    font-weight: bold;
+}
+
+.progress-cvs .resultmarker {
+    font-size: xx-small !important; /* TODO Adjust this in the graph css directly*/
+}

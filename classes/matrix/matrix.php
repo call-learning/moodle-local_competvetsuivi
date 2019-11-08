@@ -323,6 +323,7 @@ class matrix {
         return get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');
     }
 
+    const MAX_FULLNAME_SIZE =  255;
     /**
      * Import a matrix from a file and fills the relevant tables
      *
@@ -403,7 +404,7 @@ class matrix {
             $competency->descriptionformat = FORMAT_PLAIN;
             $competency->shortname = join('.', $competencypath);
             $competency->fullname = $description;
-            if (strlen($competency->fullname)) {
+            if (strlen($competency->fullname)> static::MAX_FULLNAME_SIZE ) {
                 $competency->fullname = trim(\core_text::substr($competency->fullname, 0, 252)) . '...';
             }
             $competency->id = $DB->insert_record('cvs_matrix_comp', $competency);

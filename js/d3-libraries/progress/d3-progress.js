@@ -17,7 +17,7 @@ function progress () {
   let graphMargins = { top: 20, right: 5, bottom: 30, left: 15 }; // Absolute margins
   let graphWidth = function () { return width - graphMargins.left - graphMargins.right; };
   let graphHeight = function () { return height - graphMargins.top - graphMargins.bottom; };
-  let marginW = 0.1;
+  let marginW = 0.05;
   let marginH = 0.1;
 
   let ticksValues = [0, 0.25, 0.50, 0.75, 1];
