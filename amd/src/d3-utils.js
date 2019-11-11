@@ -81,7 +81,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
 
                     // Hack we just do the graph on the strand 1
 
-                    var color = d3.scaleOrdinal().range(d3.schemeDarkgit);
+                    var color = d3.scaleOrdinal().range(d3.schemeDark2);
 
                     var arc = d3.arc()
                         .outerRadius(radius - 10)
