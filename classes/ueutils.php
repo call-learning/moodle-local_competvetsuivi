@@ -114,7 +114,7 @@ class ueutils {
 
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
-        $uevalues = [];
+        $compuestrandvalues = [];
 
         // Restrict UE to semester or not
         if ($samesemesteronly) {
@@ -125,20 +125,20 @@ class ueutils {
         }
         // Go through all competencies and find out about the contribution of each UE to this competency
         foreach ($allcomps as $comp) {
-            if (!key_exists($comp->id, $uevalues)) {
-                $uevalues[$comp->id] = [];
+            if (!key_exists($comp->id, $compuestrandvalues)) {
+                $compuestrandvalues[$comp->id] = [];
             }
             foreach ($allues as $ue) {
                 $currentuevals = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id, true);
                 foreach ($currentuevals as $strandval) {
                     $strandid = $strandval->type;
-                    if (!key_exists($ue->id, $uevalues[$comp->id])) {
-                        $uevalues[$comp->id][$ue->id] = [];
+                    if (!key_exists($ue->id, $compuestrandvalues[$comp->id])) {
+                        $compuestrandvalues[$comp->id][$ue->id] = [];
                     }
-                    if (!isset($uevalues[$comp->id][$ue->id][$strandid])) {
-                        $uevalues[$comp->id][$ue->id][$strandid] = 0;
+                    if (!isset($compuestrandvalues[$comp->id][$ue->id][$strandid])) {
+                        $compuestrandvalues[$comp->id][$ue->id][$strandid] = 0;
                     }
-                    $uevalues[$comp->id][$ue->id][$strandid] += chartingutils::get_real_value_from_strand($strandid,
+                    $compuestrandvalues[$comp->id][$ue->id][$strandid] += chartingutils::get_real_value_from_strand($strandid,
                             $strandval->value);
                 }
             }
@@ -150,7 +150,7 @@ class ueutils {
             // First initialize the array
             $maxuevalues = array_fill_keys(array_keys(matrix::MATRIX_COMP_TYPE_NAMES), 0);
             // Then for each UE add its contribution to the semester/cursus so we have the max contributed
-            $maxuevalues = array_reduce($uevalues[$comp->id], function($carry, $item) {
+            $maxuevalues = array_reduce($compuestrandvalues[$comp->id], function($carry, $item) {
                 foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
                     $carry[$strandid] += $item[$strandid];
                 }
@@ -159,10 +159,62 @@ class ueutils {
             // Now for the current UE, just calculate its contribution
             foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
                 $results[$comp->id][$strandid] =
-                        $maxuevalues[$strandid] ? $uevalues[$comp->id][$currentue->id][$strandid] / $maxuevalues[$strandid] : 0;
+                        $maxuevalues[$strandid] ?
+                                $compuestrandvalues[$comp->id][$currentue->id][$strandid] / $maxuevalues[$strandid] : 0;
             }
         }
         return $results;
     }
 
+    /**
+     * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
+     * Results are for each competency for one given strand
+     *
+     * @param $matrix : ue
+     * @param $ue : given ue
+     * @param int $rootcompid root competency id to start with. If null we take the macro competencies
+     * @param bool $samesemesteronly only in the same semester
+     * @return array
+     */
+    public static function get_ue_vs_competencies_percent($matrix, $currentue, $strandid, $rootcompid = 0) {
+
+        $allcomps = $matrix->get_child_competencies($rootcompid, true);
+
+        $compuevalues = [];
+
+        // Go through all competencies and find out about the contribution of the UE to this competency
+        $maxval = 0;
+
+        foreach ($allcomps as $comp) {
+            $currentuevals = $matrix->get_values_for_ue_and_competency($currentue->id, $comp->id, true);
+
+            $strandval = array_filter($currentuevals, function($v, $k) use ($strandid) {
+                return $v->type == $strandid;
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $strandval = reset($strandval);
+
+            if (!key_exists($comp->id, $compuevalues)) {
+                $compuevalues[$comp->id] = 0;
+            }
+            $value = chartingutils::get_real_value_from_strand($strandid,
+                    $strandval->value);
+            $maxval += $value;
+            $compuevalues[$comp->id] +=
+                    chartingutils::get_real_value_from_strand($strandid,
+                            $strandval->value);
+        }
+        // Now calculate the results for each comp
+        $results = new \stdClass();
+        $results->compsvalues = [];
+        foreach ($compuevalues as $compid => $total) {
+            $compvalue = new \stdClass();
+            $compvalue->val = $total / $maxval;
+            $compvalue->fullname = $allcomps[$compid]->fullname;
+            $compvalue->shortname = $allcomps[$compid]->shortname;
+            $results->compsvalues[$compid] = $compvalue;
+        }
+        $results->strandid = $strandid;
+        return $results;
+    }
 }

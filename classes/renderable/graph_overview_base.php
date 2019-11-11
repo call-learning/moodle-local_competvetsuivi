@@ -40,7 +40,7 @@ abstract class graph_overview_base {
     protected $matrix = null;
     public $charts = array();
 
-    public function init(
+    public function init_bar_chart(
             $matrix,
             $strandlist,
             $rootcomp = null,
@@ -58,7 +58,7 @@ abstract class graph_overview_base {
         $this->childrencomps = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0, true);
     }
 
-    protected function get_intial_exportable_context(renderer_base $output) {
+    protected function get_bar_chart_exportable_context(renderer_base $output) {
         global $FULLME;
         // TODO : fix this, we should have a way to override
         $exportablecontext = new \stdClass();

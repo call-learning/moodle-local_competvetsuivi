@@ -17,3 +17,16 @@
 .progress-cvs .resultmarker {
     font-size: xx-small !important; /* TODO Adjust this in the graph css directly*/
 }
+
+
+.cvs-summary-chart {
+    min-height: 400px;
+}
+
+.cvs-summary-chart .fn-label {
+    fill: gray;
+}
+
+.cvs-summary-chart .labels text {
+    font-size: x-small;
+}

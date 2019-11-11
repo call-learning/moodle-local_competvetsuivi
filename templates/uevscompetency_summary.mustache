@@ -17,11 +17,10 @@
 {{!
   @local_competvetsuivi
 
-  CompetVetSuivi chart template
+  CompetVetSuivi page template for a single UE showing what the UE contributes
+  to the global competency
 
-  The purpose of this template is to generate a graph using the D3 JS
-
-  Classes required for JS:
+  Classes required for JS: all the boostrap classes for display
 
   Data attributes required for JS:
 
@@ -29,19 +28,22 @@
 
   Example context (json):
   {
-    compid : competency id
-    uniqueidentifier: unique identifier for this graph
-    type : graph type (bullet, progress)
-    data: data
+    "graph_title": the fullname of the current competency,
+    "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
+    "chartdata": graphdata per strand as an array
+                        [
+                        { } , ...
+                        ]
+
+    ]
   }
+
 
 }}
 
-<svg id="{{uniqueidentifier}}" class="chart-item" data-graph-type="{{type}}" width="100%" height="100%"></svg>
 
-{{#js}}
-    require(['local_competvetsuivi/config', 'local_competvetsuivi/d3-utils'], function(config, d3utils) {
-    var uid = '{{uniqueidentifier}}';
-    var d3chart = d3utils.{{type}}_charts(uid,{{{data}}});
-    });
-{{/js}}
+<div class="cvs-summary-chart">
+    {{#chartdata}}
+        {{> local_competvetsuivi/chart_item }}
+    {{/chartdata}}
+</div>

@@ -40,7 +40,7 @@ class competency_progress_overview extends graph_overview_base implements \rende
             $userdata,
             $currentsemester,
             $linkbuildercallback = null) {
-        $this->init($matrix, $strandlist, $rootcomp, $linkbuildercallback);
+        $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback);
         foreach ($this->childrencomps as $comp) {
             $this->charts[$comp->id] =
                     new chart_item(
@@ -62,7 +62,7 @@ class competency_progress_overview extends graph_overview_base implements \rende
      * @throws \moodle_exception
      */
     public function export_for_template(renderer_base $output) {
-        $exportablecontext = $this->get_intial_exportable_context($output);
+        $exportablecontext = $this->get_bar_chart_exportable_context($output);
         return $exportablecontext;
     }
 }

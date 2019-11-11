@@ -38,8 +38,8 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
                 var svgselector = '#' + svgid;
                 var svgelement = $(svgselector).first();
                 var padding = Object.assign(data.padding || {}, this.default_padding);
-                var width = svgelement.width() - padding.left - padding.right;
-                var height = svgelement.height() - padding.top - padding.bottom;
+                var width = svgelement.parent().width() - padding.left - padding.right;
+                var height = svgelement.parent().height() - padding.top - padding.bottom;
 
                 var chart = d3bulletcvs.bulletcvs()
                     .width(width)
@@ -67,6 +67,111 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
                             .call(chart);
                     }
                 );
+            },
+
+            ring_charts: function (svgid, data) {
+                var thisutils = this;
+                $(document).ready(function () {
+                    var svgselector = '#' + svgid;
+                    var svgelement = $(svgselector).first();
+                    var padding = thisutils.default_padding;
+                    var width = svgelement.parent().width() - padding.left - padding.right;
+                    var height = svgelement.parent().height() - padding.top - padding.bottom;
+                    var radius = Math.min(width, height) / 2;
+
+                    // Hack we just do the graph on the strand 1
+
+                    var color = d3.scaleOrdinal().range(d3.schemeDarkgit);
+
+                    var arc = d3.arc()
+                        .outerRadius(radius - 10)
+                        .innerRadius(radius / 2);
+
+                    var outerArc = d3.arc()
+                        .outerRadius(radius )
+                        .innerRadius(radius - 10 );
+
+                    // Create the basic drawing / container
+                    var svg = d3.select(svgselector).attr("width", width)
+                        .attr("height", height)
+                        .append("g")
+                        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+                    // Pie chart return just the value
+                    var pie = d3.pie().value(function (d) {
+                        return d.val;
+                    });
+                    var d3piedata =  pie(Object.values(data.compsvalues));
+                    var g = svg.selectAll(".arc")
+                        .data(d3piedata)
+                        .enter()
+                        .append("g")
+                        .attr("class", "arc");
+
+                    //Draw, Style and color the arc
+                    g.append("path")
+                        .attr("d", arc)
+                        .style("fill", function (_d,i) {
+                            return color(i);
+                        })
+                        .style('stroke', "black");
+                    // Add the polylines between chart and labels (see https://www.d3-graph-gallery.com/graph/donut_label.html)
+                    svg.append('g').classed('lines',true);
+                    svg.append('g').classed('labels',true);
+                    svg
+                        .select('.lines')
+                        .selectAll('polyline')
+                        .data(d3piedata)
+                        .enter()
+                        .append('polyline')
+                        .attr("stroke", "black")
+                        .style("fill", "none")
+                        .attr("stroke-width", 1)
+                        .attr('points', function (d) {
+                            var posA = arc.centroid(d); // line insertion in the slice
+                            var posB = outerArc.centroid(d);
+                            var posC = outerArc.centroid(d);
+                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                            posC[0] = radius * 0.95 * (midangle < Math.PI ? 1 : -1);
+                            return [posA, posB, posC];
+                        });
+
+                    // Add the polylines between chart and labels:
+                    var labels = svg
+                        .select('.labels')
+                        .selectAll('text')
+                        .data(d3piedata)
+                        .enter()
+                        .append('text')
+                        .attr('transform', function (d) {
+                            var pos = outerArc.centroid(d);
+                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                            pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
+                            return 'translate(' + pos + ')';
+                        });
+                    labels.append('tspan')
+                        .text(function (d) {
+                            return d.data.shortname + ' - ' + (Math.round(d.data.val * 100)) + '%';
+                        })
+                        .attr('class','sn-label')
+                        .style('text-anchor', function (d) {
+                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                            return (midangle < Math.PI ? 'start' : 'end');
+                        });
+                    labels.append('tspan')
+                        .text(function (d) {
+                            return d.data.fullname;
+                        })
+                        .attr('class','fn-label')
+                        .attr('dy','1.2em')
+                        .attr('x','0')
+                        .style('text-anchor', function (d) {
+                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                            return (midangle < Math.PI ? 'start' : 'end');
+                        });
+
+
+                });
             },
             load_css: function (path) {
                 var link = document.createElement('link');

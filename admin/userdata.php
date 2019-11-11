@@ -80,5 +80,4 @@ $renderable = new local_competvetsuivi\renderable\userdata_log();
 echo $OUTPUT->header();
 $mform->display();
 echo $renderer->render($renderable);
-//echo $renderer->render_from_template('local_competvetsuivi/userdata_log', $renderable->export_for_template($renderer));
 echo $OUTPUT->footer();

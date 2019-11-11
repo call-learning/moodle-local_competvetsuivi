@@ -31,7 +31,7 @@ use renderer_base;
 use stdClass;
 use templatable;
 
-class uevscompetency_overview extends graph_overview_base implements \renderable, templatable {
+class uevscompetency_summary extends graph_overview_base implements \renderable, templatable {
     const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait)
 
     protected $ue = null;
@@ -39,37 +39,16 @@ class uevscompetency_overview extends graph_overview_base implements \renderable
     public function __construct(
             $matrix,
             $ueid,
-            $strandlist,
-            $rootcomp = null,
-            $samesemesteronly = true,
-            $linkbuildercallback = null
+            $rootcomp = null
     ) {
-        $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback);
+        $capabilitystrand = matrix::MATRIX_COMP_TYPE_ABILITY;
+        $this->init_bar_chart($matrix, array($capabilitystrand), $rootcomp, null);
         $rootcompid = $rootcomp ? $rootcomp->id : 0;
 
         $this->ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
-        $results = ueutils::get_ue_vs_competencies($matrix, $this->ue, $rootcompid, $samesemesteronly);
-        foreach (array_keys($results) as $compid) {
-            $chartdata = [];
-            foreach ($strandlist as $st) {
-                // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
-                $data = new \stdClass();
-                $res = new \stdClass();
-                $res->label = matrix::comptype_to_string($st);
-                $res->type = $st;
-                $res->value = $results[$compid][$st];
-                $data->markers = [];
-                $data->result = $res;
-                if ($res->value > 0) {
-                    $chartdata [] = $data;
-                }
-            }
-            if (!empty($chartdata)) {
-                $this->charts[$compid] = new chart_item($chartdata);
-            }
-        }
-        $this->samesemesteronly = $samesemesteronly;
+        $chartdata = ueutils::get_ue_vs_competencies_percent($matrix, $this->ue,$capabilitystrand,  $rootcompid);
 
+        $this->chart = new chart_item($chartdata, 'ring');
     }
 
     /**
@@ -81,7 +60,8 @@ class uevscompetency_overview extends graph_overview_base implements \renderable
      * @return stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        $exportablecontext = $this->get_bar_chart_exportable_context($output);
+        $exportablecontext = new stdClass();
+        $exportablecontext->chartdata = $this->chart->export_for_template($output);
         return $exportablecontext;
     }
 }

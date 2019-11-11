@@ -72,6 +72,12 @@ if ($currentcompid) {
     $currentcomp = $matrix->comp[$currentcompid];
 }
 
+$progress_percent =  new \local_competvetsuivi\renderable\uevscompetency_summary(
+        $matrix,
+        $ueid,
+        $currentcomp
+);
+
 $progress_overview = new \local_competvetsuivi\renderable\uevscompetency_overview(
         $matrix,
         $ueid,
@@ -80,5 +86,9 @@ $progress_overview = new \local_competvetsuivi\renderable\uevscompetency_overvie
 );
 
 $renderer = $PAGE->get_renderer('local_competvetsuivi');
+
+echo $renderer->render($progress_percent);
 echo $renderer->render($progress_overview);
+
+
 echo $OUTPUT->footer();
