@@ -43,6 +43,7 @@ define(['core/config'], function (config) {
                 'd3-format': 'd3',
                 'd3-transition': 'd3',
                 'd3-shape': 'd3',
+                'd3-selection': 'd3',
             }
         },
         shim: {
@@ -53,7 +54,7 @@ define(['core/config'], function (config) {
                 deps: ['d3', 'd3-axis', 'd3-scale', 'd3-selection', 'd3-timer', 'd3-transition', 'd3-scale-chromatic'],
             },
             'd3-progress': {
-                deps: ['d3', 'd3-axis', 'd3-scale', 'd3-format', 'd3-transition','d3-shape'],
+                deps: ['d3', 'd3-axis', 'd3-scale', 'd3-format', 'd3-transition','d3-shape', 'd3-selection'],
             },
 
         }

@@ -1,10 +1,10 @@
 // https://github.com/call-learning/d3-progress.git v1.0.0 Copyright 2019 Laurent David
     //  https://github.com/call-learning/d3-progress v1.0.0. Copyright 2019 SAS CALL Learning
 (function (global, factory) {
-typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-axis'), require('d3-scale'), require('d3-shape')) :
-typeof define === 'function' && define.amd ? define(['exports', 'd3-axis', 'd3-scale', 'd3-shape'], factory) :
-(global = global || self, factory(global.d3 = global.d3 || {}, global.d3, global.d3, global.d3));
-}(this, function (exports, d3Axis, d3Scale, d3Shape) { 'use strict';
+typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-selection'), require('d3-axis'), require('d3-scale'), require('d3-shape')) :
+typeof define === 'function' && define.amd ? define(['exports', 'd3-selection', 'd3-axis', 'd3-scale', 'd3-shape'], factory) :
+(global = global || self, factory(global.d3 = global.d3 || {}, global.d3, global.d3, global.d3, global.d3));
+}(this, function (exports, d3Selection, d3Axis, d3Scale, d3Shape) { 'use strict';
 
 /**
  * Make a data structure to hold a progress bar with markers
@@ -24,6 +24,10 @@ function progress () {
 
   // For each small multiple…
   function progressCVS (svgitem) {
+
+    // Prepare for patterns
+
+    progressCVS.addPatternDefinition();
 
     // This wrapper contains the graph and the axis
     let wrap = svgitem
@@ -95,7 +99,7 @@ function progress () {
       });
 
     var triangleSize = graphWidth() / 50;
-    var topPosition = function(index) {
+    var topPosition = function (index) {
       return extentY * (index % 2) + graphMargins.top;
     };
 
@@ -109,22 +113,39 @@ function progress () {
 
     var symbolGenerator = d3Shape.symbol().size(triangleSize).type(d3Shape.symbolTriangle);
 
-    var  resultsmarker = resultsmarkerouter.append('g')
-      .attr('transform', function (r, index) {return `rotate(${180 * ((index+1) % 2)})`;});
+    var resultsmarker = resultsmarkerouter.append('g')
+      .attr('transform', function (r, index) {return `rotate(${180 * ((index + 1) % 2)})`;});
 
     resultsmarker
       .append('path')
       .attr('d', function () {
         return symbolGenerator();
       })
-      .attr('y',  triangleSize * 0.8);
+      .attr('y', triangleSize * 0.8);
 
-
-    resultsmarker
+    resultsmarker.append('g').attr('class', 'resultmarker-bg')
       .append('text')
-      .attr('dy', function (_d, index) { return (index) % 2 ? triangleSize : -triangleSize*0.5;})
-      .attr('transform', function (r, index) {return `rotate(${180 * ((index+1) % 2)})`;})
+      .attr('class', 'resultmarker-text')
+      .attr('dy', function (_d, index) { return (index) % 2 ? triangleSize : -triangleSize * 0.5;})
       .text(function (d) {return `${Math.round(d * 100)} %`;});
+
+    var markersbb = [];
+    svgitem.selectAll('text.resultmarker-text').each(function (d, i) {
+      markersbb[i] = this.getBBox(); // get bounding box of text field and store it in texts array
+    });
+
+    // Adjust rect so they are in the background
+    svgitem
+      .selectAll('g.resultmarker-bg')
+      .attr('transform', function (r, index) {return `rotate(${180 * ((index + 1) % 2)})`;})
+      .data(markersbb)
+      .append('rect')
+      .lower()
+      .attr('class', 'resultmarker-bg')
+      .attr('x', function (d) { return d.x; })
+      .attr('y', function (d) { return d.y; })
+      .attr('width', function (d) { return d.width; })
+      .attr('height', function (d) { return d.height; });
 
   }
 
@@ -203,6 +224,49 @@ function progress () {
     if (!arguments.length) return data;
     data = _;
     return this;
+  };
+
+  progressCVS.addPatternDefinition = function (_) {
+    var availablepatterns = [
+      {
+        pattername: 'crosshatch',
+        imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4JyBoZWlnaHQ9JzgnPgogIDxyZWN0IHdpZHRoPSc4JyBoZWlnaHQ9JzgnIGZpbGw9JyNmZmYnLz4KICA8cGF0aCBkPSdNMCAwTDggOFpNOCAwTDAgOFonIHN0cm9rZS13aWR0aD0nMC41JyBzdHJva2U9JyNhYWEnLz4KPC9zdmc+Cg=='
+      },
+      {
+        pattername: 'diagonal-stripe-3',
+        imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzMnLz4KPC9zdmc+'
+      },
+      {
+        pattername: 'whitecarbon',
+        imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR0aD0nNicgaGVpZ2h0PSc2Jz4KICA8cmVjdCB3aWR0aD0nNicgaGVpZ2h0PSc2JyBmaWxsPScjZWVlZWVlJy8+CiAgPGcgaWQ9J2MnPgogICAgPHJlY3Qgd2lkdGg9JzMnIGhlaWdodD0nMycgZmlsbD0nI2U2ZTZlNicvPgogICAgPHJlY3QgeT0nMScgd2lkdGg9JzMnIGhlaWdodD0nMicgZmlsbD0nI2Q4ZDhkOCcvPgogIDwvZz4KICA8dXNlIHhsaW5rOmhyZWY9JyNjJyB4PSczJyB5PSczJy8+Cjwvc3ZnPg=='
+      },
+      {
+        pattername: 'dots-7',
+        imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScgLz4KICA8cmVjdCB4PScwJyB5PScwJyB3aWR0aD0nNycgaGVpZ2h0PSc3JyBmaWxsPSdibGFjaycgLz4KPC9zdmc+'
+      },
+    ];
+
+    var svgpattern = d3Selection.select('body').select('svg#d3svgpatterndef');
+    if (svgpattern.empty()) {
+      d3Selection.select('body')
+        .append('svg')
+        .attr('id', 'd3svgpatterndef')
+        .append('defs')
+        .selectAll('pattern')
+        .data(availablepatterns)
+        .enter()
+        .append('pattern')
+        .attr('id', function (d) {return d.pattername;})
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('width', 10)
+        .attr('height', 10)
+        .append('image')
+        .attr('xlink:href', function (d) {return d.imagedef;})
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 10)
+        .attr('height', 10);
+    }
   };
 
   return progressCVS;

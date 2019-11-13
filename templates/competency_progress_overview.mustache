@@ -69,7 +69,9 @@
             </div>
             <div class="col-sm-8">
                 {{#graphdata}}
-                    {{> local_competvetsuivi/chart_item }}
+                    <div class="macrocomp-{{competency_mcompindex}}">
+                        {{> local_competvetsuivi/chart_item }}
+                    </div>
                 {{/graphdata}}
             </div>
         </div>

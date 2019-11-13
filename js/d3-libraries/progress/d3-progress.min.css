@@ -37,135 +37,57 @@
 }
 
 
-/*   Competency Type 1 */
+/*   Competency Type : Generic  */
+.progress-cvs .bar {
+    fill-opacity: 60%;
+}
+
+.progress-cvs .bar-bg {
+    fill: #faa339;
+}
+
+.progress-cvs .marker {
+    fill: #eee;
+}
+
+.progress-cvs .marker.active {
+    fill: #aaa;
+}
+
+.progress-cvs .marker text {
+    fill: #555;
+}
+
+.progress-cvs .marker circle {
+    stroke: #999;
+}
+
+.progress-cvs .marker.active text {
+    fill: #fff;
+}
+
+.progress-cvs .marker.active circle {
+    stroke: #bbb;
+}
+
+.progress-cvs rect.resultmarker-bg {
+    fill: white;
+    fill-opacity: 50%;
+}
+
+/*   Competency Type 2, 3, 4 */
 .progress-cvs .comptype-1 .bar {
-    fill: #faa339;
+    fill: url(#crosshatch);
 }
 
-.progress-cvs .comptype-1 .bar-bg {
-    fill: #fee3c0;
-}
-
-
-.progress-cvs .comptype-1 .marker {
-    fill: #fee3c0;
-}
-
-.progress-cvs .comptype-1 .marker.active {
-    fill: #faa339;
-}
-
-.progress-cvs .comptype-1 .marker text {
-    fill: #faa339;
-}
-
-.progress-cvs .comptype-1 .marker circle {
-    stroke: #faa339;
-}
-
-.progress-cvs .comptype-1 .marker.active  text {
-    fill: #fee3c0;
-}
-
-.progress-cvs .comptype-1 .marker.active  circle {
-    stroke: #fee3c0;
-}
-
-
-/*   Competency Type 2 */
 .progress-cvs .comptype-2 .bar {
-    fill: #3991de;
+    fill: url(#diagonal-stripe-3);
 }
 
-.progress-cvs .comptype-2 .bar-bg  {
-    fill: #a9c5de;
-}
-
-.progress-cvs .comptype-2 .marker {
-    fill: #a9c5de;
-}
-
-.progress-cvs .comptype-2 .marker.active {
-    fill: #3991de;
-}
-
-.progress-cvs .comptype-2 .marker text {
-    fill: #3991de;
-}
-.progress-cvs .comptype-2 .marker circle {
-    stroke: #3991de;
-}
-
-.progress-cvs .comptype-2 .marker.active  text {
-    fill: #a9c5de;
-}
-
-.progress-cvs .comptype-2 .marker.active  circle {
-    stroke: #a9c5de;
-}
-
-/*   Competency Type 3 */
 .progress-cvs .comptype-3 .bar {
-    fill: #39fa43;
+    fill: url(#whitecarbon);
 }
 
-.progress-cvs .comptype-3 .bar-bg {
-    fill: #befac1;
-}
-
-.progress-cvs .comptype-3 .marker {
-    fill: #befac1;
-}
-
-.progress-cvs .comptype-3 .marker.active {
-    fill: #befac1;
-}
-
-
-.progress-cvs .comptype-3 .marker text {
-    fill: #39fa43;
-}
-
-.progress-cvs .comptype-3 .marker circle {
-    stroke: #39fa43;
-}
-
-.progress-cvs .comptype-3 .marker.active  text {
-    fill: #befac1;
-}
-
-.progress-cvs .comptype-3 .marker.active  circle {
-    stroke: #befac1;
-}
-
-
-/*   Competency Type 4 */
-.progress-cvs .comptype-4 .bar {
-    fill: #fa39f0;
-}
-
-.progress-cvs .comptype-4 .bar-bg {
-    fill: #fabef7;
-}
-
-.progress-cvs .comptype-4 .marker {
-    fill: #fabef7;
-}
-
-.progress-cvs .comptype-4 .marker.active {
-    fill: #fabef7;
-}
-
-.progress-cvs .comptype-4 .marker text {
-    fill: #fa39f0;
-}
-.progress-cvs .comptype-4 .marker circle {
-    stroke: #fa39f0;
-}
-
-.progress-cvs .comptype-4 .marker.active  text {
-    fill: #fabef7;
-}
-.progress-cvs .comptype-4 .marker circle {
-    stroke: #fabef7;
+.progress-cvs .comptype-3 .bar {
+    fill: url(#dots-7);
 }

@@ -30,3 +30,39 @@
 .cvs-summary-chart .labels text {
     font-size: x-small;
 }
+
+
+/* Bar Styling for macro competencies 1 to 8 */
+.macrocomp-1 .progress-cvs .bar-bg {
+    fill: #faa339;
+}
+
+.macrocomp-2 .progress-cvs .bar-bg {
+    fill: #3991de;
+}
+
+
+.macrocomp-3 .progress-cvs .bar-bg {
+    fill: #39fa43;
+}
+
+.macrocomp-4 .progress-cvs .bar-bg {
+    fill: #faa339;
+}
+
+.macrocomp-5 .progress-cvs .bar-bg {
+    fill: #fa39f0;
+}
+
+.macrocomp-6 .progress-cvs .bar-bg {
+    fill: #a9c5de;
+}
+
+.macrocomp-7 .progress-cvs .bar-bg {
+    fill: #befac1;
+}
+
+
+.macrocomp-8 .progress-cvs .bar-bg {
+    fill: #fabef7;
+}
