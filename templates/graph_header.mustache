@@ -17,7 +17,7 @@
 {{!
   @local_competvetsuivi
 
-  Will render the graph header: legend and breadcrumb
+  Will render the graph header: title and breadcrumb
 
   Classes required for JS: all the boostrap classes for display
 
@@ -27,68 +27,32 @@
 
   Example context (json):
   {
-    "comp_fullname": the fullname of the current competency,
-    "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
+    "graph_title": the graph title
     "breadcrumb": [ {'name': , 'link'}
+    "competency_desc": Competency full description
   }
 
 
 }}
 
-<div class="row cvs-breadcrumb">
+<div class="row graph-header-title">
     <div class="col-12">
-        <span>
-            {{#breadcrumbs}}
-                <a href="{{link}}">{{name}}</a> /
-            {{/breadcrumbs}}
-        </span>
+        <h3>{{graph_title}}</h3>
     </div>
 </div>
-<div class="row pt-3 pb-3">
-    <div class="col-sm-4">
-        <h3>{{comp_fullname}}</h3>
+<div class="row pt-2 pb-2 cvs-breadcrumb">
+    <div class="col-12">
+            <span>
+                {{#breadcrumbs}}
+                    <a href="{{link}}">{{name}}</a> /
+                {{/breadcrumbs}}
+            </span>
     </div>
-
-    <div class="progress-cvs col-8">
-        <div class="row">
-
-            {{#comp_types}}
-                <div class="col-4">
-                    <div class="d-flex flex-column justify-content-center">
-                        <div>
-                            <svg width="1.5em" height="1.5em">
-                                <g class="comptype-{{comp_type_id}}">
-                                    <g class="marker bar">
-                                        <circle cx="0.75em" cy="0.75em" r="0.5em"/>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <div>
-                            <span>{{comp_type_name}}</span>
-                        </div>
-                    </div>
-                </div>
-            {{/comp_types}}
-            {{$has_no_milestone}}
-                <div class="col-4">
-                    <div class="flex-column justify-content-center">
-                        <div>
-                            <svg width="1.5em" height="1.5em">
-                                <g class="comptype-1">
-                                    <g class="marker">
-                                        <circle cx="0.75em" cy="0.75em" r="0.5em"/>
-                                        <text x="0.75em" y="0.75em" class="marker-text">1</text>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <div>
-                            <span>{{#str}}milestone, local_competvetsuivi{{/str}}</span>
-                        </div>
-                    </div>
-                </div>
-            {{/has_no_milestone}}
-        </div>
+</div>
+<div class="row pt-2 pb-2">
+    <div class="col-12">
+            <span>
+                {{ competency_desc }}
+            </span>
     </div>
 </div>

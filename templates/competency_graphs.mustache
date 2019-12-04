@@ -1,0 +1,92 @@
+{{!
+   This file is part of Moodle - http://moodle.org/
+
+   Moodle is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Moodle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+ }}
+{{!
+  @local_competvetsuivi
+
+  CompetVetSuivi utils that will just draw all graph in a given section
+
+  Classes required for JS: all the boostrap classes for display
+
+  Data attributes required for JS:
+
+  Context variables required for this template:
+
+    Example context (json):
+    {
+    "compitems" : [
+        {
+            "competency_fn": competency fullname,
+            "competency_sn": competency shortname,
+            "competency_link": competency link to the page,
+            "compvsuegraphdata": graphdata per strand as an array
+                        [
+                        { } , ...
+                        ]
+
+        ]
+    }
+
+
+}}
+
+{{#compitems}}
+    <div class="row mb-1 mt-1">
+        <div class="col-sm-4">
+            <div class="flex-column">
+                <div class="competency-sn-link">
+                    {{#competency_link}}
+                    <a href="{{competency_link}}">
+                    {{/competency_link}}
+                    {{competency_sn}}
+                    {{#competency_link}}
+                    </a>
+                    {{/competency_link}}
+                </div>
+                <div class="competency-desc text-truncate">
+                    {{competency_desc}}
+                </div>
+                <div>
+                    <a href='#' class="comp-readmore">({{#str}}readmore, local_competvetsuivi{{/str}})</a>
+                    <a href='#' class="invisible comp-readless">({{#str}}readless, local_competvetsuivi{{/str}})</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            {{#graphdata}}
+                <div class="macrocomp-{{competency_mcompindex}}">
+                    {{> local_competvetsuivi/chart_item }}
+                </div>
+            {{/graphdata}}
+        </div>
+    </div>
+{{/compitems}}
+
+{{#js}}
+    require(['jquery'], function($) {
+    var comptoggler = function(e) {
+        var parent = $(e.target).parent().parent();
+        parent.children('.competency-desc').toggleClass('text-truncate');
+        parent.find('.comp-readless').toggleClass('invisible');
+        parent.find('.comp-readmore').toggleClass('invisible');
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
+    };
+    $('.comp-readless').click(comptoggler);
+    $('.comp-readmore').click(comptoggler);
+    });
+{{/js}}

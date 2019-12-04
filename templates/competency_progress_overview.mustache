@@ -28,7 +28,7 @@
 
   Example context (json):
   {
-    "comp_fullname": the fullname of the current competency,
+    "graph_title": the graph title
     "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
     "breadcrumb": [ {'name': , 'link'}
     "compitems" : [
@@ -47,33 +47,7 @@
 
 }}
 <div>
-    {{< local_competvetsuivi/graph_header}}
-    {{/ local_competvetsuivi/graph_header}}
-    {{#compitems}}
-        <div class="row mb-1 mt-1">
-            <div class="col-sm-4">
-                <div class="flex-column">
-                    <div class="competency-namelink">
-                        {{#competency_link}}
-                        <a href="{{competency_link}}">
-                        {{/competency_link}}
-                        {{competency_fn}}
-                        {{#competency_link}}
-                        </a>
-                        {{/competency_link}}
-                    </div>
-                    <div class="competency-sn">
-                        {{competency_sn}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                {{#graphdata}}
-                    <div class="macrocomp-{{competency_mcompindex}}">
-                        {{> local_competvetsuivi/chart_item }}
-                    </div>
-                {{/graphdata}}
-            </div>
-        </div>
-    {{/compitems}}
+    {{> local_competvetsuivi/graph_header}}
+    {{> local_competvetsuivi/competency_graphs}}
+    {{> local_competvetsuivi/graph_footer}}
 </div>

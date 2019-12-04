@@ -61,9 +61,10 @@ abstract class graph_overview_base {
         global $FULLME;
         // TODO : fix this, we should have a way to override
         $exportablecontext = new \stdClass();
-        $exportablecontext->comp_fullname = $this->rootcomp ?
-                $this->rootcomp->fullname : get_string('rootcomp', 'local_competvetsuivi');
+        $exportablecontext->graph_title = get_string('graphtitle:level0', 'local_competvetsuivi');
 
+        $exportablecontext->competency_desc = $this->rootcomp ?
+                format_text($this->rootcomp->description,$this->rootcomp->descriptionformat) : "";
         $exportablecontext->comp_types = array_map(function($comptypeid) {
             return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
         }, $this->strandlist);
@@ -75,7 +76,7 @@ abstract class graph_overview_base {
         $allmacrocomps = array_filter($allcomps, function($c) { return substr_count($c->path, '/') < 2; });
         $allmacrocompsid = array_values(array_map(function($c) {return $c->id;}, $allmacrocomps));
 
-        // Build breadcrump
+        // Build breadcrump and set the title
         if ($this->rootcomp) {
             $allcompsid = explode('/', $this->rootcomp->path);
             // Here array_values is necessary if not the json transformation will think breadcrumbs is an object and not an array
@@ -102,6 +103,11 @@ abstract class graph_overview_base {
                     'name' => get_string('home'),
                     'link' => $homeurl->out(false),
             ]);
+
+            // Set the right title
+
+            $level = min(count($allcompsid), 2);
+            $exportablecontext->graph_title = get_string("graphtitle:level$level", 'local_competvetsuivi');;
         }
         foreach ($this->childrencomps as $c) {
             if (empty($this->charts[$c->id])) {
@@ -113,7 +119,7 @@ abstract class graph_overview_base {
                 $compitem->competency_fn = trim(\core_text::substr($compitem->competency_fn, 0, static::MAX_FULLNAME_LN)) . '...';
             }
             $compitem->competency_sn = $c->shortname;
-
+            $compitem->competency_desc = $c->description;
             $compitem->competency_link = null;
             if ($this->matrix->has_children($c)) {
                 $compitem->competency_link = ($this->linkbuilder)($c)->out(false);

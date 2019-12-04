@@ -1,21 +1,22 @@
 /* Default stylesheet for CompetVet Suivi, will be overridden if necessary in theme */
 
-.cvs-breadcrumb, .cvs-breadcrumb a {
-    background: black;
-    color: white;
+.bar-bg-gray {
+    fill: #555;
 }
 
-.competency-namelink {
+.competency-sn-link a, .competency-sn-link {
     font-weight: bolder;
+    color: #0A246A;
+}
+
+.competency-sn-link a:hover {
+    text-decoration: none;
+    color: #0e0e0e;
 }
 
 .competency-sn {
     color: gray;
     font-weight: bold;
-}
-
-.progress-cvs .resultmarker {
-    font-size: xx-small !important; /* TODO Adjust this in the graph css directly*/
 }
 
 
@@ -27,42 +28,39 @@
     fill: gray;
 }
 
-.cvs-summary-chart .labels text {
-    font-size: x-small;
+.graph-header-title {
+    border-bottom: solid 2px lightgrey;
 }
 
+/* Bar Styling for macro competencies 0 to 7 */
+.macrocomp-0 .progress-cvs .bar-bg {
+    fill: #7ed341;
+}
 
-/* Bar Styling for macro competencies 1 to 8 */
 .macrocomp-1 .progress-cvs .bar-bg {
-    fill: #faa339;
+    fill: #43e4c4;
 }
 
 .macrocomp-2 .progress-cvs .bar-bg {
     fill: #3991de;
 }
 
-
 .macrocomp-3 .progress-cvs .bar-bg {
-    fill: #39fa43;
+    fill: #8a18f7;
 }
 
 .macrocomp-4 .progress-cvs .bar-bg {
-    fill: #faa339;
+    fill: #e85119;
 }
 
 .macrocomp-5 .progress-cvs .bar-bg {
-    fill: #fa39f0;
+    fill: #faa339;
 }
 
 .macrocomp-6 .progress-cvs .bar-bg {
-    fill: #a9c5de;
+    fill: #c3bf46;
 }
 
 .macrocomp-7 .progress-cvs .bar-bg {
-    fill: #befac1;
-}
-
-
-.macrocomp-8 .progress-cvs .bar-bg {
-    fill: #fabef7;
+    fill: #fce646;
 }

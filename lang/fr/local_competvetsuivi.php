@@ -35,7 +35,11 @@ $string['currentprogress'] = 'Avancement';
 $string['directorydoesnotexist'] = 'Directory does not exist';
 $string['enablecompetvetsuivi'] = 'Activer le plugin Compet Vetsuivi';
 $string['enablecompetvetsuivi_help'] = 'Activer le plugin Compet Vetsuivi';
+$string['graphtitle:level0'] = 'Macro-Compétences';
+$string['graphtitle:level1'] = 'Compétences';
+$string['graphtitle:level2'] = 'Capacités';
 $string['importerror'] = 'Erreur d\'importation: {$a}';
+$string['legend'] = 'Légende';
 $string['managematrix'] = 'Gérer les matrices de compétences';
 $string['matrix:add'] = 'Ajouter une matrice';
 $string['matrix:assigncohorts'] = 'Affecter une cohorte';
@@ -68,6 +72,10 @@ $string['matrixuevscompgraphtitle:semester'] = 'Contribution de {$a->uename} au 
 $string['matrix:view'] = 'Voir la matrice {$a}';
 $string['milestone'] = 'Niveau à atteindre à la fin du semestre (n)';
 $string['nomatrixerror'] = 'Pas de feuille avec le préfixe ${a} dans le fichier uploadé';
+$string['readmore'] = 'plus';
+$string['readless'] = 'moins';
+$string['semester'] = 'Semestre';
+$string['semester:x'] = 'Semestre {$a}';
 $string['userdatacsvuploadtask'] = 'Importer les données utilisateurs en CSV';
 $string['userdataimported'] = 'Données utilisateur importées';
 $string['userdatafilepath_desc'] = 'Répertoire avec les données utilisateurs en CSV. Les fichiers seront effacés une fois importés';
@@ -80,7 +88,6 @@ $string['userdatafile_help'] = 'Fichier CSV contentant les données utilisateur'
 $string['userdatauploaddate'] = 'Date';
 $string['userdatainsertednb'] = 'Nombre d\'utilisateurs insérés';
 $string['userdataupdatednb'] = 'Nombre d\'utilisateurs mis à jour';
-$string['rootcomp'] = 'Macro-Compétences';
-$string['semester'] = 'Semestre';
-$string['semester:x'] = 'Semestre {$a}';
+
+
 

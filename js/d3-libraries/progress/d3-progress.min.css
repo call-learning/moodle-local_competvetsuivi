@@ -6,13 +6,14 @@
 }
 
 .progress-cvs .background-bar {
-    fill: #edeff1;
+    fill: #fff;
 }
-
+.progress-cvs .bar-gray-bg {
+    fill: #eee;
+}
 
 .progress-cvs .axisgraph {
     color: #696b6d;
-    font-size: 0.8em;
 }
 
 .progress-cvs .axismarker {
@@ -23,7 +24,6 @@
 
 .progress-cvs .resultmarker {
     color: #696b6d;
-    font-size: 0.8em;
 }
 
 
@@ -32,8 +32,7 @@
 .progress-cvs .marker text {
     text-anchor: middle;
     dominant-baseline: middle;
-    font-weight: bold;
-    font-size: x-small;
+    font-weight: bolder;
 }
 
 
@@ -51,7 +50,7 @@
 }
 
 .progress-cvs .marker.active {
-    fill: #aaa;
+    fill: #bbb;
 }
 
 .progress-cvs .marker text {
@@ -59,35 +58,41 @@
 }
 
 .progress-cvs .marker circle {
-    stroke: #999;
+    stroke: #aaa;
 }
 
 .progress-cvs .marker.active text {
-    fill: #fff;
+    fill: #000;
 }
 
 .progress-cvs .marker.active circle {
     stroke: #bbb;
 }
 
+.progress-cvs path.value-arrow {
+    stroke: #aaa;
+    fill: #aaa;
+}
 .progress-cvs rect.resultmarker-bg {
     fill: white;
-    fill-opacity: 50%;
+    stroke: #aaa;
+    stroke-width: 1px;
+    filter: url(#d3std-dropshadow);
 }
 
 /*   Competency Type 2, 3, 4 */
 .progress-cvs .comptype-1 .bar {
-    fill: url(#crosshatch);
-}
-
-.progress-cvs .comptype-2 .bar {
-    fill: url(#diagonal-stripe-3);
-}
-
-.progress-cvs .comptype-3 .bar {
     fill: url(#whitecarbon);
 }
 
+.progress-cvs .comptype-2 .bar {
+    fill: none;
+}
+
 .progress-cvs .comptype-3 .bar {
-    fill: url(#dots-7);
+    fill: url(#dot-7);
+}
+
+.progress-cvs .comptype-3 .bar {
+    fill: url(#crosshatch);
 }
