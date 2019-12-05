@@ -72,6 +72,7 @@ $string['matrixuevscompgraphtitle:global'] = 'Contribution de {$a->uename} à la
 $string['matrixuevscompgraphtitle:semester'] = 'Contribution de {$a->uename} au semestre';
 
 $string['matrix:view'] = 'Voir la matrice {$a}';
+$string['matrix:viewtestresults'] = 'Voir les résultats du test';
 $string['milestone'] = 'Niveau à atteindre à la fin du semestre (n)';
 $string['nomatrixerror'] = 'Pas de feuille avec le préfixe ${a} dans le fichier uploadé';
 $string['readmore'] = 'plus';
@@ -91,6 +92,6 @@ $string['userdatafile_help'] = 'Fichier CSV contentant les données utilisateur'
 $string['userdatauploaddate'] = 'Date';
 $string['userdatainsertednb'] = 'Nombre d\'utilisateurs insérés';
 $string['userdataupdatednb'] = 'Nombre d\'utilisateurs mis à jour';
-
+$string['usertestresults'] = 'Résultats utilisateurs';
 
 

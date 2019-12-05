@@ -70,6 +70,7 @@ $string['matrixuevscomptitle'] = 'Contribution of {$a->uename} the competencies 
 $string['matrixuevscompgraphtitle:global'] = 'Contribution of {$a->uename} to the general progression';
 $string['matrixuevscompgraphtitle:semester'] = 'Contribution of {$a->uename} to semester';
 $string['matrix:view'] = 'View matrix {$a}';
+$string['matrix:viewtestresults'] = 'View test results';
 $string['milestone'] = 'Target leve at the end of Semester(n)';
 $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file uploaded';
 $string['repartition:title'] = 'Percentage of competences and knowledge in {$a}';
@@ -89,4 +90,5 @@ $string['userdatafile_help'] = 'File containing user data as CSV';
 $string['userdatauploaddate'] = 'Date';
 $string['userdatainsertednb'] = 'Number of inserted users';
 $string['userdataupdatednb'] = 'Number of updated users';
+$string['usertestresults'] = 'User test results';
 
