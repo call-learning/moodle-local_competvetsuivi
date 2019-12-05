@@ -51,6 +51,7 @@ class uevscompetency_overview extends graph_overview_base implements \renderable
         $results = ueutils::get_ue_vs_competencies($matrix, $this->ue, $rootcompid, $samesemesteronly);
         foreach (array_keys($results) as $compid) {
             $chartdata = [];
+            $nullvalues = 0;
             foreach ($strandlist as $st) {
                 // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
                 $data = new \stdClass();
@@ -60,11 +61,10 @@ class uevscompetency_overview extends graph_overview_base implements \renderable
                 $res->value = $results[$compid][$st];
                 $data->markers = [];
                 $data->result = $res;
-                if ($res->value > 0) {
-                    $chartdata [] = $data;
-                }
+                $nullvalues += ($res->value > 0) ? 0 : 1;
+                $chartdata [] = $data;
             }
-            if (!empty($chartdata)) {
+            if (!empty($chartdata) && $nullvalues !=  count($strandlist)) {
                 $this->charts[$compid] = new chart_item($chartdata);
             }
         }
@@ -82,6 +82,7 @@ class uevscompetency_overview extends graph_overview_base implements \renderable
      */
     public function export_for_template(renderer_base $output) {
         $exportablecontext = $this->get_bar_chart_exportable_context($output);
+        $exportablecontext->graph_title = get_string('contribution:title', 'local_competvetsuivi', $this->ue->shortname);
         return $exportablecontext;
     }
 }

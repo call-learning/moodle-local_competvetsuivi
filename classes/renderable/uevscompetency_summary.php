@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Progress bar item
+ * Progress bar item : UC during whole year
  *
  * @package     local_competvetsuivi
  * @category    chart item renderable
@@ -41,13 +41,13 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
             $ueid,
             $rootcomp = null
     ) {
-        $capabilitystrand = matrix::MATRIX_COMP_TYPE_ABILITY;
-        $this->init_bar_chart($matrix, array($capabilitystrand), $rootcomp, null);
+        $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
+        $this->init_bar_chart($matrix, $strands, $rootcomp, null);
         $rootcompid = $rootcomp ? $rootcomp->id : 0;
 
         $this->ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
-        $chartdata = ueutils::get_ue_vs_competencies_percent($matrix, $this->ue,$capabilitystrand,  $rootcompid);
-
+        $chartdata = ueutils::get_ue_vs_competencies_percent($matrix, $this->ue, $strands, $rootcompid);
+        $chartdata->overlaystrandid = matrix::MATRIX_COMP_TYPE_KNOWLEDGE;
         $this->chart = new chart_item($chartdata, 'ring');
     }
 
@@ -62,6 +62,7 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
     public function export_for_template(renderer_base $output) {
         $exportablecontext = new stdClass();
         $exportablecontext->chartdata = $this->chart->export_for_template($output);
+        $exportablecontext->graph_title = get_string('repartition:title', 'local_competvetsuivi', $this->ue->shortname);
         return $exportablecontext;
     }
 }

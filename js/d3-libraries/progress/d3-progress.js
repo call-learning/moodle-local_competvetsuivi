@@ -101,7 +101,7 @@ function progress () {
 
     var triangleSize = Math.sqrt(graphWidth() / 25);
     var topPosition = function (index) {
-      return (index % 2)? graphHeight()+ graphMargins.top: graphMargins.top - triangleSize;
+      return (index % 2)? graphMargins.top + extentY + triangleSize: graphMargins.top - triangleSize;
     };
 
     const resultsmarker = wrap
@@ -131,7 +131,7 @@ function progress () {
       .attr('transform', function (_d, index) { return  `translate(0,${(index) % 2 ? triangleSize : 0})`;})
       .append('text')
       .attr('class', 'resultmarker-text')
-      .attr('font-size', tickSize * 1)
+      .attr('font-size', tickSize * 1.2)
       .text(function (d) {return `${Math.round(d * 100)} %`;});
 
     var markersbb = [];

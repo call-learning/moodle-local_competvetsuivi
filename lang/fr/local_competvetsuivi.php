@@ -32,6 +32,8 @@ $string['competencyfullname'] = 'Nom Complet';
 $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Gestion de l\'importation des données Utilisateur';
 $string['currentprogress'] = 'Avancement';
+$string['contribution:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jascentes et des compétences au 
+<strong>sein de l\'ensemble du cursus</strong>';
 $string['directorydoesnotexist'] = 'Directory does not exist';
 $string['enablecompetvetsuivi'] = 'Activer le plugin Compet Vetsuivi';
 $string['enablecompetvetsuivi_help'] = 'Activer le plugin Compet Vetsuivi';
@@ -74,6 +76,7 @@ $string['milestone'] = 'Niveau à atteindre à la fin du semestre (n)';
 $string['nomatrixerror'] = 'Pas de feuille avec le préfixe ${a} dans le fichier uploadé';
 $string['readmore'] = 'plus';
 $string['readless'] = 'moins';
+$string['repartition:title'] = 'Répartition des connaissances sous-jascentes et compétences au sein de l\'{$a}';
 $string['semester'] = 'Semestre';
 $string['semester:x'] = 'Semestre {$a}';
 $string['userdatacsvuploadtask'] = 'Importer les données utilisateurs en CSV';

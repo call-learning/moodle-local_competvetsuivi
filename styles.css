@@ -33,34 +33,38 @@
 }
 
 /* Bar Styling for macro competencies 0 to 7 */
-.macrocomp-0 .progress-cvs .bar-bg {
+.macrocomp-0 .progress-cvs .bar-bg, .macrocomp-0.arc-bg {
     fill: #7ed341;
 }
 
-.macrocomp-1 .progress-cvs .bar-bg {
+.macrocomp-1 .progress-cvs .bar-bg, .macrocomp-1.arc-bg {
     fill: #43e4c4;
 }
 
-.macrocomp-2 .progress-cvs .bar-bg {
+.macrocomp-2 .progress-cvs .bar-bg, .macrocomp-2.arc-bg {
     fill: #3991de;
 }
 
-.macrocomp-3 .progress-cvs .bar-bg {
+.macrocomp-3 .progress-cvs .bar-bg, .macrocomp-3.arc-bg {
     fill: #8a18f7;
 }
 
-.macrocomp-4 .progress-cvs .bar-bg {
+.macrocomp-4 .progress-cvs .bar-bg, .macrocomp-4.arc-bg {
     fill: #e85119;
 }
 
-.macrocomp-5 .progress-cvs .bar-bg {
+.macrocomp-5 .progress-cvs .bar-bg, .macrocomp-5.arc-bg {
     fill: #faa339;
 }
 
-.macrocomp-6 .progress-cvs .bar-bg {
+.macrocomp-6 .progress-cvs .bar-bg, .macrocomp-6.arc-bg {
     fill: #c3bf46;
 }
 
-.macrocomp-7 .progress-cvs .bar-bg {
+.macrocomp-7 .progress-cvs .bar-bg, .macrocomp-7.arc-bg {
     fill: #fce646;
+}
+
+.fn-label {
+    font-size: x-small;
 }

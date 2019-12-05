@@ -168,53 +168,71 @@ class ueutils {
 
     /**
      * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
-     * Results are for each competency for one given strand
+     * Results are for each competency for a given set of strands.
+     * We calculate for each strand the total contribution and we highlight the highest value
+     * The other strands will be respresented as a percentage of this value
      *
-     * @param $matrix : ue
-     * @param $ue : given ue
-     * @param int $rootcompid root competency id to start with. If null we take the macro competencies
-     * @param bool $samesemesteronly only in the same semester
-     * @return array
+     * @param $matrix
+     * @param $currentue
+     * @param $strandids
+     * @param int $rootcompid
+     * @return \stdClass
      */
-    public static function get_ue_vs_competencies_percent($matrix, $currentue, $strandid, $rootcompid = 0) {
+    public static function get_ue_vs_competencies_percent($matrix, $currentue, $strandids, $rootcompid = 0) {
 
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
         $compuevalues = [];
 
-        // Go through all competencies and find out about the contribution of the UE to this competency
+        // Go through all competencies and strands and find out about the contribution of the UE to this competency
         $maxval = 0;
 
         foreach ($allcomps as $comp) {
             $currentuevals = $matrix->get_values_for_ue_and_competency($currentue->id, $comp->id, true);
-
-            $strandval = array_filter($currentuevals, function($v, $k) use ($strandid) {
-                return $v->type == $strandid;
-            }, ARRAY_FILTER_USE_BOTH);
-
-            $strandval = reset($strandval);
-
-            if (!key_exists($comp->id, $compuevalues)) {
-                $compuevalues[$comp->id] = 0;
+            foreach ($currentuevals as $strandval) {
+                if (!in_array($strandval->type, $strandids)) {
+                    continue;
+                }
+                if (!key_exists($comp->id, $compuevalues)) {
+                    $compuevalues[$comp->id] = [];
+                }
+                if (!key_exists($strandval->type, $compuevalues[$comp->id])) {
+                    $compuevalues[$comp->id][$strandval->type] = 0;
+                }
+                $value = chartingutils::get_real_value_from_strand($strandval->type,
+                        $strandval->value);
+                $maxval += $value;
+                $compuevalues[$comp->id][$strandval->type] += $value;
             }
-            $value = chartingutils::get_real_value_from_strand($strandid,
-                    $strandval->value);
-            $maxval += $value;
-            $compuevalues[$comp->id] +=
-                    chartingutils::get_real_value_from_strand($strandid,
-                            $strandval->value);
         }
-        // Now calculate the results for each comp
+        // Now calculate the results for each competency
+        /*
+            The way we go about it:
+            - We want to obtain a percentage of contribution to the competency ref. the total : so val is this percentage
+            - within each competency, we want to obtain the contribution of each strand
+        */
         $results = new \stdClass();
         $results->compsvalues = [];
-        foreach ($compuevalues as $compid => $total) {
+        $index = 0;
+        foreach ($compuevalues as $compid => $strandvalues) {
+            // Get the max value across all strands
+            $totalforcomp = array_sum($strandvalues);
             $compvalue = new \stdClass();
-            $compvalue->val = $total / $maxval;
-            $compvalue->fullname = $allcomps[$compid]->fullname;
-            $compvalue->shortname = $allcomps[$compid]->shortname;
-            $results->compsvalues[$compid] = $compvalue;
+            $compvalue->val = $totalforcomp / $maxval;
+            if ($compvalue->val > 0) { // Remove 0 values
+                $compvalue->strandvals = [];
+                foreach ($strandvalues as $strandid => $strandtotal) {
+                    $compvalue->strandvals[$strandid] = new \stdClass();
+                    $compvalue->strandvals[$strandid]->val = $strandtotal / $totalforcomp;
+                    $compvalue->strandvals[$strandid]->type = $strandid;
+                }
+                $compvalue->colorindex = $index; // Index for color => this works because get_child_competencies orders by id
+                $compvalue->fullname = $allcomps[$compid]->fullname;
+                $compvalue->shortname = $allcomps[$compid]->shortname;
+                $results->compsvalues[$compid] = $compvalue;
+            }
+            $index++;
         }
-        $results->strandid = $strandid;
         return $results;
     }
 }
