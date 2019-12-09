@@ -53,10 +53,11 @@ class add_edit_form extends moodleform {
 
         $mform->addElement('text', 'fullname', get_string('matrixname', 'local_competvetsuivi'), $fullname);
         $mform->setType('fullname', PARAM_TEXT);
+        $mform->addRule('fullname', get_string('required'), 'required');
 
         $mform->addElement('text', 'shortname', get_string('matrixshortname', 'local_competvetsuivi'), $shortname);
         $mform->setType('shortname', PARAM_TEXT);
-
+        $mform->addRule('shortname', get_string('required'), 'required');
         $mform->addElement(
                 'filepicker',
                 'matrixfile',
