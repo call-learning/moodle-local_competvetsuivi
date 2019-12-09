@@ -85,6 +85,7 @@ class userdata {
                 $updateduser = 0;
                 while ($userrecord = $importer->next()) {
                     $useremail = $userrecord[$emailcolumnindex]; // Get user email
+                    if (!trim($useremail)) continue; // Skip empty lines
                     // The email is followed by the data itself
                     $userdatarow = array_splice($userrecord, $emailcolumnindex + 1);
 
