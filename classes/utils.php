@@ -71,8 +71,9 @@ class utils {
         $matrixid = 0;
         if ($cohorts) {
             global $DB;
-            $cohort = reset($cohorts);
-            $matrixid = $DB->get_field('cvs_matrix_cohorts', 'matrixid', array('cohortid' => $cohort->id));
+            $cohortsid = array_map(function($c) { return $c->id; }, $cohorts);
+            list($insql, $inparams) = $DB->get_in_or_equal($cohortsid);
+            $matrixid = $DB->get_field_sql('SELECT matrixid FROM {cvs_matrix_cohorts} WHERE cohortid '.$insql.' LIMIT 1', $inparams);
         }
         return $matrixid;
     }
