@@ -33,15 +33,18 @@
   }
 
 
+  Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
+  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
+
 }}
 
 <div class="row graph-header-title">
-    <div class="col-12">
+    <div class="col-12 span12">
         <h3>{{{graph_title}}}</h3>
     </div>
 </div>
-<div class="row pt-2 pb-2 cvs-breadcrumb">
-    <div class="col-12">
+<div class="row pt-2 pb-2 cvs-breadcrumb row-fluid">
+    <div class="col-12 span12">
             <span>
                 {{#breadcrumbs}}
                     <a href="{{link}}">{{name}}</a> /
@@ -49,8 +52,8 @@
             </span>
     </div>
 </div>
-<div class="row pt-2 pb-2">
-    <div class="col-12">
+<div class="row pt-2 pb-2 row-fluid">
+    <div class="col-12 span12">
             <span>
                 {{ competency_desc }}
             </span>

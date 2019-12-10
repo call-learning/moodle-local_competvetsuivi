@@ -30,18 +30,20 @@
     "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
   }
 
+  Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
+  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 
 }}
 
-<div class="row pt-3 pb-3">
-    <div class="legend-title col-4">
+<div class="row pt-3 pb-3 row-fluid">
+    <div class="legend-title col-4 span4">
         {{#str}}legend, local_competvetsuivi{{/str}}
     </div>
-    <div class="progress-cvs col-8">
-        <div class="row">
+    <div class="progress-cvs col-8 span8">
+        <div class="row row-fluid">
 
             {{#comp_types}}
-                <div class="col-4">
+                <div class="col-4 span4">
                     <div class="d-flex flex-column justify-content-center">
                         <svg width="1.5em" height="1.5em">
                             <g class="comptype-{{comp_type_id}}">
@@ -60,7 +62,7 @@
                 </div>
             {{/comp_types}}
             {{$has_no_milestone}}
-                <div class="col-4">
+                <div class="col-4 span4">
                     <div class="flex-column justify-content-center">
                         <div>
                             <svg width="1.5em" height="1.5em">

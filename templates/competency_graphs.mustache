@@ -40,12 +40,13 @@
         ]
     }
 
-
+  Note: we had to make this compatible with lambda theme, so we added span classes
+  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 }}
 
 {{#compitems}}
-    <div class="row mb-1 mt-1">
-        <div class="col-sm-4">
+    <div class="row mb-1 mt-1 row-fluid">
+        <div class="col-sm-4 span4">
             <div class="flex-column">
                 <div class="competency-sn-link">
                     {{#competency_link}}
@@ -65,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-8 span8">
             {{#graphdata}}
                 <div class="macrocomp-{{competency_mcompindex}}">
                     {{> local_competvetsuivi/chart_item }}

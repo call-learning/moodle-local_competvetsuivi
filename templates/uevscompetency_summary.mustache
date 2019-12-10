@@ -38,16 +38,19 @@
     ]
   }
 
+  Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
+  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 
 }}
-
-<div class="row graph-header-title">
-    <div class="col-12">
-        <h3>{{{graph_title}}}</h3>
+<div class="container-fluid">
+    <div class="row graph-header-title row-fluid">
+        <div class="col-12 span12">
+            <h3>{{{graph_title}}}</h3>
+        </div>
     </div>
-</div>
-<div class="cvs-summary-chart">
-    {{#chartdata}}
-        {{> local_competvetsuivi/chart_item }}
-    {{/chartdata}}
+    <div class="cvs-summary-chart">
+        {{#chartdata}}
+            {{> local_competvetsuivi/chart_item }}
+        {{/chartdata}}
+    </div>
 </div>
