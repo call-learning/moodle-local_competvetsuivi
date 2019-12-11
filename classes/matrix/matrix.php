@@ -35,7 +35,7 @@ global $CFG;
  *
  */
 class matrix {
-    const UC_PREFIX = ['UC','UE'];
+    const UC_PREFIX = ['UC', 'UE'];
     const MATRIX_SHEET_PREFIX = 'matrice';
 
     const MATRIX_COMP_TYPE_KNOWLEDGE = 1;
@@ -136,6 +136,9 @@ class matrix {
                 array('cmatrixid' => $this->id, 'umatrixid' => $this->id));
         // Then fully delete the rest
         $DB->delete_records('cvs_matrix_ue', array('matrixid' => $this->id));
+        $DB->delete_records_select('cvs_matrix_comp_ue',
+                'compid IN (SELECT c.id FROM {cvs_matrix_comp} c WHERE c.matrixid = :matrixid)',
+                array('matrixid' => $this->id));
         $DB->delete_records('cvs_matrix_comp', array('matrixid' => $this->id));
     }
 
@@ -182,6 +185,7 @@ class matrix {
 
     /**
      * Get UEs for this matrix
+     *
      * @return array
      * @throws matrix_exception
      */
@@ -200,7 +204,7 @@ class matrix {
             $matchingues = array_filter($this->ues, function($ue) use ($propertyname, $propertyvalue) {
                 $currentvalue = $ue->$propertyname;
 
-                foreach(static::UC_PREFIX as $prefix) {
+                foreach (static::UC_PREFIX as $prefix) {
                     $currentvalue = strtr($currentvalue, $prefix, '');
                     $propertyvalue = strtr($propertyvalue, $prefix, '');
                 }
@@ -219,8 +223,10 @@ class matrix {
         }
         return reset($matchingues);
     }
+
     /**
      * Get the list of attached competencies for this matrix
+     *
      * @return array
      * @throws matrix_exception
      */
@@ -287,7 +293,7 @@ class matrix {
      * @return array
      * @throws \dml_exception
      */
-    public function get_child_competencies($compid=0, $directchildonly = false) {
+    public function get_child_competencies($compid = 0, $directchildonly = false) {
         global $DB;
         $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded
         if ($compid && key_exists($compid, $complist)) {
@@ -299,7 +305,7 @@ class matrix {
         $comps = array_filter($complist, function($comp) use ($rootcomp, $directchildonly) {
             $currentpath = $rootcomp ? $rootcomp->path . '/' : '/';
             if (strpos($comp->path, $currentpath) === 0) {
-                return !$directchildonly  || substr_count($comp->path, "/", strlen($currentpath)) == 0;
+                return !$directchildonly || substr_count($comp->path, "/", strlen($currentpath)) == 0;
             } else {
                 return false;
             }
@@ -321,12 +327,12 @@ class matrix {
         return !empty($children);
     }
 
-
     static public function comptype_to_string($comptypeid) {
         return get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');
     }
 
-    const MAX_FULLNAME_SIZE =  255;
+    const MAX_FULLNAME_SIZE = 255;
+
     /**
      * Import a matrix from a file and fills the relevant tables
      *
@@ -385,7 +391,8 @@ class matrix {
             $row = $rowiterator->current();
             $celliterator = $row->getCellIterator();
             // Get the competency first column
-            $compref = rtrim(strtoupper($celliterator->current()->getValue()),'.'); // First column is the reference for the competency
+            $compref = rtrim(strtoupper($celliterator->current()->getValue()),
+                    '.'); // First column is the reference for the competency
             if (!$compref) {
                 break; // We finished
             }
@@ -407,7 +414,7 @@ class matrix {
             $competency->descriptionformat = FORMAT_PLAIN;
             $competency->shortname = join('.', $competencypath);
             $competency->fullname = $description;
-            if (strlen($competency->fullname)> static::MAX_FULLNAME_SIZE ) {
+            if (strlen($competency->fullname) > static::MAX_FULLNAME_SIZE) {
                 $competency->fullname = trim(\core_text::substr($competency->fullname, 0, 252)) . '...';
             }
             $competency->id = $DB->insert_record('cvs_matrix_comp', $competency);
