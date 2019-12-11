@@ -1,13 +1,7 @@
-.progress-cvs .resultmarker {
-    text-anchor: middle;
-    color: #2b2d2f;
-    font-family: sans-serif;
-    font-variant: small-caps;
-}
-
 .progress-cvs .background-bar {
     fill: #fff;
 }
+
 .progress-cvs .bar-gray-bg {
     fill: #eee;
 }
@@ -22,11 +16,6 @@
 }
 
 
-.progress-cvs .resultmarker {
-    color: #696b6d;
-}
-
-
 /*Four types of competencies */
 
 .progress-cvs .marker text {
@@ -34,7 +23,6 @@
     dominant-baseline: middle;
     font-weight: bolder;
 }
-
 
 /*   Competency Type : Generic  */
 .progress-cvs .bar {
@@ -73,12 +61,37 @@
     stroke: #aaa;
     fill: #aaa;
 }
-.progress-cvs rect.resultmarker-bg {
+
+.progress-cvs  .labelbar path.value-arrow {
+    fill: #afa;
+    stroke: #383;
+}
+
+/* Labels */
+
+.progress-cvs .labelmarker, .progress-cvs .labelbar {
+    text-anchor: middle;
+    font-family: sans-serif;
+    font-variant: small-caps;
+}
+
+
+.progress-cvs .labelmarker-bg, .progress-cvs .labelbar-bg {
     fill: white;
     stroke: #aaa;
     stroke-width: 1px;
     filter: url(#d3std-dropshadow);
 }
+
+.progress-cvs .labelbar-bg {
+    fill: #afa;
+    stroke: #383;
+}
+.progress-cvs .barlabelbar {
+    fill: #383;
+    fill-opacity: 0.8;
+}
+
 
 /*   Competency Type 2, 3, 4 */
 .progress-cvs .comptype-1 .bar {
