@@ -25,26 +25,46 @@
 
 namespace local_competvetsuivi\renderable;
 
+use local_competvetsuivi\autoevalutils;
 use renderer_base;
 use stdClass;
 use templatable;
 use local_competvetsuivi\chartingutils;
+use local_competvetsuivi\matrix\matrix;
 
 class competency_progress_overview extends graph_overview_base implements \renderable, templatable {
     const PARAM_COMPID = 'competencypid'; // Used to build URL (see graph_overview_base methods)
-
+    protected $studentautoevalresults;
     public function __construct(
             $rootcomp,
             $matrix,
             $strandlist,
             $userdata,
             $currentsemester,
+            $userid,
             $linkbuildercallback = null) {
+        global $CFG;
         $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback);
+        $autoevalresults = autoevalutils::get_student_results( $userid,
+                $matrix,
+                $CFG->questionbankcategory,
+                $rootcomp
+                );
+        // Autoeval only valid for competences
+        $this->studentautoevalresults = [matrix::MATRIX_COMP_TYPE_ABILITY=>$autoevalresults,
+                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [],
+                matrix::MATRIX_COMP_TYPE_EVALUATION => [],
+                matrix::MATRIX_COMP_TYPE_OBJECTIVES => [],
+                ];
         foreach ($this->childrencomps as $comp) {
             $this->charts[$comp->id] =
                     new chart_item(
-                            chartingutils::get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester)
+                            chartingutils::get_data_for_progressbar($matrix,
+                                    $comp,
+                                    $strandlist,
+                                    $userdata,
+                                    $currentsemester,
+                                    $this->studentautoevalresults)
                     );
         }
 
@@ -63,6 +83,9 @@ class competency_progress_overview extends graph_overview_base implements \rende
      */
     public function export_for_template(renderer_base $output) {
         $exportablecontext = $this->get_bar_chart_exportable_context($output);
+        $exportablecontext->has_self_assessment = $this->studentautoevalresults
+                && key_exists(matrix::MATRIX_COMP_TYPE_ABILITY, $this->studentautoevalresults)
+                && count($this->studentautoevalresults[matrix::MATRIX_COMP_TYPE_ABILITY]) > 0;
         return $exportablecontext;
     }
 }

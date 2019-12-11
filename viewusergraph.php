@@ -81,7 +81,8 @@ $progress_overview = new \local_competvetsuivi\renderable\competency_progress_ov
         $matrix,
         $strandlist,
         $userdata,
-        $currentsemester
+        $currentsemester,
+        $userid
 );
 
 $renderer = $PAGE->get_renderer('local_competvetsuivi');

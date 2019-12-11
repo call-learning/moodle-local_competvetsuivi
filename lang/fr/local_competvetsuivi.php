@@ -80,6 +80,7 @@ $string['readless'] = 'moins';
 $string['repartition:title'] = 'Répartition des connaissances sous-jascentes et compétences au sein de l\'{$a}';
 $string['semester'] = 'Semestre';
 $string['semester:x'] = 'Semestre {$a}';
+$string['selfassessment'] = 'Auto-évaluation';
 $string['userdatacsvuploadtask'] = 'Importer les données utilisateurs en CSV';
 $string['userdataimported'] = 'Données utilisateur importées';
 $string['userdatafilepath_desc'] = 'Répertoire avec les données utilisateurs en CSV. Les fichiers seront effacés une fois importés';

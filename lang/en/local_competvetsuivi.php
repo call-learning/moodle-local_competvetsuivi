@@ -78,6 +78,7 @@ $string['readmore'] = 'more';
 $string['readless'] = 'less';
 $string['semester'] = 'Semester';
 $string['semester:x'] = 'Semester {$a}';
+$string['selfassessment'] = 'Self-Assessment';
 $string['userdatacsvuploadtask'] = 'User Data CSV Uploading';
 $string['userdataimported'] = 'User Data Imported';
 $string['userdatafilepath_desc'] = 'Directory for User Data CSV files. Once uploaded the files will be deleted.';

@@ -81,7 +81,7 @@ class chartingutils {
 
 
     const INITIAL_SEMESTER = 5;
-    public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester) {
+    public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester, $userselftestresults = null) {
         $alldata = [];
         foreach ($strandlist as $comptypeid) {
             // Init array
@@ -126,6 +126,12 @@ class chartingutils {
                     $marker->active = $semester > $currentsemester;
                     $data->markers[] = $marker;
                 }
+            }
+            // Add self test results
+            if ($userselftestresults
+                    && key_exists($comptypeid, $userselftestresults)
+                    && key_exists($comp->id, $userselftestresults[$comptypeid])) {
+                $data->stopbars = [$userselftestresults[$comptypeid][$comp->id]];
             }
             $alldata[] = $data;
         }
