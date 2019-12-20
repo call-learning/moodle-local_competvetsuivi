@@ -174,7 +174,9 @@ class matrix {
             }
             $value = new \stdClass();
             $value->type = $cuv->type;
-            $value->value = $cuv->value == 0 ? matrix::MAX_VALUE_PER_STRAND[$cuv->type] : $cuv->value; // Normalize value
+            $value->value = ($cuv->value == 0 || $cuv->value > matrix::MAX_VALUE_PER_STRAND[$cuv->type]) ?
+                    matrix::MAX_VALUE_PER_STRAND[$cuv->type] : $cuv->value; // Normalize value
+
             if (empty($this->compuevalues[$cuv->ueid][$cuv->compid])) {
                 $this->compuevalues[$cuv->ueid][$cuv->compid] = array();
             }
@@ -196,6 +198,14 @@ class matrix {
         return $this->ues;
     }
 
+    /**
+     * Get matching UE per search criteria.
+     * We take care of the special case for shortname where we can either have UC or UE
+     * @param $propertyname
+     * @param $propertyvalue
+     * @return mixed
+     * @throws matrix_exception
+     */
     public function get_matrix_ue_by_criteria($propertyname, $propertyvalue) {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
@@ -205,8 +215,8 @@ class matrix {
                 $currentvalue = $ue->$propertyname;
 
                 foreach (static::UC_PREFIX as $prefix) {
-                    $currentvalue = strtr($currentvalue, $prefix, '');
-                    $propertyvalue = strtr($propertyvalue, $prefix, '');
+                    $currentvalue = str_replace($prefix, '', $currentvalue);
+                    $propertyvalue = str_replace($prefix, '', $propertyvalue);
                 }
                 return $currentvalue == $propertyvalue;
             });

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing tests for api_test.
+ * File containing tests for autoevalutils_test.
  *
  * @package     local_competvetsuivi
  * @category    test
@@ -36,14 +36,13 @@ defined('MOODLE_INTERNAL') || die();
 // https://phpunit.de
 
 /**
- * The api_test test class.
+ * The autoevalutils_test test class.
  *
  * @package    local_competvetsuivi
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_tests extends advanced_testcase {
+class autoevalutils_tests extends advanced_testcase {
 
-    // Write the tests here as public funcions.
 
 }

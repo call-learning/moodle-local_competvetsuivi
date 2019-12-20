@@ -1,0 +1,163 @@
+[
+  {
+    "fullname": "Conseiller et Pr\u00e9venir",
+    "shortname": "COPREV",
+    "description": "Conseiller et Pr\u00e9venir",
+    "matrix": "MATRIX1",
+    "path": "/COPREV"
+  },
+  {
+    "fullname": "\u00c9valuer l'\u00e9tat g\u00e9n\u00e9ral, le bien-\u00eatre et l'\u00e9tat nutritionnel d'un animal ou d'un groupe d'animaux",
+    "shortname": "COPREV.1",
+    "description": "\u00c9valuer l'\u00e9tat g\u00e9n\u00e9ral, le bien-\u00eatre et l'\u00e9tat nutritionnel d'un animal ou d'un groupe d'animaux",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.1"
+  },
+  {
+    "fullname": "R\u00e9aliser un examen comportemental sur un animal ",
+    "shortname": "COPREV.1.1",
+    "description": "R\u00e9aliser un examen comportemental sur un animal ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.1/COPREV.1.1"
+  },
+  {
+    "fullname": "R\u00e9aliser un examen comportemental sur un groupe d\u2019animaux ",
+    "shortname": "COPREV.1.1BIS",
+    "description": "R\u00e9aliser un examen comportemental sur un groupe d\u2019animaux ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.1/COPREV.1.1BIS"
+  },
+  {
+    "fullname": "R\u00e9aliser une visite de transaction  ",
+    "shortname": "COPREV.1.2",
+    "description": "R\u00e9aliser une visite de transaction  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.1/COPREV.1.2"
+  },
+  {
+    "fullname": "Juger de l\u2019\u00e9tat d\u2019entretien d\u2019un animal ou d\u2019un groupe d\u2019animaux",
+    "shortname": "COPREV.1.3",
+    "description": "Juger de l\u2019\u00e9tat d\u2019entretien d\u2019un animal ou d\u2019un groupe d\u2019animaux",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.1/COPREV.1.3"
+  },
+  {
+    "fullname": "R\u00e9aliser une diagnose de cat\u00e9gorie et une \u00e9valuation comportementale dans le cadre de la r\u00e9glementation li\u00e9e aux chiens susceptibles d'\u00eatre dangereux  ",
+    "shortname": "COPREV.1.4",
+    "description": "R\u00e9aliser une diagnose de cat\u00e9gorie et une \u00e9valuation comportementale dans le cadre de la r\u00e9glementation li\u00e9e aux chiens susceptibles d'\u00eatre dangereux  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.1/COPREV.1.4"
+  },
+  {
+    "fullname": "Conseiller sur les principes d\u2019h\u00e9bergement, d\u2019entretien, de reproduction, d\u2019\u00e9ducation et d\u2019alimentation ; proposer et mettre en \u0153uvre des programmes de pr\u00e9vention dans le respect des bonnes pratiques en mati\u00e8re de sant\u00e9 animale, de bien-\u00eatre animal et...",
+    "shortname": "COPREV.2",
+    "description": "Conseiller sur les principes d\u2019h\u00e9bergement, d\u2019entretien, de reproduction, d\u2019\u00e9ducation et d\u2019alimentation ; proposer et mettre en \u0153uvre des programmes de pr\u00e9vention dans le respect des bonnes pratiques en mati\u00e8re de sant\u00e9 animale, de bien-\u00eatre animal et de sant\u00e9 publique ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2"
+  },
+  {
+    "fullname": "Conseiller un \u00e9leveur quant au respect du bien-\u00eatre comportemental et physique d'un groupe d'animaux  ",
+    "shortname": "COPREV.2.1",
+    "description": "Conseiller un \u00e9leveur quant au respect du bien-\u00eatre comportemental et physique d'un groupe d'animaux  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.1"
+  },
+  {
+    "fullname": "Conseiller sur l\u2019alimentation, \u00e9laborer ou corriger une ration adapt\u00e9e \u00e0 un animal ou un groupe d\u2019animaux ",
+    "shortname": "COPREV.2.2",
+    "description": "Conseiller sur l\u2019alimentation, \u00e9laborer ou corriger une ration adapt\u00e9e \u00e0 un animal ou un groupe d\u2019animaux ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.2"
+  },
+  {
+    "fullname": "Conseiller un \u00e9leveur pour la reproduction, la s\u00e9lection et pour la gestion et la pr\u00e9vention des affections h\u00e9r\u00e9ditaires ou \u00e0 composante g\u00e9n\u00e9tique : trouver les informations n\u00e9cessaires pour une esp\u00e8ce donn\u00e9e et proposer un plan de gestion et de pr\u00e9ven...",
+    "shortname": "COPREV.2.3",
+    "description": "Conseiller un \u00e9leveur pour la reproduction, la s\u00e9lection et pour la gestion et la pr\u00e9vention des affections h\u00e9r\u00e9ditaires ou \u00e0 composante g\u00e9n\u00e9tique : trouver les informations n\u00e9cessaires pour une esp\u00e8ce donn\u00e9e et proposer un plan de gestion et de pr\u00e9vention pour une affection h\u00e9r\u00e9ditaire",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.3"
+  },
+  {
+    "fullname": "Conseiller un \u00e9leveur pour la reproduction, la s\u00e9lection et pour la gestion et la pr\u00e9vention des affections h\u00e9r\u00e9ditaires ou \u00e0 composante g\u00e9n\u00e9tique : principes de s\u00e9lection",
+    "shortname": "COPREV.2.3BIS",
+    "description": "Conseiller un \u00e9leveur pour la reproduction, la s\u00e9lection et pour la gestion et la pr\u00e9vention des affections h\u00e9r\u00e9ditaires ou \u00e0 composante g\u00e9n\u00e9tique : principes de s\u00e9lection",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.3BIS"
+  },
+  {
+    "fullname": "Conseiller sur, \u00e9tablir et mettre en place un plan de pr\u00e9vention raisonn\u00e9 contre les maladies infectieuses et parasitaires  ",
+    "shortname": "COPREV.2.4",
+    "description": "Conseiller sur, \u00e9tablir et mettre en place un plan de pr\u00e9vention raisonn\u00e9 contre les maladies infectieuses et parasitaires  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.4"
+  },
+  {
+    "fullname": "Conseiller un utilisateur d\u2019animal de sport ou d\u2019utilit\u00e9 sur les \u00e9l\u00e9ments de pr\u00e9vention sp\u00e9cifiques  ",
+    "shortname": "COPREV.2.5",
+    "description": "Conseiller un utilisateur d\u2019animal de sport ou d\u2019utilit\u00e9 sur les \u00e9l\u00e9ments de pr\u00e9vention sp\u00e9cifiques  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.5"
+  },
+  {
+    "fullname": "Conseiller et accompagner les \u00e9leveurs pour les documents r\u00e9glementaires, notamment l\u2019\u00e9tablissement du r\u00e8glement sanitaire d\u2019un \u00e9levage canin ou f\u00e9lin, le bilan sanitaire d\u2019\u00e9levage et un protocole de soin",
+    "shortname": "COPREV.2.6",
+    "description": "Conseiller et accompagner les \u00e9leveurs pour les documents r\u00e9glementaires, notamment l\u2019\u00e9tablissement du r\u00e8glement sanitaire d\u2019un \u00e9levage canin ou f\u00e9lin, le bilan sanitaire d\u2019\u00e9levage et un protocole de soin",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.6"
+  },
+  {
+    "fullname": "Conduire une consultation de m\u00e9decine pr\u00e9ventive, individuelle",
+    "shortname": "COPREV.2.7",
+    "description": "Conduire une consultation de m\u00e9decine pr\u00e9ventive, individuelle",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.7"
+  },
+  {
+    "fullname": " Conduire une consultation de m\u00e9decine pr\u00e9ventive, collective  ",
+    "shortname": "COPREV.2.7BIS",
+    "description": " Conduire une consultation de m\u00e9decine pr\u00e9ventive, collective  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.7BIS"
+  },
+  {
+    "fullname": "R\u00e9aliser un audit d\u2019\u00e9levage (aspects li\u00e9s aux animaux, aux installations, aux m\u00e9thodes, en traitant de la sant\u00e9 animale, du bien-\u00eatre animal, des enjeux \u00e9conomiques et de sant\u00e9 publique notamment zoonoses et de la protection de l\u2019environnement)...",
+    "shortname": "COPREV.2.8",
+    "description": "R\u00e9aliser un audit d\u2019\u00e9levage (aspects li\u00e9s aux animaux, aux installations, aux m\u00e9thodes, en traitant de la sant\u00e9 animale, du bien-\u00eatre animal, des enjeux \u00e9conomiques et de sant\u00e9 publique notamment zoonoses et de la protection de l\u2019environnement)",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.2/COPREV.2.8"
+  },
+  {
+    "fullname": "Appliquer les principes de bios\u00e9curit\u00e9 et conseiller sur la bios\u00e9curit\u00e9",
+    "shortname": "COPREV.3",
+    "description": "Appliquer les principes de bios\u00e9curit\u00e9 et conseiller sur la bios\u00e9curit\u00e9",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.3"
+  },
+  {
+    "fullname": "Justifier, appliquer et faire appliquer les mesures de bios\u00e9curit\u00e9 en pratique quotidienne v\u00e9t\u00e9rinaire  ",
+    "shortname": "COPREV.3.1",
+    "description": "Justifier, appliquer et faire appliquer les mesures de bios\u00e9curit\u00e9 en pratique quotidienne v\u00e9t\u00e9rinaire  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.3/COPREV.3.1"
+  },
+  {
+    "fullname": "Conseiller sur la bios\u00e9curit\u00e9 en \u00e9levage, notamment en ce qui concerne les mesures pr\u00e9ventives et les protocoles de nettoyage et d\u00e9sinfection",
+    "shortname": "COPREV.3.2",
+    "description": "Conseiller sur la bios\u00e9curit\u00e9 en \u00e9levage, notamment en ce qui concerne les mesures pr\u00e9ventives et les protocoles de nettoyage et d\u00e9sinfection",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.3/COPREV.3.2"
+  },
+  {
+    "fullname": "Appliquer les principes et les m\u00e9thodes pour \u00e9liminer les cadavres, les sous-produits animaux, et les d\u00e9chets d'activit\u00e9 de soins dans le respect de la r\u00e9glementation et des r\u00e8gles de bios\u00e9curit\u00e9",
+    "shortname": "COPREV.3.3",
+    "description": "Appliquer les principes et les m\u00e9thodes pour \u00e9liminer les cadavres, les sous-produits animaux, et les d\u00e9chets d'activit\u00e9 de soins dans le respect de la r\u00e9glementation et des r\u00e8gles de bios\u00e9curit\u00e9",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.3/COPREV.3.3"
+  },
+  {
+    "fullname": "Justifier, appliquer et faire appliquer les mesures de bios\u00e9curit\u00e9 face \u00e0 un incident de nature \u00e0 mettre en jeu la s\u00e9curit\u00e9 sanitaire des personnes ou des animaux  ",
+    "shortname": "COPREV.3.4",
+    "description": "Justifier, appliquer et faire appliquer les mesures de bios\u00e9curit\u00e9 face \u00e0 un incident de nature \u00e0 mettre en jeu la s\u00e9curit\u00e9 sanitaire des personnes ou des animaux  ",
+    "matrix": "MATRIX1",
+    "path": "/COPREV/COPREV.3/COPREV.3.4"
+  }
+]

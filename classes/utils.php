@@ -63,21 +63,33 @@ class utils {
      * TODO: Alert admin when user are assigned to several cohorts
      *
      * @param $userid
+     * @return matrix id of the first matching matrix or false if not found
+     * @throws \coding_exception
+     * @throws \dml_exception
      */
     public static function get_matrixid_for_user($userid) {
         global $CFG;
         require_once($CFG->dirroot . '/cohort/lib.php');
         $cohorts = cohort_get_user_cohorts($userid);
-        $matrixid = 0;
+        $matrixid = false;
         if ($cohorts) {
             global $DB;
-            $cohortsid = array_map(function($c) { return $c->id; }, $cohorts);
+            $cohortsid = array_map(function($c) {
+                return $c->id;
+            }, $cohorts);
             list($insql, $inparams) = $DB->get_in_or_equal($cohortsid);
-            $matrixid = $DB->get_field_sql('SELECT matrixid FROM {cvs_matrix_cohorts} WHERE cohortid '.$insql.' LIMIT 1', $inparams);
+            $matrixid = $DB->get_field_sql('SELECT matrixid FROM {cvs_matrix_cohorts} WHERE cohortid ' . $insql . ' LIMIT 1',
+                    $inparams);
         }
         return $matrixid;
     }
 
+    /**
+     * Assign a cohort to a matrix if it is not already assigned to
+     * @param $matrixid
+     * @param $cohortid
+     * @throws \dml_exception
+     */
     public static function assign_matrix_cohort($matrixid, $cohortid) {
         global $DB;
         $assignment = new \stdClass();
