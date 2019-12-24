@@ -60,7 +60,7 @@ class import_tests extends advanced_testcase {
 
         $matrix = new matrix($matrixobject->id);
         $matrix->load_data();
-        $comps = array_values($matrix->comp);
+        $comps = array_values($matrix->get_matrix_competencies());
         $mastercomp = $comps[0]; // COPREV
         $childcomp = $comps[1]; // COPREV.1
         $leafcomp = $comps[4]; // COPREV.1.2

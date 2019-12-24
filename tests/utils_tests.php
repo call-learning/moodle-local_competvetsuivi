@@ -40,6 +40,7 @@ include_once('lib.php');
 use local_competvetsuivi\utils;
 
 include_once('lib.php');
+
 /**
  * The utils_test test class.
  *
@@ -77,7 +78,7 @@ class utils_tests extends competvetsuivi_tests {
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
         $matrix->load_data();
-        $comp = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.1.1'));
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
         $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $comp, $userdata);
         $uc55vals = [];

@@ -112,7 +112,7 @@ class ueutils {
     /**
      * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
      * Results are for each competency and then each strands covered by the UE.
-     *
+     * TODO : Implements Caching
      * @param $matrix : ue
      * @param $ue : given ue
      * @param int $rootcompid root competency id to start with. If null we take the macro competencies
@@ -180,7 +180,7 @@ class ueutils {
      * Results are for each competency for a given set of strands.
      * We calculate for each strand the total contribution and we highlight the highest value
      * The other strands will be respresented as a percentage of this value
-     *
+     * TODO : Implements Caching
      * @param $matrix
      * @param $currentue
      * @param $strandids

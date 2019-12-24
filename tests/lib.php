@@ -70,8 +70,9 @@ class competvetsuivi_tests extends advanced_testcase {
      *
      * @throws coding_exception
      */
-    public function setup() {
+    public function setUp() {
         global $CFG;
+        parent::setUp();
         $this->presetup_data();
         load_data_from_json_fixtures($CFG->dirroot . $this->fixturepath);
     }

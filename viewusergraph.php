@@ -73,7 +73,7 @@ $currentsemester = ueutils::get_current_semester_index($lastseenue, $matrix);
 
 $currentcomp = null;
 if ($currentcompid) {
-    $currentcomp = $matrix->comp[$currentcompid];
+    $currentcomp = $matrix->get_matrix_comp_by_criteria('id', $currentcompid);
 }
 
 $progress_overview = new \local_competvetsuivi\renderable\competency_progress_overview(

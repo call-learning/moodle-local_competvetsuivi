@@ -257,6 +257,30 @@ class matrix {
     }
 
     /**
+     * Get matching competency per search criteria.
+     *
+     * @param $propertyname
+     * @param $propertyvalue
+     * @return mixed
+     * @throws matrix_exception
+     */
+    public function get_matrix_comp_by_criteria($propertyname, $propertyvalue) {
+        if (!$this->dataloaded) {
+            throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
+        }
+        $matchingcomp = array_filter($this->comp, function($comp) use ($propertyname, $propertyvalue) {
+            return $comp->$propertyname == $propertyvalue;
+        });
+        if (!$matchingcomp) {
+            throw new matrix_exception('foundnomatchingcompetency', 'local_competvetsuivi');
+        }
+        if (count($matchingcomp) > 1) {
+            throw new matrix_exception('foundtoomanymatchingcompetency', 'local_competvetsuivi');
+        }
+        return reset($matchingcomp);
+    }
+
+    /**
      * Get recursively the possible (maximum) values for this competency
      *
      * @param $ueid

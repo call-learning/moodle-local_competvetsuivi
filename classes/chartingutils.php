@@ -84,6 +84,7 @@ class chartingutils {
 
     /**
      * Get the progress in each UE/Semester and place markers accordingly
+     * TODO : Implements Caching
      * @param $matrix
      * @param $comp
      * @param $strandlist

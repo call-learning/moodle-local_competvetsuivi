@@ -29,10 +29,9 @@ use local_competvetsuivi\matrix\matrix;
 use mod_quiz\question\qubaids_for_users_attempts;
 
 class autoevalutils {
-    public static function get_student_results($userid, $matrix, $questionbankcategorysn, $rootcomp = null) {
-        global $CFG, $DB;
-        include_once($CFG->dirroot . '/question/engine/lib.php');
-        include_once($CFG->dirroot . '/mod/quiz/locallib.php'); // Yeah, if not quiz_attempt not defined
+
+    public static function get_all_question_from_qbank_category($questionbankcategorysn) {
+        global $DB;
         // Get all relevant questions
         $params = array('competvetid' => $questionbankcategorysn);
         $sql = "SELECT "
@@ -42,22 +41,54 @@ class autoevalutils {
                 . "LEFT JOIN {quiz_slots} qs ON qs.questionid = q.id "
                 . "WHERE qc.idnumber=:competvetid";
 
-        $allquestions = $DB->get_records_sql($sql, $params);
+        return $DB->get_records_sql($sql, $params);
+    }
 
-        $sqlallcomps = 'SELECT c.shortname, c.id FROM {cvs_matrix_comp} AS c';
-        $sqlallcomplike = "";
-        $sqlallcompparams = array('matrixid' => $matrix->id);
+    /**
+     * Return an associative array which can be used to match competency shortname with their respective IDs
+     * @param $matrix
+     * @param $rootcomp
+     * @return array
+     */
+    public static function get_all_competency_association($matrix, $rootcomp) {
+        /** @var  matrix $matrix  */
+        $allcompetencies = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0);
+        $compassociation = [];
         if ($rootcomp) {
-            $sqlallcomplike = "WHERE " . $DB->sql_like('c.path', ':rootpathcheck')
-                    . " OR c.path=:rootpath";
-            $sqlallcompparams['rootpathcheck'] = "%/{$rootcomp->id}/%";
-            $sqlallcompparams['rootpath'] = "/{$rootcomp->id}";
+            $compassociation[$rootcomp->shortname] = $rootcomp->id; // We add the root competency to the set
         }
-        $sqlallcomporder = ' ORDER BY id ASC';
-        $allcompetenciesmatch = $DB->get_records_sql_menu(
-                "$sqlallcomps $sqlallcomplike $sqlallcomporder",
-                $sqlallcompparams
-        );
+        foreach($allcompetencies as $cmp) {
+            $compassociation[$cmp->shortname] = $cmp->id;
+        }
+        return $compassociation;
+    }
+
+    public static function get_question_mark($qa) {
+        $markfract = $qa->get_fraction(); // Question fraction is the percentage for this question
+        $coef = $qa->get_max_mark(); // This is really the question weight, not the max, the max mark is
+        // obtained using max_fraction/min_fraction
+        $minmark = $qa->get_min_fraction();
+        $maxmark = $qa->get_max_fraction();
+        return ($markfract - $minmark) / ($maxmark - $minmark) * $coef;
+    }
+    /**
+     * Get student results
+     * TODO : Implements Caching
+     * @param $userid
+     * @param $matrix
+     * @param $questionbankcategorysn
+     * @param null $rootcomp
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function get_student_results($userid, $matrix, $questionbankcategorysn, $rootcomp = null) {
+        global $CFG, $DB;
+        include_once($CFG->dirroot . '/question/engine/lib.php');
+        include_once($CFG->dirroot . '/mod/quiz/locallib.php'); // Yeah, if not quiz_attempt not defined
+
+        $allquestions = static::get_all_question_from_qbank_category($questionbankcategorysn);
+
+        $allcompetenciesmatch = static::get_all_competency_association($matrix, $rootcomp);
 
         $dm = new \question_engine_data_mapper();
         $questionresults = [];
@@ -67,19 +98,14 @@ class autoevalutils {
             foreach ($qubas as $quba) {
                 foreach ($quba->get_attempt_iterator() as $qa) {
                     $question = $qa->get_question();
-                    $markfract = $qa->get_fraction(); // Question fraction is the percentage for this question
-                    $coef = $qa->get_max_mark(); // This is really the question weight, not the max, the max mark is
-                    // obtained using max_fraction/min_fraction
-                    $minmark = $qa->get_min_fraction();
-                    $maxmark = $qa->get_max_fraction();
-                    $markfraction = ($markfract - $minmark) / ($maxmark - $minmark) * $coef;
                     $questionsn = trim(strtoupper(trim($question->name)), '.');
                     if (key_exists($questionsn, $allcompetenciesmatch)) {
                         $questionid = $allcompetenciesmatch[$questionsn]; // The key is now the competency id
+                        $qmark = static::get_question_mark($qa);
                         if (empty($questionresults[$questionid])) {
-                            $questionresults[$questionid] = $markfraction;
+                            $questionresults[$questionid] = $qmark;
                         } else {
-                            $questionresults[$questionid] = max($markfraction, $questionresults[$questionid]);
+                            $questionresults[$questionid] = max($qmark, $questionresults[$questionid]);
                         }
                     }
                 }
@@ -95,7 +121,7 @@ class autoevalutils {
         return $questionresults;
     }
 
-    static private function compute_results_recursively(&$currentresultarray, $matrix, $currentcomp) {
+    public static function compute_results_recursively(&$currentresultarray, $matrix, $currentcomp) {
         $compresult = [];
         foreach ($matrix->get_child_competencies($currentcomp->id) as $cmp) {
             $compmean = static::compute_results_recursively($currentresultarray, $matrix, $cmp);

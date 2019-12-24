@@ -69,7 +69,7 @@ echo $OUTPUT->heading(get_string('matrixuevscomptitle', 'local_competvetsuivi',
 
 $currentcomp = null;
 if ($currentcompid) {
-    $currentcomp = $matrix->comp[$currentcompid];
+    $currentcomp = $matrix->get_matrix_comp_by_criteria('id', $currentcompid);
 }
 
 $progress_percent =  new \local_competvetsuivi\renderable\uevscompetency_summary(

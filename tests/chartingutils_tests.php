@@ -152,7 +152,7 @@ class chartingutils_tests extends competvetsuivi_tests {
 
         );
         foreach ($computedresults as $compname => $expectedresults) {
-            $comp = $DB->get_record('cvs_matrix_comp', array('shortname' => $compname));
+            $comp = $matrix->get_matrix_comp_by_criteria('shortname', $compname);
             $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
             // User has been validated up to and including UC55
             $strands = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
@@ -176,7 +176,7 @@ class chartingutils_tests extends competvetsuivi_tests {
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
         $matrix->load_data();
-        $comp = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.1.1'));
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $useremail = "Etudiant-145@ecole.fr";
         $userdata = local_competvetsuivi\userdata::get_user_data($useremail);
         $lastseenue = local_competvetsuivi\userdata::get_user_last_ue_name($useremail);

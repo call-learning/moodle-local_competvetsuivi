@@ -99,4 +99,19 @@ class utils {
             $DB->insert_record('cvs_matrix_cohorts', $assignment);
         }
     }
+
+    /**
+     * Hash a series of objects so to be able to check if the value is already there in a cache
+     * @param $arrayobjectohash
+     * @return string sha1 of the concatentation of all serialized version of the objects
+     */
+    public static function cache_parameter_hash($arrayobjectohash) {
+        $serialized = '';
+        foreach ($arrayobjectohash as $o) {
+            if($o) {
+                $serialized .= serialize($o);
+            } // Null objects or value will not count
+        }
+        return hash('sha1',$serialized);
+    }
 }

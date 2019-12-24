@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_competvetsuivi\matrix\matrix_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 // For installation and usage of PHPUnit within Moodle please read:
@@ -45,13 +47,13 @@ include_once('lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix_tests extends competvetsuivi_tests {
-       public function test_get_values_for_ue_and_competency() {
+    public function test_get_values_for_ue_and_competency() {
         global $DB;
         $this->resetAfterTest();
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
         $matrix->load_data();
-        $comp = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.1.1'));
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $matrixues = $matrix->get_matrix_ues();
         $uc51 = reset($matrixues);
         $values = $matrix->get_values_for_ue_and_competency($uc51->id, $comp->id, false);
@@ -75,13 +77,29 @@ class matrix_tests extends competvetsuivi_tests {
         }
     }
 
+    public function test_get_matrix_comp_by_criteria() {
+        global $DB;
+        $this->resetAfterTest();
+        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
+        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+        $matrix->load_data();
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
+        $this->assertEquals($comp->shortname, 'COPREV.2');
+        $comp = $matrix->get_matrix_comp_by_criteria('id', $comp->id);
+        $this->assertEquals($comp->shortname, 'COPREV.2');
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
+        $this->assertEquals($comp->shortname, 'COPREV.1.1');
+        $this->expectException(matrix_exception::class);
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2ZDQSD');
+    }
+
     public function test_get_values_for_ue_and_competency_competencies() {
         global $DB;
         $this->resetAfterTest();
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
         $matrix->load_data();
-        $comp = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.2'));
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
         $matrixues = $matrix->get_matrix_ues();
         $uc55 = array_values(array_filter($matrixues, function($u) {
             return $u->shortname == 'UC55';
@@ -113,8 +131,8 @@ class matrix_tests extends competvetsuivi_tests {
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
         $matrix->load_data();
-        $coprev2 = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.2'));
-        $coprev23 = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.2.3'));
+        $coprev2 = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
+        $coprev23 = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2.3');
         $this->assertTrue($matrix->has_children($coprev2));
         $this->assertFalse($matrix->has_children($coprev23));
     }
@@ -134,8 +152,8 @@ class matrix_tests extends competvetsuivi_tests {
     public function test_normalize_uc_name() {
         global $DB;
         $this->resetAfterTest();
-        $this->assertEquals('UC51' , \local_competvetsuivi\matrix\matrix::normalize_uc_name('UC51'));
-        $this->assertEquals('UC51' , \local_competvetsuivi\matrix\matrix::normalize_uc_name('UE51'));
-        $this->assertEquals('UCUV51' , \local_competvetsuivi\matrix\matrix::normalize_uc_name('UV51'));
+        $this->assertEquals('UC51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UC51'));
+        $this->assertEquals('UC51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UE51'));
+        $this->assertEquals('UCUV51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UV51'));
     }
 }
