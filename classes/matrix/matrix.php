@@ -36,6 +36,7 @@ global $CFG;
  */
 class matrix {
     const UC_PREFIX = ['UC', 'UE'];
+    const UC_REAL_PREFIX = 'UC'; // We use this prefix
     const MATRIX_SHEET_PREFIX = 'matrice';
 
     const MATRIX_COMP_TYPE_KNOWLEDGE = 1;
@@ -199,6 +200,17 @@ class matrix {
     }
 
     /**
+     * Make sure we always have the same name for the UC (UC as prefix for now)
+     * @param $ucname
+     * @return string
+     */
+    public static function normalize_uc_name($ucname) {
+        foreach (static::UC_PREFIX as $prefix) {
+            $ucname = str_replace($prefix, '', $ucname);
+        }
+        return self::UC_REAL_PREFIX.$ucname;
+    }
+    /**
      * Get matching UE per search criteria.
      * We take care of the special case for shortname where we can either have UC or UE
      * @param $propertyname
@@ -211,13 +223,10 @@ class matrix {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
         if ($propertyname == 'shortname') {
+            $propertyvalue = matrix::normalize_uc_name($propertyvalue);
             $matchingues = array_filter($this->ues, function($ue) use ($propertyname, $propertyvalue) {
                 $currentvalue = $ue->$propertyname;
-
-                foreach (static::UC_PREFIX as $prefix) {
-                    $currentvalue = str_replace($prefix, '', $currentvalue);
-                    $propertyvalue = str_replace($prefix, '', $propertyvalue);
-                }
+                $currentvalue =  matrix::normalize_uc_name($currentvalue);
                 return $currentvalue == $propertyvalue;
             });
         } else {

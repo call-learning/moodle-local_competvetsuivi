@@ -29,7 +29,12 @@ use local_competvetsuivi\matrix\matrix;
 
 class ueutils {
 
-    const FIRST_UE_SEMESTER = 51;
+    public static function get_first_ue($matrix) {
+        if (empty($matrix->ues)) {
+            return null;
+        }
+        return array_values($matrix->ues)[0];
+    }
 
     /**
      * Calculate the semester number for the given UE/UC
@@ -37,10 +42,12 @@ class ueutils {
      * @param $ue
      * @return float|int
      */
-    public static function get_semester_for_ue($ue) {
+    public static function get_semester_for_ue($ue, $matrix) {
         $semester = 1;
+        $firstue = ueutils::get_first_ue($matrix);
+        $firstueval = intval(substr($firstue->shortname, 2));
         if ($ue) {
-            return floor(((intval(substr($ue->shortname, 2)) - static::FIRST_UE_SEMESTER) / 10) + 1);
+            return floor(((intval(substr($ue->shortname, 2)) - $firstueval) / 10) + 1);
         }
         return $semester;
     }
@@ -54,21 +61,23 @@ class ueutils {
      */
     public static function get_ues_for_semester($semester, $matrix) {
         $uelist = $matrix->ues;
-        return array_filter($uelist, function($ue) use ($semester) {
+        return array_filter($uelist, function($ue) use ($semester, $matrix) {
             // For now it is a guess work but it should be coming from the database as a group of UEs
-            return ueutils::get_semester_for_ue($ue) == $semester;
+            return ueutils::get_semester_for_ue($ue, $matrix) == $semester;
         });
     }
-
-    const MAX_SEMESTERS = 7;
 
     /**
      * Get the number of semester. This will probably be overrident when using groups
      *
      * @return int
      */
-    public static function get_semester_count() {
-        return static::MAX_SEMESTERS;
+    public static function get_semester_count($matrix) {
+        $uelist = $matrix->ues;
+        $mapsemester = array_map(function($ue) use ($matrix) {
+            return ueutils::get_semester_for_ue($ue, $matrix);
+        }, $uelist);
+        return count(array_unique($mapsemester));
     }
 
     const YEAR_START_MONTH = 9; // September
@@ -76,24 +85,24 @@ class ueutils {
     /**
      * Get current semester from the name (shortname) of the last seen UC/UE
      *
-     * @param $lastseenue
+     * @param $lastseenuesn: last seen ue shortname
      * @param $matrix
      * @return float|int
      */
-    public static function get_current_semester_index($lastseenue, $matrix) {
+    public static function get_current_semester_index($lastseenuesn, $matrix) {
         $matrixues = $matrix->get_matrix_ues();
         $semester = 1;
-        if ($lastseenue) {
+        if ($lastseenuesn) {
             // Make sure this UE belongs to the matrix
             $foundue = null;
             foreach ($matrixues as $ue) {
-                if ($lastseenue == $ue->shortname) {
+                if ($lastseenuesn == $ue->shortname) {
                     $foundue = $ue;
                     break;
                 }
             }
             if ($foundue) {
-                $semester = ueutils::get_semester_for_ue($ue);
+                $semester = ueutils::get_semester_for_ue($ue, $matrix);
             }
 
         }
@@ -118,7 +127,7 @@ class ueutils {
 
         // Restrict UE to semester or not
         if ($samesemesteronly) {
-            $semester = self::get_semester_for_ue($currentue);
+            $semester = self::get_semester_for_ue($currentue, $matrix);
             $allues = self::get_ues_for_semester($semester, $matrix);
         } else {
             $allues = $matrix->get_matrix_ues();

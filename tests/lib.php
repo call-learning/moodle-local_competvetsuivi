@@ -49,7 +49,33 @@ function load_data_from_json_fixtures($fixturepath) {
     }
 }
 
+/**
+ * The matrix_test test class.
+ *
+ * @package    local_competvetsuivi
+ * @copyright  2019 CALL Learning <laurent@call-learning.fr>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class competvetsuivi_tests extends advanced_testcase {
+    protected $user, $cohort1, $cohort2;
+    protected $fixturepath = '/local/competvetsuivi/tests/fixtures/basic';
 
+    public function presetup_data() {
+        $this->user = static::getDataGenerator()->create_user();
+        $this->cohort1 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT1'));
+        $this->cohort2 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT2'));
+    }
+    /**
+     * Load the model data
+     *
+     * @throws coding_exception
+     */
+    public function setup() {
+        global $CFG;
+        $this->presetup_data();
+        load_data_from_json_fixtures($CFG->dirroot . $this->fixturepath);
+    }
+}
 /*
  * Generate the comp_ue table:
  * SELECT ue.shortname AS ue, comp.shortname AS comp, cue.type as type, cue.value as value

@@ -24,7 +24,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-include_once('lib.php');
 
 // For installation and usage of PHPUnit within Moodle please read:
 // https://docs.moodle.org/dev/PHPUnit
@@ -36,6 +35,8 @@ include_once('lib.php');
 // The official PHPUnit homepage is at:
 // https://phpunit.de
 
+include_once('lib.php');
+
 /**
  * The matrix_test test class.
  *
@@ -43,23 +44,8 @@ include_once('lib.php');
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class matrix_tests extends advanced_testcase {
-    protected $user, $cohort1, $cohort2;
-
-    /**
-     * Load the model data
-     *
-     * @throws coding_exception
-     */
-    public function setup() {
-        global $CFG;
-        $this->user = static::getDataGenerator()->create_user();
-        $this->cohort1 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT1'));
-        $this->cohort2 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT2'));
-        load_data_from_json_fixtures($CFG->dirroot . '/local/competvetsuivi/tests/fixtures/basic');
-    }
-
-    public function test_get_values_for_ue_and_competency() {
+class matrix_tests extends competvetsuivi_tests {
+       public function test_get_values_for_ue_and_competency() {
         global $DB;
         $this->resetAfterTest();
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
@@ -139,11 +125,17 @@ class matrix_tests extends advanced_testcase {
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
         $matrix->load_data();
-        $coprev2 = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.2'));
-        $coprev23 = $DB->get_record('cvs_matrix_comp', array('shortname' => 'COPREV.2.3'));
         $uc51 = $matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $this->assertEquals('UC51', $uc51->shortname);
         $uc51 = $matrix->get_matrix_ue_by_criteria('shortname', 'UE51');
         $this->assertEquals('UC51', $uc51->shortname);
+    }
+
+    public function test_normalize_uc_name() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->assertEquals('UC51' , \local_competvetsuivi\matrix\matrix::normalize_uc_name('UC51'));
+        $this->assertEquals('UC51' , \local_competvetsuivi\matrix\matrix::normalize_uc_name('UE51'));
+        $this->assertEquals('UCUV51' , \local_competvetsuivi\matrix\matrix::normalize_uc_name('UV51'));
     }
 }

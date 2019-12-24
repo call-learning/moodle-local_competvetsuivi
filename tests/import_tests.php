@@ -61,25 +61,35 @@ class import_tests extends advanced_testcase {
         $matrix = new matrix($matrixobject->id);
         $matrix->load_data();
         $comps = array_values($matrix->comp);
-        $mastercomp  = $comps[0]; // COPREV
-        $childcomp =  $comps[1]; // COPREV.1
-        $leafcomp  = $comps[4]; // COPREV.1.2
+        $mastercomp = $comps[0]; // COPREV
+        $childcomp = $comps[1]; // COPREV.1
+        $leafcomp = $comps[4]; // COPREV.1.2
         $this->assertEquals('COPREV', $mastercomp->shortname);
         $this->assertEquals("/{$mastercomp->id}", $mastercomp->path);
-        $this->assertEquals('COPREV.1', $childcomp->shortname );
+        $this->assertEquals('COPREV.1', $childcomp->shortname);
         $this->assertEquals("/{$mastercomp->id}/{$childcomp->id}", $childcomp->path);
         $this->assertEquals('COPREV.1.2', $leafcomp->shortname);
         $this->assertEquals("/{$mastercomp->id}/{$childcomp->id}/{$leafcomp->id}", $leafcomp->path);
     }
+
     public function test_import_users() {
         global $DB;
         $this->resetAfterTest();
+        // With UE
         $filename = dirname(__FILE__) . '/fixtures/userdata_sample.csv';
         $status = userdata::import_user_data_from_file($filename);
-        $user = $DB->get_record('cvs_userdata',array('useremail'=>'Etudiant-143@ecole.fr'));
+        $user = $DB->get_record('cvs_userdata', array('useremail' => 'Etudiant-143@ecole.fr'));
         $userdata = json_decode($user->userdata);
-        $this->assertEquals(1,$userdata->UC53);
-        $this->assertEquals(0,$userdata->UC52);
+        $this->assertEquals(1, $userdata->UC53);
+        $this->assertEquals(0, $userdata->UC52);
+        $this->assertEquals($user->lastseenunit, 'UC55');
+        // Now with UC
+        $filename = dirname(__FILE__) . '/fixtures/userdata_sample_uc.csv';
+        $status = userdata::import_user_data_from_file($filename);
+        $user = $DB->get_record('cvs_userdata', array('useremail' => 'Etudiant-143@ecole.fr'));
+        $userdata = json_decode($user->userdata);
+        $this->assertEquals(1, $userdata->UC53);
+        $this->assertEquals(0, $userdata->UC52);
         $this->assertEquals($user->lastseenunit, 'UC55');
     }
 }

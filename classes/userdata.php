@@ -26,6 +26,7 @@
 namespace local_competvetsuivi;
 
 use csv_import_reader;
+use local_competvetsuivi\matrix\matrix;
 
 class userdata {
 
@@ -78,7 +79,7 @@ class userdata {
                 $useddataheaders = array_splice($headers, $emailcolumnindex + 1);
                 // TODO: This is a hack: We either need to change the header in the user data source or the matrix
                 $useddataheaders = array_map(function($label) {
-                    return str_replace('UE', 'UC', $label);
+                    return matrix::normalize_uc_name($label);
                 }, $useddataheaders);
 
                 $inserteduser = 0;

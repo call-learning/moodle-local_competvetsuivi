@@ -81,20 +81,33 @@ class chartingutils {
 
 
     const INITIAL_SEMESTER = 5;
+
+    /**
+     * Get the progress in each UE/Semester and place markers accordingly
+     * @param $matrix
+     * @param $comp
+     * @param $strandlist
+     * @param $userdata
+     * @param $currentsemester
+     * @param null $userselftestresults
+     * @return array
+     */
     public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester, $userselftestresults = null) {
         $alldata = [];
         foreach ($strandlist as $comptypeid) {
             // Init array
             $userprogress = [];
             $maxprogress = [];
+            $semestercount = ueutils::get_semester_count($matrix);
             // We get the cumulated progress for each semester (if they have any progress) with a marker for the maximum possible progress
-            for ($semester = 1; $semester <= ueutils::get_semester_count(); $semester++) {
+            for ($semester = 1; $semester <= $semestercount; $semester++) {
                 $ueselection = ueutils::get_ues_for_semester($semester, $matrix);
                 list($progressspertrand, $maxperstrand) =
                         chartingutils::get_comp_progress($matrix, $comp, $userdata, array($comptypeid), $ueselection);
-
+                $ueselectionbis = array_map(function ($ue) { return $ue->fullname ; },$ueselection) ;
                 $userprogress[$semester] = reset($progressspertrand);
                 $maxprogress[$semester] = reset($maxperstrand);
+
             }
             $data = new \stdClass();
             $data->markers = [];
@@ -117,11 +130,12 @@ class chartingutils {
             $data->markers = [];
             $accumulator = 0;
             $maximumprogress = array_sum($maxprogress);
-            for ($semester = 1; $semester <= ueutils::get_semester_count(); $semester++) {
+            $semestercount = ueutils::get_semester_count($matrix);
+            for ($semester = 1; $semester <= $semestercount; $semester++) {
                 $accumulator += $maxprogress[$semester];
                 if ($maxprogress[$semester]) {
                     $marker = new \stdClass();
-                    $marker->label = intval($semester) + static::INITIAL_SEMESTER;
+                    $marker->label = intval($semester) + static::INITIAL_SEMESTER - 1 ;
                     $marker->value = $accumulator / $maximumprogress;
                     $marker->active = $semester > $currentsemester;
                     $data->markers[] = $marker;

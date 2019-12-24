@@ -39,6 +39,7 @@ include_once('lib.php');
 
 use local_competvetsuivi\utils;
 
+include_once('lib.php');
 /**
  * The utils_test test class.
  *
@@ -46,22 +47,7 @@ use local_competvetsuivi\utils;
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class utils_tests extends advanced_testcase {
-    protected $user, $cohort1, $cohort2;
-
-    /**
-     * Load the model data
-     *
-     * @throws coding_exception
-     */
-    public function setup() {
-        global $CFG;
-        $this->user = static::getDataGenerator()->create_user();
-        $this->cohort1 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT1'));
-        $this->cohort2 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT2'));
-        load_data_from_json_fixtures($CFG->dirroot . '/local/competvetsuivi/tests/fixtures/basic');
-    }
-
+class utils_tests extends competvetsuivi_tests {
     public function test_get_matrixid_for_user() {
         global $DB;
         $this->resetAfterTest();
