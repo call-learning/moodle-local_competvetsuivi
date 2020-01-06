@@ -36,6 +36,9 @@ defined('MOODLE_INTERNAL') || die();
 // https://phpunit.de
 
 include('lib.php');
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 /**
  * The autoevalutils_test test class.
@@ -51,70 +54,145 @@ class autoevalutils_tests extends competvetsuivi_tests {
     protected $matrix = null;
 
     const COURSE_QUIZ_NB = 2;
-    const QBANK_QUESTION_NB = 4;
+    // Responses to the questions quiz
+    const QBANK_QUESTION_COMP = ['COPREV' => 'One',
+            'COPREV.1.1' => 'Two',
+            'COPREV.1.2' => 'Four',
+            'COPREV.2' => 'Two',
+            'COPREV.2.1' => 'Three',
+            'COPREV.2.2' => 'Three',
+            'COPREV.3.1' => 'Two',
+            'COPREV.3.4' => 'Four',
+    ];
     const QBANK_CATEGORY_ID = 'qbankcat';
+    const QUESTION_POSSIBLE_ANSWERS = array('One' => '1', 'Two' => '0.75', 'Three' => '0.5', 'Four' => '0.25', 'Five' => '0');
 
-    protected static function make_a_quiz_question($competency) {
+    protected static function get_mc_question_data($competency) {
         global $USER;
+        $qdata = new stdClass();
 
-        question_bank::load_question_definition_classes('multichoice');
-        $mc = new qtype_multichoice_multi_question();
-        $mc->id = 0;
-        $mc->category = 0;
-        $mc->idnumber = $competency->shortname;
-        $mc->parent = 0;
-        $mc->questiontextformat = FORMAT_HTML;
-        $mc->generalfeedbackformat = FORMAT_HTML;
-        $mc->defaultmark = 1;
-        $mc->penalty = 0.3333333;
-        $mc->length = 1;
-        $mc->stamp = make_unique_id_code();
-        $mc->version = make_unique_id_code();
-        $mc->hidden = 0;
-        $mc->timecreated = time();
-        $mc->timemodified = time();
-        $mc->createdby = $USER->id;
-        $mc->modifiedby = $USER->id;
-        $mc->name = 'Multi-choice question, single response';
-        $mc->questiontext = "Competency {$competency->shortname}";
-        $mc->generalfeedback = '';
-        $mc->qtype = question_bank::get_qtype('multichoice');
+        $qdata->name = 'multiple choice question';
+        $qdata->idnumber = $competency->shortname;
+        $qdata->questiontext = array('text' => "Question for {$competency->shortname}", 'format' => FORMAT_HTML);
+        $qdata->generalfeedback = array('text' => "Question for {$competency->shortname} answered.", 'format' => FORMAT_HTML);
+        $qdata->defaultmark = 1;
+        $qdata->noanswers = 5;
+        $qdata->numhints = 2;
+        $qdata->penalty = 0.3333333;
 
-        $mc->shuffleanswers = 0;
-        $mc->answernumbering = 'abc';
-
-        $mc->correctfeedback = self::STANDARD_OVERALL_CORRECT_FEEDBACK;
-        $mc->correctfeedbackformat = FORMAT_HTML;
-        $mc->partiallycorrectfeedback = self::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
-        $mc->partiallycorrectfeedbackformat = FORMAT_HTML;
-        $mc->shownumcorrect = true;
-        $mc->incorrectfeedback = self::STANDARD_OVERALL_INCORRECT_FEEDBACK;
-        $mc->incorrectfeedbackformat = FORMAT_HTML;
-
-        $mc->answers = array(
-                13 => new question_answer(13, 'A', 0, '', FORMAT_HTML),
-                14 => new question_answer(14, 'B', 0.25, '', FORMAT_HTML),
-                15 => new question_answer(15, 'C', 0.5, '', FORMAT_HTML),
-                16 => new question_answer(16, 'D', 1, '', FORMAT_HTML),
+        $qdata->shuffleanswers = 1;
+        $qdata->answernumbering = '123';
+        $qdata->single = '1';
+        $qdata->correctfeedback = array('text' => test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK,
+                'format' => FORMAT_HTML);
+        $qdata->partiallycorrectfeedback = array('text' => test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK,
+                'format' => FORMAT_HTML);
+        $qdata->shownumcorrect = 1;
+        $qdata->incorrectfeedback = array('text' => test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK,
+                'format' => FORMAT_HTML);
+        $qdata->fraction = array_values(self::QUESTION_POSSIBLE_ANSWERS);
+        $qdata->answer = array(
+                0 => array(
+                        'text' => 'One',
+                        'format' => FORMAT_PLAIN
+                ),
+                1 => array(
+                        'text' => 'Two',
+                        'format' => FORMAT_PLAIN
+                ),
+                2 => array(
+                        'text' => 'Three',
+                        'format' => FORMAT_PLAIN
+                ),
+                3 => array(
+                        'text' => 'Four',
+                        'format' => FORMAT_PLAIN
+                ),
+                4 => array(
+                        'text' => 'Five',
+                        'format' => FORMAT_PLAIN
+                )
         );
 
-        return $mc;
+        $qdata->feedback = array(
+                0 => array(
+                        'text' => 'One is odd.',
+                        'format' => FORMAT_HTML
+                ),
+                1 => array(
+                        'text' => 'Two is even.',
+                        'format' => FORMAT_HTML
+                ),
+                2 => array(
+                        'text' => 'Three is odd.',
+                        'format' => FORMAT_HTML
+                ),
+                3 => array(
+                        'text' => 'Four is even.',
+                        'format' => FORMAT_HTML
+                ),
+                4 => array(
+                        'text' => '',
+                        'format' => FORMAT_HTML
+                )
+        );
+
+        $qdata->hint = array(
+                0 => array(
+                        'text' => 'Hint 1.',
+                        'format' => FORMAT_HTML
+                ),
+                1 => array(
+                        'text' => 'Hint 2.',
+                        'format' => FORMAT_HTML
+                )
+        );
+        $qdata->hintclearwrong = array(0, 1);
+        $qdata->hintshownumcorrect = array(1, 1);
+
+        return $qdata;
+    }
+
+    /**
+     */
+    protected function create_question($questiongenerator, $competency, $categoryid) {
+        $fromform = $this->get_mc_question_data($competency);
+
+        $question = new stdClass();
+        $question->category = $categoryid;
+        $question->qtype = 'multichoice';
+        $question->createdby = 0;
+        $question->idnumber = null;
+        $fromform->category = $categoryid;
+
+        /** @var core_question_generator $questiongenerator */
+        // see $questiongenerator->update_question($question)
+
+        $qtype = $question->qtype;
+        $question = question_bank::get_qtype($qtype)->save_question($question, $fromform);
+
+        return $question;
     }
 
     public function setUp() {
         global $DB;
+        global $CFG;
         parent::setUp();
 
         $generator = $this->getDataGenerator();
         /** @var core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
         // Create a course and a quiz.
         for ($i = 0; $i < self::COURSE_QUIZ_NB; $i++) {
             $course = $generator->create_course();
             $this->course[] = $course;
-            $qiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
-            $this->quizzes[] = $qiz;
+            $quiz = $quizgenerator->create_instance(array('course' => $course->id,
+                    'questionsperpage' => 0,
+                    'grade' => 100.0,
+                    'sumgrades' => 2));
+            $this->quizzes[] = $quiz;
         }
 
         // Create a specific question bank category
@@ -127,16 +205,49 @@ class autoevalutils_tests extends competvetsuivi_tests {
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
         $matrix->load_data();
         $this->matrix = $matrix;
-        $cache = cache::make('core', 'questiondata');
-        for ($i = 0; $i < self::QBANK_QUESTION_NB; $i++) {
-            $questiondata = $questiongenerator->create_question('multichoice', null,
-                    ['name' => 'Example question', 'category' => $category->id]);
-            $cache->delete($questiondata->id);
-            quiz_add_quiz_question($questiondata->id, $this->quizzes[$i % 2]);
-            $this->questions[] = $questiondata;
+
+        foreach (self::QBANK_QUESTION_COMP as $compname => $result) {
+            $comp = $matrix->get_matrix_comp_by_criteria('shortname', $compname);
+            $questiondata = $this->create_question($questiongenerator, $comp, $category->id);
+            $this->questions[$compname] = $questiondata;
         }
 
+        foreach ($this->quizzes as $quiz) {
+            foreach (self::QBANK_QUESTION_COMP as $compname => $result) {
+                quiz_add_quiz_question( $this->questions[$compname]->id, $quiz);
+            }
+        }
         // Note for numerical question results see qtype_multichoice_test_helper : 100 <=> 3.14, rest if 0%
+
+        // Next start the quiz (see mod/qui/test/attempt_walkthrough_test
+
+        foreach ($this->quizzes as $qid => $q) {
+            $quizobj = quiz::create($q->id, $this->user->id);
+            $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+            $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+            $timenow = time();
+            $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $this->user->id);
+            quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+            quiz_attempt_save_started($quizobj, $quba, $attempt);
+            // Process some responses from the student.
+            $attemptobj = quiz_attempt::create($attempt->id);
+            $tosubmit = [];
+            foreach ($attemptobj->get_slots() as $slot) {
+                $cquestion = $quba->get_question($slot);
+                if (key_exists($cquestion->idnumber, self::QBANK_QUESTION_COMP)) {
+                    $tosubmit[$slot] = array('answer' => self::QBANK_QUESTION_COMP[$cquestion->idnumber]);
+                }
+                // Just an exception for COPREV3.4, we have two different answers so we can check
+                // if we take the max
+                if ($cquestion->idnumber == 'COPREV.3.4' && $qid % 2) {
+                    $tosubmit[$slot] = array('answer' => 'Two');
+                }
+            }
+            $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
+            // Finish the attempt.
+            $attemptobj = quiz_attempt::create($attempt->id);
+            $attemptobj->process_finish($timenow, false);
+        }
     }
 
     public function test_get_all_question_from_qbank_category() {
@@ -144,56 +255,164 @@ class autoevalutils_tests extends competvetsuivi_tests {
         $allquestions = \local_competvetsuivi\autoevalutils::get_all_question_from_qbank_category(
                 self::QBANK_CATEGORY_ID
         );
-        $this->assertCount(4, $allquestions);
+        // We have two quiz with the same questions, so it will be 10
+        $this->assertCount(count(self::QBANK_QUESTION_COMP) * 2, $allquestions);
     }
 
-    public function test_get_student_results() {
+    public function test_get_all_competency_association() {
         $this->resetAfterTest();
         $allcomps = \local_competvetsuivi\autoevalutils::get_all_competency_association($this->matrix, null);
-        $compresult = array (
-                'COPREV' => '276000',
-                'COPREV.1' => '276001',
-                'COPREV.1.1' => '276002',
-                'COPREV.1.1BIS' => '276003',
-                'COPREV.1.2' => '276004',
-                'COPREV.1.3' => '276005',
-                'COPREV.1.4' => '276006',
-                'COPREV.2' => '276007',
-                'COPREV.2.1' => '276008',
-                'COPREV.2.2' => '276009',
-                'COPREV.2.3' => '276010',
-                'COPREV.2.3BIS' => '276011',
-                'COPREV.2.4' => '276012',
-                'COPREV.2.5' => '276013',
-                'COPREV.2.6' => '276014',
-                'COPREV.2.7' => '276015',
-                'COPREV.2.7BIS' => '276016',
-                'COPREV.2.8' => '276017',
-                'COPREV.3' => '276018',
-                'COPREV.3.1' => '276019',
-                'COPREV.3.2' => '276020',
-                'COPREV.3.3' => '276021',
-                'COPREV.3.4' => '276022',
+        $compresult = array(
+                'COPREV',
+                'COPREV.1',
+                'COPREV.1.1',
+                'COPREV.1.1BIS',
+                'COPREV.1.2',
+                'COPREV.1.3',
+                'COPREV.1.4',
+                'COPREV.2',
+                'COPREV.2.1',
+                'COPREV.2.2',
+                'COPREV.2.3',
+                'COPREV.2.3BIS',
+                'COPREV.2.4',
+                'COPREV.2.5',
+                'COPREV.2.6',
+                'COPREV.2.7',
+                'COPREV.2.7BIS',
+                'COPREV.2.8',
+                'COPREV.3',
+                'COPREV.3.1',
+                'COPREV.3.2',
+                'COPREV.3.3',
+                'COPREV.3.4'
         );
-        $this->assertEquals($compresult, $allcomps);
+        $this->assertEquals($compresult, array_keys($allcomps));
 
         $comp2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
         $allcomps = \local_competvetsuivi\autoevalutils::get_all_competency_association($this->matrix, $comp2);
-        $compresult = array (
-                'COPREV.2' => '276007',
-                'COPREV.2.1' => '276008',
-                'COPREV.2.2' => '276009',
-                'COPREV.2.3' => '276010',
-                'COPREV.2.3BIS' => '276011',
-                'COPREV.2.4' => '276012',
-                'COPREV.2.5' => '276013',
-                'COPREV.2.6' => '276014',
-                'COPREV.2.7' => '276015',
-                'COPREV.2.7BIS' => '276016',
-                'COPREV.2.8' => '276017',
+        $compresult = array(
+                'COPREV.2',
+                'COPREV.2.1',
+                'COPREV.2.2',
+                'COPREV.2.3',
+                'COPREV.2.3BIS',
+                'COPREV.2.4',
+                'COPREV.2.5',
+                'COPREV.2.6',
+                'COPREV.2.7',
+                'COPREV.2.7BIS',
+                'COPREV.2.8'
         );
-        $this->assertEquals($compresult, $allcomps);
+        $this->assertEquals($compresult, array_keys($allcomps));
     }
 
+    public function test_get_question_mark() {
+        $this->resetAfterTest();
+
+        $allquiz = array_map(function($q) {
+            return $q->id;
+        }, $this->quizzes);
+
+        $attempts = quiz_get_user_attempts($allquiz, $this->user->id);
+        foreach ($attempts as $a) {
+            $attemptobj = quiz_attempt::create($a->id);
+            foreach ($attemptobj->get_slots() as $slot) {
+                $qa = $attemptobj->get_question_attempt($slot);
+                $currentresponse = $qa->get_response_summary();
+                $expectedmark = 0; // No answer
+                if (key_exists($currentresponse, self::QUESTION_POSSIBLE_ANSWERS)) {
+                    $expectedmark = self::QUESTION_POSSIBLE_ANSWERS[$qa->get_response_summary()];
+                }
+                $mark = \local_competvetsuivi\autoevalutils::get_question_mark($qa);
+                $this->assertEquals($expectedmark, $mark, "Expected that $expectedmark is equal to $mark.");
+            }
+        }
+    }
+
+    public function test_compute_results_recursively_mean() {
+        $this->resetAfterTest();
+        $rootcompetency = $this->matrix->get_root_competency();
+        $coprev34 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3.4');
+        $coprev31 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3.1');
+        $coprev3 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3');
+        $questionresults = array(
+                $coprev34->id => 0.75,
+                $coprev31->id => 0.25,
+        );
+        \local_competvetsuivi\autoevalutils::compute_results_recursively($questionresults, $this->matrix, $rootcompetency);
+        $this->assertEquals(0.5, $questionresults[$coprev3->id]); // Mean
+        $this->assertEquals(0.75, $questionresults[$coprev34->id]);
+        $this->assertEquals(0.25, $questionresults[$coprev31->id]);
+
+    }
+    public function test_compute_results_recursively_override() {
+        $this->resetAfterTest();
+        $rootcompetency = $this->matrix->get_root_competency();
+        $coprev34 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3.4');
+        $coprev31 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3.1');
+        $coprev3 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3');
+        $questionresults = array(
+                $coprev34->id => 0.75,
+                $coprev31->id => 0.25,
+                $coprev3->id => 0.25,
+        );
+        \local_competvetsuivi\autoevalutils::compute_results_recursively($questionresults, $this->matrix, $rootcompetency);
+        $this->assertEquals(0.25, $questionresults[$coprev3->id]);
+
+    }
+
+    public function test_get_student_results_simple() {
+        $this->resetAfterTest();
+        // Easy use case: we look at COPREV.3.1 =>  0.75
+        $comp3 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3.1');
+
+        // Here we look at the root competency
+        $resultforallcomps =
+                \local_competvetsuivi\autoevalutils::get_student_results(
+                        $this->user->id,
+                        $this->matrix,
+                        self::QBANK_CATEGORY_ID,
+                        $comp3);
+
+        $this->assertEquals(0.75, $resultforallcomps[$comp3->id]);
+    }
+
+    public function test_get_student_results_aggregated_override() {
+        $this->resetAfterTest();
+        $comp2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
+        $resultforallcomps =
+                \local_competvetsuivi\autoevalutils::get_student_results(
+                        $this->user->id,
+                        $this->matrix,
+                        self::QBANK_CATEGORY_ID,
+                        $comp2);
+        $this->assertEquals(0.75, $resultforallcomps[$comp2->id]); // Here the result below are overriden
+    }
+
+    public function test_get_student_results_aggregated_mean() {
+        $this->resetAfterTest();
+        $comp1 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
+        $resultforallcomps =
+                \local_competvetsuivi\autoevalutils::get_student_results(
+                        $this->user->id,
+                        $this->matrix,
+                        self::QBANK_CATEGORY_ID);
+        $this->assertEquals(0.5, $resultforallcomps[$comp1->id]); // Here the result below are the mean of
+        // sub competencies
+    }
+
+    public function test_get_student_results_check_max_grade() {
+        $this->resetAfterTest();
+        // Check we take the max grade for this student (there are two answers : 0.75 and 0.25
+        $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3.4');
+        $resultforallcomps =
+                \local_competvetsuivi\autoevalutils::get_student_results(
+                        $this->user->id,
+                        $this->matrix,
+                        self::QBANK_CATEGORY_ID);
+        $this->assertEquals(0.75, $resultforallcomps[$comp->id]); // Here the result below are the mean of
+        // sub competencies
+    }
 }
 

@@ -332,12 +332,10 @@ class matrix {
      * Get all direct child competencies or direct child competencies
      *
      * @param $compid
-     * @param $matrix
      * @return array
      * @throws \dml_exception
      */
     public function get_child_competencies($compid = 0, $directchildonly = false) {
-        global $DB;
         $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded
         if ($compid && key_exists($compid, $complist)) {
             $rootcomp = $complist[$compid];
@@ -360,7 +358,6 @@ class matrix {
      * Get all direct child competencies or direct child competencies
      *
      * @param $compid
-     * @param $matrix
      * @return array
      * @throws \dml_exception
      */
@@ -369,6 +366,29 @@ class matrix {
         $children = $this->get_child_competencies($comp->id);
         return !empty($children);
     }
+
+
+    /**
+     * Get root competency
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public function get_root_competency() {
+        static $rootcompetency = null;
+
+        if ($rootcompetency) {
+            return $rootcompetency;
+        }
+
+        $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded
+        $comps = array_filter($complist, function($comp) {
+            return substr_count($comp->path, '/') == 1;
+        });
+        $rootcompetency = reset($comps);
+        return $rootcompetency;
+    }
+
 
     static public function comptype_to_string($comptypeid) {
         return get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');

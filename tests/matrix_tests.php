@@ -150,10 +150,18 @@ class matrix_tests extends competvetsuivi_tests {
     }
 
     public function test_normalize_uc_name() {
-        global $DB;
         $this->resetAfterTest();
         $this->assertEquals('UC51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UC51'));
         $this->assertEquals('UC51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UE51'));
         $this->assertEquals('UCUV51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UV51'));
+    }
+    public function test_get_root_competency() {
+        global $DB;
+        $this->resetAfterTest();
+        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
+        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+        $matrix->load_data();
+        $rootcomp = $matrix->get_root_competency();
+        $this->assertEquals('COPREV', $rootcomp->shortname);
     }
 }

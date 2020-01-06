@@ -36,7 +36,7 @@ class autoevalutils {
         $params = array('competvetid' => $questionbankcategorysn);
         $sql = "SELECT "
                 . $DB->sql_concat_join("'-'", ["q.id", "qc.id", "qs.id"])
-                . " AS uniqueid, qs.quizid AS quizid FROM {question} q "
+                . " AS uniqueid, qs.quizid AS quizid, qs.questionid AS questionid FROM {question} q "
                 . "LEFT JOIN {question_categories} qc ON qc.id = q.category "
                 . "LEFT JOIN {quiz_slots} qs ON qs.questionid = q.id "
                 . "WHERE qc.idnumber=:competvetid";
@@ -46,18 +46,19 @@ class autoevalutils {
 
     /**
      * Return an associative array which can be used to match competency shortname with their respective IDs
+     *
      * @param $matrix
      * @param $rootcomp
      * @return array
      */
     public static function get_all_competency_association($matrix, $rootcomp) {
-        /** @var  matrix $matrix  */
+        /** @var  matrix $matrix */
         $allcompetencies = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0);
         $compassociation = [];
         if ($rootcomp) {
             $compassociation[$rootcomp->shortname] = $rootcomp->id; // We add the root competency to the set
         }
-        foreach($allcompetencies as $cmp) {
+        foreach ($allcompetencies as $cmp) {
             $compassociation[$cmp->shortname] = $cmp->id;
         }
         return $compassociation;
@@ -71,14 +72,18 @@ class autoevalutils {
         $maxmark = $qa->get_max_fraction();
         return ($markfract - $minmark) / ($maxmark - $minmark) * $coef;
     }
+
     /**
      * Get student results
+     * This will compute the result for each competency in the matrix. We compute the average result of the
+     * children competencies. If the question is asked twice we take the best result.
      * TODO : Implements Caching
+     *
      * @param $userid
      * @param $matrix
      * @param $questionbankcategorysn
      * @param null $rootcomp
-     * @return array
+     * @return array An array indexed by competency id and the numerical result
      * @throws \dml_exception
      */
     public static function get_student_results($userid, $matrix, $questionbankcategorysn, $rootcomp = null) {
@@ -87,25 +92,35 @@ class autoevalutils {
         include_once($CFG->dirroot . '/mod/quiz/locallib.php'); // Yeah, if not quiz_attempt not defined
 
         $allquestions = static::get_all_question_from_qbank_category($questionbankcategorysn);
+        $allquestionsid = array_map(function($q) {
+            return $q->questionid;
+        }, $allquestions);
 
         $allcompetenciesmatch = static::get_all_competency_association($matrix, $rootcomp);
 
         $dm = new \question_engine_data_mapper();
         $questionresults = [];
-        foreach ($allquestions as $qs) {
+        $allquizid = array_reduce(
+                $allquestions,
+                function($carry, $item) {
+                    if (!in_array($item->quizid, $carry)) {
+                        $carry[] = $item->quizid;
+                    }
+                    return $carry;
+                }, []);
+        foreach ($allquizid as $qid) {
             $qubas = $dm->load_questions_usages_by_activity(
-                    new qubaids_for_users_attempts($qs->quizid, $userid));
+                    new qubaids_for_users_attempts($qid, $userid));
             foreach ($qubas as $quba) {
                 foreach ($quba->get_attempt_iterator() as $qa) {
                     $question = $qa->get_question();
-                    $questionsn = trim(strtoupper(trim($question->name)), '.');
-                    if (key_exists($questionsn, $allcompetenciesmatch)) {
-                        $questionid = $allcompetenciesmatch[$questionsn]; // The key is now the competency id
-                        $qmark = static::get_question_mark($qa);
-                        if (empty($questionresults[$questionid])) {
-                            $questionresults[$questionid] = $qmark;
-                        } else {
-                            $questionresults[$questionid] = max($qmark, $questionresults[$questionid]);
+                    if (in_array($question->id, $allquestionsid)) {
+                        $questionsn = trim(strtoupper(trim($question->idnumber)), '.');
+                        if (key_exists($questionsn, $allcompetenciesmatch)) {
+                            $competencyid = $allcompetenciesmatch[$questionsn]; // The key is now the competency id
+                            $qmark = static::get_question_mark($qa);
+                            $questionresults[$competencyid] = key_exists($competencyid, $questionresults) ?
+                                    max($qmark, $questionresults[$competencyid]) : $qmark;
                         }
                     }
                 }
@@ -113,14 +128,23 @@ class autoevalutils {
         }
 
         // Now make sure that for each competency we check the subcompetencies for results
-        foreach ($matrix->get_child_competencies(0, true) as $cmp) {
-            static::compute_results_recursively($questionresults, $matrix, $cmp);
-        }
+        /** @var $matrix \local_competvetsuivi\matrix\matrix */
+
+        $rootcompetency = $matrix->get_root_competency();
+        static::compute_results_recursively($questionresults, $matrix, $rootcompetency);
 
         ksort($questionresults); // Sort it so it is easier to get the corresponding competencies
         return $questionresults;
     }
 
+    /**
+     * Compute the results recursively. If a result already exists, we keep it as is.
+     *
+     * @param $currentresultarray
+     * @param $matrix
+     * @param $currentcomp
+     * @return float|int|mixed
+     */
     public static function compute_results_recursively(&$currentresultarray, $matrix, $currentcomp) {
         $compresult = [];
         foreach ($matrix->get_child_competencies($currentcomp->id) as $cmp) {
@@ -129,14 +153,12 @@ class autoevalutils {
                 $compresult[] = $compmean;
             }
         }
-        if (count($compresult)) {
+        $meanvalue = -1; // "Do not exist" value, not taken into account
+        if (key_exists($currentcomp->id, $currentresultarray)) {  // If the value already exist, don't touch it
+            $meanvalue = $currentresultarray[$currentcomp->id];
+        } else if (count($compresult)) {
             $meanvalue = array_sum($compresult) / count($compresult);
             $currentresultarray[$currentcomp->id] = $meanvalue;
-        } else {
-            $meanvalue = -1; // "Do not exist" value, not taken into account
-            if (key_exists($currentcomp->id, $currentresultarray)) {
-                $meanvalue = $currentresultarray[$currentcomp->id];
-            }
         }
         return $meanvalue;
     }
