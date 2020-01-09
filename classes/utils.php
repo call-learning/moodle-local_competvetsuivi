@@ -37,11 +37,11 @@ class utils {
         }
         $possiblevsactual = array();
         foreach ($matrixues as $ue) {
-            $values = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id, $recursive);
+            $values = $matrix->get_total_values_for_ue_and_competency($ue->id, $comp->id, $recursive);
 
             foreach ($values as $ueval) {
                 $data = new \stdClass();
-                $data->possibleval = $ueval->value;
+                $data->possibleval = $ueval->totalvalue;
                 $data->userval = 0;
                 $data->ue = $ue->shortname;
                 $data->ueid = $ue->id;

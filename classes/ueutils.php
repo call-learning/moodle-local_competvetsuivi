@@ -112,6 +112,7 @@ class ueutils {
     /**
      * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
      * Results are for each competency and then each strands covered by the UE.
+     * We calculate the max value for each ue over the set of subcompetencies
      * TODO : Implements Caching
      * @param $matrix : ue
      * @param $ue : given ue
@@ -121,7 +122,13 @@ class ueutils {
      */
     public static function get_ue_vs_competencies($matrix, $currentue, $rootcompid = 0, $samesemesteronly = false) {
 
+        /** @var $matrix matrix */
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
+
+        // Case it is a leaf competency
+        if ($rootcompid && !$allcomps) {
+            $allcomps = [ $matrix->get_matrix_competencies()[$rootcompid] ];
+        }
 
         $compuestrandvalues = [];
 
@@ -138,7 +145,7 @@ class ueutils {
                 $compuestrandvalues[$comp->id] = [];
             }
             foreach ($allues as $ue) {
-                $currentuevals = $matrix->get_values_for_ue_and_competency($ue->id, $comp->id, true);
+                $currentuevals = $matrix->get_total_values_for_ue_and_competency($ue->id, $comp->id, true);
                 foreach ($currentuevals as $strandval) {
                     $strandid = $strandval->type;
                     if (!key_exists($ue->id, $compuestrandvalues[$comp->id])) {
@@ -147,8 +154,7 @@ class ueutils {
                     if (!isset($compuestrandvalues[$comp->id][$ue->id][$strandid])) {
                         $compuestrandvalues[$comp->id][$ue->id][$strandid] = 0;
                     }
-                    $compuestrandvalues[$comp->id][$ue->id][$strandid] += chartingutils::get_real_value_from_strand($strandid,
-                            $strandval->value);
+                    $compuestrandvalues[$comp->id][$ue->id][$strandid] += $strandval->totalvalue;
                 }
             }
         }
@@ -208,7 +214,7 @@ class ueutils {
                 if (!key_exists($strandval->type, $compuevalues[$comp->id])) {
                     $compuevalues[$comp->id][$strandval->type] = 0;
                 }
-                $value = chartingutils::get_real_value_from_strand($strandval->type,
+                $value = matrix::get_real_value_from_strand($strandval->type,
                         $strandval->value);
                 $maxval += $value;
                 $compuevalues[$comp->id][$strandval->type] += $value;

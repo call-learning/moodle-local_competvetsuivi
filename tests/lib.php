@@ -59,6 +59,7 @@ function load_data_from_json_fixtures($fixturepath) {
 class competvetsuivi_tests extends advanced_testcase {
     protected $user, $cohort1, $cohort2;
     protected $fixturepath = '/local/competvetsuivi/tests/fixtures/basic';
+    public $matrix;
 
     public function presetup_data() {
         $this->user = static::getDataGenerator()->create_user();
@@ -71,10 +72,16 @@ class competvetsuivi_tests extends advanced_testcase {
      * @throws coding_exception
      */
     public function setUp() {
-        global $CFG;
+        global $CFG, $DB;
         parent::setUp();
         $this->presetup_data();
         load_data_from_json_fixtures($CFG->dirroot . $this->fixturepath);
+
+        // Setup Matrix as it is used often in tests
+        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
+        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+        $matrix->load_data();
+        $this->matrix = $matrix;
     }
 }
 /*

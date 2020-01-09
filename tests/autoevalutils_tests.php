@@ -51,7 +51,6 @@ class autoevalutils_tests extends competvetsuivi_tests {
     protected $courses = [];
     protected $quizzes = [];
     protected $questions = [];
-    protected $matrix = null;
 
     const COURSE_QUIZ_NB = 2;
     // Responses to the questions quiz
@@ -201,20 +200,16 @@ class autoevalutils_tests extends competvetsuivi_tests {
                 'idnumber' => self::QBANK_CATEGORY_ID));
 
         // Create all questions now
-        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
-        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
-        $matrix->load_data();
-        $this->matrix = $matrix;
 
         foreach (self::QBANK_QUESTION_COMP as $compname => $result) {
-            $comp = $matrix->get_matrix_comp_by_criteria('shortname', $compname);
+            $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
             $questiondata = $this->create_question($questiongenerator, $comp, $category->id);
             $this->questions[$compname] = $questiondata;
         }
 
         foreach ($this->quizzes as $quiz) {
             foreach (self::QBANK_QUESTION_COMP as $compname => $result) {
-                quiz_add_quiz_question( $this->questions[$compname]->id, $quiz);
+                quiz_add_quiz_question($this->questions[$compname]->id, $quiz);
             }
         }
         // Note for numerical question results see qtype_multichoice_test_helper : 100 <=> 3.14, rest if 0%
@@ -346,6 +341,7 @@ class autoevalutils_tests extends competvetsuivi_tests {
         $this->assertEquals(0.25, $questionresults[$coprev31->id]);
 
     }
+
     public function test_compute_results_recursively_override() {
         $this->resetAfterTest();
         $rootcompetency = $this->matrix->get_root_competency();

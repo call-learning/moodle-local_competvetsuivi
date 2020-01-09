@@ -48,15 +48,13 @@ class chartingutils {
                             || empty($strands))) {
                 $progressperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
                         function($acc, $val) use ($comptypeid) {
-                            $progress = chartingutils::get_real_value_from_strand($comptypeid, $val->possibleval);
-                            return $acc + $progress * $val->userval; // Previous value
+                            return $acc + $val->possibleval * $val->userval; // Previous value
                         },
                         0);
 
                 $maxperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
                         function($acc, $val) use ($comptypeid) {
-                            $max = chartingutils::get_real_value_from_strand($comptypeid, $val->possibleval);
-                            return $acc + $max; // Previous value
+                            return $acc + $val->possibleval; // Previous value
                         },
                         0);
 
@@ -64,21 +62,6 @@ class chartingutils {
         }
         return array($progressperstrand, $maxperstrand);
     }
-
-    public static function get_real_value_from_strand($comptypeid, $currentval) {
-        $value = 0;
-        $strandfactor =  $currentval / (matrix::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
-        switch ($strandfactor) {
-            case 1 :
-                $value = 1;
-                break;
-            case 2:
-                $value = 0.5;
-                break;
-        }
-        return $value;
-    }
-
 
     const INITIAL_SEMESTER = 5;
 

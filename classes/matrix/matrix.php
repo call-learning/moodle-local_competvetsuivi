@@ -201,6 +201,7 @@ class matrix {
 
     /**
      * Make sure we always have the same name for the UC (UC as prefix for now)
+     *
      * @param $ucname
      * @return string
      */
@@ -208,11 +209,13 @@ class matrix {
         foreach (static::UC_PREFIX as $prefix) {
             $ucname = str_replace($prefix, '', $ucname);
         }
-        return self::UC_REAL_PREFIX.$ucname;
+        return self::UC_REAL_PREFIX . $ucname;
     }
+
     /**
      * Get matching UE per search criteria.
      * We take care of the special case for shortname where we can either have UC or UE
+     *
      * @param $propertyname
      * @param $propertyvalue
      * @return mixed
@@ -226,7 +229,7 @@ class matrix {
             $propertyvalue = matrix::normalize_uc_name($propertyvalue);
             $matchingues = array_filter($this->ues, function($ue) use ($propertyname, $propertyvalue) {
                 $currentvalue = $ue->$propertyname;
-                $currentvalue =  matrix::normalize_uc_name($currentvalue);
+                $currentvalue = matrix::normalize_uc_name($currentvalue);
                 return $currentvalue == $propertyvalue;
             });
         } else {
@@ -280,8 +283,32 @@ class matrix {
         return reset($matchingcomp);
     }
 
+    protected function get_associative_array_value_for_ue($ueid, $compid) {
+        $currentvalue = [];
+        if (!isset($this->compuevalues[$ueid]) || !isset($this->compuevalues[$ueid][$compid])) {
+            foreach (array_keys(static::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+                $currentvalue[$strandid] = new \stdClass();
+                $currentvalue[$strandid]->type = $strandid;
+                $currentvalue[$strandid]->value = 3;
+            }
+        } else {
+            $currentvalue = [];
+            foreach ($this->compuevalues[$ueid][$compid] as $val) {
+                $val->value = intval($val->value);
+                $currentvalue[$val->type] = $val;
+            }
+        }
+        return $currentvalue;
+    }
+
     /**
      * Get recursively the possible (maximum) values for this competency
+     * We take the maximum value as we are using thresholds that have 3 states
+     *  - No contribution
+     *  - Some contribution
+     *  - Full contribution
+     * Having a mean or average does not have sense in this. So either a competency has no, some
+     * contribution, or full contribution
      *
      * @param $ueid
      * @param $compid
@@ -293,23 +320,11 @@ class matrix {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
-        $currentvalue = null;
-        if (!isset($this->compuevalues[$ueid]) || !isset($this->compuevalues[$ueid][$compid])) {
-            $currentvalue = [];
-            foreach (array_keys(static::MATRIX_COMP_TYPE_NAMES) as $strandid) {
-                $currentvalue[$strandid] = new \stdClass();
-                $currentvalue[$strandid]->type = $strandid;
-                $currentvalue[$strandid]->value = 3;
-            }
-        } else {
-            $currentvalue = $this->compuevalues[$ueid][$compid];
-        }
+        $currentvalue = $this->get_associative_array_value_for_ue($ueid, $compid);
         if ($recursive) {
             foreach ($this->get_child_competencies($compid) as $cmp) {
-                $childvalues = $this->get_values_for_ue_and_competency($ueid, $cmp->id, false);
-                foreach ($childvalues as $val) {
-                    foreach ($currentvalue as $key => $cv) {
-                        if ($cv->type == $val->type) {
+                $childvalues = $this->get_values_for_ue_and_competency($ueid, $cmp->id, true);
+                foreach ($childvalues as $key=> $cv) {
                             /*
                              *  Here this is a bit complicated due to the range chosen
                              *  For example with the Knowledge strand:
@@ -319,13 +334,75 @@ class matrix {
                              *  So when calculating the aggregated for a given value we take he min
                              *  except when it is equal to 0
                              */
-                            $currentvalue[$key]->value = min($val->value, $cv->value);
-                        }
-                    }
+                            $currentvalue[$key]->value = min($currentvalue[$key]->value, $cv->value);
                 }
             }
         }
         return $currentvalue;
+    }
+
+    /**
+     * Get recursively the total amount of contribution for  values for this competency
+     * This is a bit different from the get_values_for_ue_and_competency as it does
+     * a sum of the possible value with a weight
+     *  - No contribution (value = 3) - 0
+     *  - Some contribution (value = 2) - 0.5
+     *  - Full contribution (value = 1) - 1
+     *
+     * @param $ueid
+     * @param $compid
+     * @param bool $recursive
+     * @return mixed
+     * @throws matrix_exception
+     */
+    public function get_total_values_for_ue_and_competency($ueid, $compid, $recursive = false) {
+        if (!$this->dataloaded) {
+            throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
+        }
+        $currentvalue = $this->get_associative_array_value_for_ue($ueid, $compid);
+        foreach (array_keys(static::MATRIX_COMP_TYPE_NAMES) as $strandid) {
+            $currentvalue[$strandid]->totalvalue = static::get_real_value_from_strand($strandid, $currentvalue[$strandid]->value);
+        }
+        if ($recursive) {
+            foreach ($this->get_child_competencies($compid) as $cmp) {
+                $childvalues = $this->get_total_values_for_ue_and_competency($ueid, $cmp->id, true);
+                foreach ($childvalues as $key => $cv) {
+                    /*
+                     *  Here this is a bit complicated due to the range chosen
+                     *  For example with the Knowledge strand:
+                     *  * 0 or 3 is None
+                     *  * 1 is max value
+                     *  * 2 is middle value
+                     *  So when calculating the aggregated for a given value we take he min
+                     *  except when it is equal to 0
+                     */
+                    $currentvalue[$key]->value = min($currentvalue[$key]->value, $cv->value);
+                    $currentvalue[$key]->totalvalue += $cv->totalvalue;
+                }
+            }
+        }
+        return $currentvalue;
+    }
+
+    /**
+     * Return a numeric value corresponding to the threshold and the strand
+     *
+     * @param $matrixvalue
+     * @return float|int : 3 or 0 => 0, 2 => 0.5, 1 => 1
+     *
+     */
+    public static function get_real_value_from_strand($comptypeid, $currentval) {
+        $value = 0;
+        $strandfactor = $currentval / (matrix::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
+        switch ($strandfactor) {
+            case 1 :
+                $value = 1;
+                break;
+            case 2:
+                $value = 0.5;
+                break;
+        }
+        return $value;
     }
 
     /**
@@ -346,6 +423,7 @@ class matrix {
         $comps = array_filter($complist, function($comp) use ($rootcomp, $directchildonly) {
             $currentpath = $rootcomp ? $rootcomp->path . '/' : '/';
             if (strpos($comp->path, $currentpath) === 0) {
+                // All children which are direct child will have <ROOTCOMPPATH>/XXXXX
                 return !$directchildonly || substr_count($comp->path, "/", strlen($currentpath)) == 0;
             } else {
                 return false;
@@ -367,7 +445,6 @@ class matrix {
         return !empty($children);
     }
 
-
     /**
      * Get root competency
      *
@@ -388,7 +465,6 @@ class matrix {
         $rootcompetency = reset($comps);
         return $rootcompetency;
     }
-
 
     static public function comptype_to_string($comptypeid) {
         return get_string('matrixcomptype:' . static::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');

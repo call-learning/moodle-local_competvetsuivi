@@ -37,6 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 
 include_once('lib.php');
 
+use local_competvetsuivi\ueutils;
 use local_competvetsuivi\utils;
 
 include_once('lib.php');
@@ -92,22 +93,47 @@ class utils_tests extends competvetsuivi_tests {
         foreach ($uc55vals as $type => $val) {
             switch ($type) {
                 case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
-                    $this->assertEquals(2, $val->possibleval);
+                    $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
                 case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
-                    $this->assertEquals(20, $val->possibleval);
+                    $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
                 case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
-                    $this->assertEquals(100, $val->possibleval);
+                    $this->assertEquals(1, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
                 case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
-                    $this->assertEquals(2000, $val->possibleval);
+                    $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
             }
         }
+    }
+
+    public function test_get_possible_vs_actual_values_aggregated() {
+        global $DB;
+        $this->resetAfterTest();
+        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
+        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+        $matrix->load_data();
+        $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
+        $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
+        $ueselection = ueutils::get_ues_for_semester(1, $matrix);
+        $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $comp, $userdata, $ueselection, true);
+
+        $sumvalues = [];
+        foreach ($possiblevsactual as $type => $vals) {
+            $sumvalues[$type] = array_sum(array_map(function($v) {
+                return $v->possibleval * $v->userval;
+            }, $vals));
+        }
+
+        $this->assertNotEmpty($sumvalues);
+        $this->assertEquals(4.5, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
+        $this->assertEquals(3, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY]);
+        $this->assertEquals(4, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES]);
+        $this->assertEquals(2.5, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION]);
     }
 }
