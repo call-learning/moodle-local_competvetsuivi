@@ -100,6 +100,38 @@ class chartingutils_tests extends competvetsuivi_tests {
         }
     }
 
+    public function test_get_comp_progress_aggregated() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $computedresults = array(
+                "COPREV.1" => array(
+                        matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [4.5, 28.5],
+                        matrix::MATRIX_COMP_TYPE_ABILITY => [3, 20],
+                        matrix::MATRIX_COMP_TYPE_OBJECTIVES => [4, 16.5],
+                        matrix::MATRIX_COMP_TYPE_EVALUATION => [2.5, 12.5]
+                ));
+        $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', "COPREV.1");
+        $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
+        foreach ($computedresults as $compname => $expectedresults) {
+            $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
+            $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
+            // User has been validated up to and including UC55
+            $strands = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION);
+            list($progressperstrand, $maxperstrand) =
+                    chartingutils::get_comp_progress($this->matrix, $comp, $userdata, $strands);
+            foreach ($strands as $strand) {
+                $this->assertEquals($expectedresults[$strand][1],
+                        $maxperstrand[$strand],
+                        "Max calculation issue - Strand($strand) : $compname");
+                $this->assertEquals($expectedresults[$strand][0],
+                        $progressperstrand[$strand],
+                        "Progress calculation Issue - Strand($strand) : $compname");
+            }
+        }
+    }
+
     public function test_get_data_for_progressbar() {
         global $DB;
         $this->resetAfterTest();
@@ -183,15 +215,19 @@ class chartingutils_tests extends competvetsuivi_tests {
         $markers = array( // Markers positions are cumulative and we only see markers who have a different percentage
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [
                         '5' => 4.5 / 28.5,
-                        '4' =>  1 / 28.5,
-                        '10' => 4 / 28.5,
-                        '11' => 9.5 / 28.5,
-                        '12' => 3.5 / 28.5,
+                        '6' =>  (4.5 + 1.5) / 28.5,
+                        '8' =>  (4.5 + 1.5 + 5.5) / 28.5,
+                        '10' => (4.5 + 1.5 + 5.5 + 4) / 28.5,
+                        '11' => (4.5 + 1.5 + 5.5 + 4 + 9.5) / 28.5,
+                        '12' => (4.5 + 1.5 + 5.5 + 4 + 9.5 + 3.5) / 28.5,
                 ],
                 matrix::MATRIX_COMP_TYPE_ABILITY => [
                         '5' => 3 / 20,
-                        '6' => 1 / 20,
-                        '6' => 1 / 20,
+                        '6' => (3 + 1) / 20,
+                        '8' => (3 + 1 + 2.5) / 20,
+                        '10' => (3 + 1 + 2.5 + 3) / 20,
+                        '11' => (3 + 1 + 2.5 +3 + 6.5) / 20,
+                        '12' => (3 + 1 + 2.5 +3 + 6.5 + 4) / 20,
                 ]
         );
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_KNOWLEDGE], $data[0]->result->value);
