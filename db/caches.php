@@ -25,13 +25,19 @@
 defined('MOODLE_INTERNAL') || die();
 
 $definitions = array(
-        // Cache for uc vs ue graph definition
-/*        'questiondata' => array(
+    // Cache for uc vs ue graph definition
+        'comp_progress' => array(
                 'mode' => cache_store::MODE_APPLICATION,
-                'simplekeys' => true, // The id of the question is used.
-                'requiredataguarantee' => false,
-                'datasource' => 'local_competvetsuivi\question_finder',
-                'datasourcefile' => 'question/engine/bank.php',
+                'simplekeys' => true, // A hash is used.
         ),
-*/
+    // Cache for get_ue_vs_competencies_percent
+        'ue_vs_comp_pc' => array(
+                'mode' => cache_store::MODE_APPLICATION,
+                'simplekeys' => true, // A hash is used.
+        ),
+    // Cache for get_ue_vs_competencies
+        'ue_vs_comp' => array(
+                'mode' => cache_store::MODE_APPLICATION,
+                'simplekeys' => true, // A hash is used.
+        ),
 );

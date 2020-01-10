@@ -38,6 +38,15 @@ class chartingutils {
      * @return array
      */
     public static function get_comp_progress($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
+
+        // Deal with cache
+        $hash = cacheutils::get_comp_progress_hash($matrix, $currentcomp, $ueselection, $strands, $ueselection);
+        $cachedvalue = cacheutils::get($hash, 'comp_progress');
+        if ($cachedvalue) {
+            return $cachedvalue;
+        }
+        // Deal with cache
+
         // For each competency regroup all finished ues and values
         $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $currentcomp, $userdata, $ueselection, true);
         $progressperstrand = [];
@@ -60,7 +69,11 @@ class chartingutils {
 
             }
         }
-        return array($progressperstrand, $maxperstrand);
+        $returnvalue = array($progressperstrand, $maxperstrand);
+        // Deal with cache
+        $isset = cacheutils::set('comp_progress', $hash, $returnvalue);
+        // Deal with cache
+        return $returnvalue;
     }
 
     const INITIAL_SEMESTER = 5;

@@ -66,6 +66,8 @@ class local_competvetsuivi_generator extends testing_module_generator {
                             $paramsin);
             $matchedcompids = array_combine($allpathitem, array_flip($martrixmatches));
             $record['path'] = '/' . join('/', $matchedcompids);
+            $record['id'] = $returnedid;
+            $DB->update_record($tablename, $record);
         }
         return $returnedid;
     }

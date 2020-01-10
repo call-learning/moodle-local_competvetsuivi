@@ -121,7 +121,13 @@ class ueutils {
      * @return array
      */
     public static function get_ue_vs_competencies($matrix, $currentue, $rootcompid = 0, $samesemesteronly = false) {
-
+        // Deal with cache
+        $hash = cacheutils::get_ue_vs_competencie_hash($matrix, $currentue, $rootcompid, $samesemesteronly);
+        $cachedvalue = cacheutils::get($hash, 'ue_vs_comp');
+        if ($cachedvalue) {
+            return $cachedvalue;
+        }
+        // Deal with cache
         /** @var $matrix matrix */
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
@@ -178,6 +184,10 @@ class ueutils {
                                 $compuestrandvalues[$comp->id][$currentue->id][$strandid] / $maxuevalues[$strandid] : 0;
             }
         }
+
+        // Deal with cache
+        $isset = cacheutils::set('ue_vs_comp', $hash, $results);
+        // Deal with cache
         return $results;
     }
 
@@ -194,6 +204,14 @@ class ueutils {
      * @return \stdClass
      */
     public static function get_ue_vs_competencies_percent($matrix, $currentue, $strandids, $rootcompid = 0) {
+
+        // Deal with cache
+        $hash = cacheutils::get_ue_vs_competencies_percent_hash($matrix, $currentue, $strandids, $rootcompid);
+        $cachedvalue = cacheutils::get($hash, 'ue_vs_comp_pc');
+        if ($cachedvalue) {
+            return $cachedvalue;
+        }
+        // Deal with cache
 
         /** @var $matrix matrix */
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
@@ -251,6 +269,10 @@ class ueutils {
             }
             $index++;
         }
+
+        // Deal with cache
+        $isset = cacheutils::set('ue_vs_comp_pc', $hash, $results);
+        // Deal with cache
         return $results;
     }
 }
