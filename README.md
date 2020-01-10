@@ -52,7 +52,20 @@ L'identifiant de la matrice peut s'obtenir sur la liste des matrice en examinant
 * Si on va sur la liste des utilisateur et on clique sur un utilisateur pour voir le profil on peut obtenir l'ID de l'utilisateur
 en regardant son profil.
  
+## Unit testing
 
+Pour initialiser l'environnement de test (attention de bien mettre la configuration souhaitée dans config.php):
+
+      php admin/tool/phpunit/cli/init.php
+     php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
+
+Après l'initialisation de l'environnement de test, l'ensemble des tests unitaires
+peut être passé par la ligne de commande suivante:
+
+     ./vendor/phpunit/phpunit/phpunit --testsuite local_competvetsuivi_testsuite
+
+
+ 
 ## License ##
 
 2019 CALL Learning <laurent@call-learning.fr>

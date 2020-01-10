@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 // The official PHPUnit homepage is at:
 // https://phpunit.de
 
-include('lib.php');
+require_once(__DIR__ . '/lib.php');
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class autoevalutils_tests extends competvetsuivi_tests {
+class autoevalutils_test extends competvetsuivi_tests {
     protected $courses = [];
     protected $quizzes = [];
     protected $questions = [];

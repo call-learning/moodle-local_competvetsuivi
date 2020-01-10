@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
 // The official PHPUnit homepage is at:
 // https://phpunit.de
 
-include_once('lib.php');
+require_once(__DIR__ . '/lib.php');
 
 /**
  * The matrix_test test class.
@@ -47,7 +47,7 @@ include_once('lib.php');
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class matrix_tests extends competvetsuivi_tests {
+class matrix_test extends competvetsuivi_tests {
 
     public function test_get_real_value_from_strand() {
         global $DB;

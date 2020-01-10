@@ -45,7 +45,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_tests extends advanced_testcase {
+class import_test extends advanced_testcase {
 
     public function test_import_matrix() {
         $this->resetAfterTest();
