@@ -322,19 +322,19 @@ class matrix {
         }
         $currentvalue = $this->get_associative_array_value_for_ue($ueid, $compid);
         if ($recursive) {
-            foreach ($this->get_child_competencies($compid) as $cmp) {
+            foreach ($this->get_child_competencies($compid, true) as $cmp) {
                 $childvalues = $this->get_values_for_ue_and_competency($ueid, $cmp->id, true);
-                foreach ($childvalues as $key=> $cv) {
-                            /*
-                             *  Here this is a bit complicated due to the range chosen
-                             *  For example with the Knowledge strand:
-                             *  * 0 or 3 is None
-                             *  * 1 is max value
-                             *  * 2 is middle value
-                             *  So when calculating the aggregated for a given value we take he min
-                             *  except when it is equal to 0
-                             */
-                            $currentvalue[$key]->value = min($currentvalue[$key]->value, $cv->value);
+                foreach ($childvalues as $key => $cv) {
+                    /*
+                     *  Here this is a bit complicated due to the range chosen
+                     *  For example with the Knowledge strand:
+                     *  * 0 or 3 is None
+                     *  * 1 is max value
+                     *  * 2 is middle value
+                     *  So when calculating the aggregated for a given value we take he min
+                     *  except when it is equal to 0
+                     */
+                    $currentvalue[$key]->value = min($currentvalue[$key]->value, $cv->value);
                 }
             }
         }
@@ -364,7 +364,7 @@ class matrix {
             $currentvalue[$strandid]->totalvalue = static::get_real_value_from_strand($strandid, $currentvalue[$strandid]->value);
         }
         if ($recursive) {
-            foreach ($this->get_child_competencies($compid) as $cmp) {
+            foreach ($this->get_child_competencies($compid, true) as $cmp) {
                 $childvalues = $this->get_total_values_for_ue_and_competency($ueid, $cmp->id, true);
                 foreach ($childvalues as $key => $cv) {
                     /*
@@ -413,22 +413,39 @@ class matrix {
      * @throws \dml_exception
      */
     public function get_child_competencies($compid = 0, $directchildonly = false) {
+        static $directchildsarray = [];
+
+        // To avoid going through the array for direct child (optimisation)
+        if (!empty($directchildsarray) && key_exists($compid, $directchildsarray)) {
+            return $directchildsarray[$compid];
+        }
+
+        // Usual case
         $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded
         if ($compid && key_exists($compid, $complist)) {
             $rootcomp = $complist[$compid];
         } else {
             $rootcomp = null;
         }
-
-        $comps = array_filter($complist, function($comp) use ($rootcomp, $directchildonly) {
-            $currentpath = $rootcomp ? $rootcomp->path . '/' : '/';
-            if (strpos($comp->path, $currentpath) === 0) {
+        $comps = [];
+        $currentpath = $rootcomp ? $rootcomp->path . '/' : '/';
+        foreach ($complist as $cid => $cmp) {
+            if (strpos($cmp->path, $currentpath) === 0) {
                 // All children which are direct child will have <ROOTCOMPPATH>/XXXXX
-                return !$directchildonly || substr_count($comp->path, "/", strlen($currentpath)) == 0;
-            } else {
-                return false;
+                $isdirectchild = substr_count($cmp->path, "/", strlen($currentpath)) == 0;
+                if (!$directchildonly || $isdirectchild) {
+                    $comps[$cid] = $cmp;
+                }
+                if ($isdirectchild) {
+                    if (!key_exists($compid, $directchildsarray)) {
+                        $directchildsarray[$compid] = [];
+                    }
+                    $directchildsarray[$compid][$cid] = $cmp;
+                }
             }
-        });
+        }
+
+        // We could use array filter but it seems slower
         return $comps;
     }
 
@@ -441,7 +458,7 @@ class matrix {
      */
     public function has_children($comp) {
         global $DB;
-        $children = $this->get_child_competencies($comp->id);
+        $children = $this->get_child_competencies($comp->id, true);
         return !empty($children);
     }
 

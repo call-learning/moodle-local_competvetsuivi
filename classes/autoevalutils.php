@@ -53,13 +53,16 @@ class autoevalutils {
      */
     public static function get_all_competency_association($matrix, $rootcomp) {
         /** @var  matrix $matrix */
-        $allcompetencies = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0);
+        $complist = $matrix->get_matrix_competencies();
         $compassociation = [];
         if ($rootcomp) {
             $compassociation[$rootcomp->shortname] = $rootcomp->id; // We add the root competency to the set
         }
-        foreach ($allcompetencies as $cmp) {
-            $compassociation[$cmp->shortname] = $cmp->id;
+        $currentpath = $rootcomp ? $rootcomp->path . '/' : '/';
+        foreach ($complist as $cid => $cmp) {
+            if (strpos($cmp->path, $currentpath) === 0) {
+                $compassociation[$cmp->shortname] = $cid;
+            }
         }
         return $compassociation;
     }

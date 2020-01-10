@@ -282,7 +282,7 @@ class autoevalutils_tests extends competvetsuivi_tests {
                 'COPREV.3.3',
                 'COPREV.3.4'
         );
-        $this->assertEquals($compresult, array_keys($allcomps));
+        $this->assertArraySubset($compresult, array_keys($allcomps));
 
         $comp2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
         $allcomps = \local_competvetsuivi\autoevalutils::get_all_competency_association($this->matrix, $comp2);
@@ -299,7 +299,7 @@ class autoevalutils_tests extends competvetsuivi_tests {
                 'COPREV.2.7BIS',
                 'COPREV.2.8'
         );
-        $this->assertEquals($compresult, array_keys($allcomps));
+        $this->assertArraySubset($compresult, array_keys($allcomps));
     }
 
     public function test_get_question_mark() {

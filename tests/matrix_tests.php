@@ -339,6 +339,15 @@ class matrix_tests extends competvetsuivi_tests {
         $this->assertCount(10, $comps);
         $comps = $this->matrix->get_child_competencies($coprev2->id, true);
         $this->assertCount(10, $comps);
+    }
 
+    public function test_get_child_competencies_coprev2_directchild_cache() {
+        $this->resetAfterTest();
+        $coprev2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
+        $compsv1 = $this->matrix->get_child_competencies($coprev2->id, true);
+        $this->assertCount(10, $compsv1);
+        $compsv2 = $this->matrix->get_child_competencies($coprev2->id, true);
+        $this->assertCount(10, $compsv2);
+        $this->assertArraySubset($compsv1, $compsv2);
     }
 }
