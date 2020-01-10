@@ -150,7 +150,8 @@ class autoevalutils {
      */
     public static function compute_results_recursively(&$currentresultarray, $matrix, $currentcomp) {
         $compresult = [];
-        foreach ($matrix->get_child_competencies($currentcomp->id) as $cmp) {
+        /** @var $matrix matrix */
+        foreach ($matrix->get_child_competencies($currentcomp->id, true) as $cmp) {
             $compmean = static::compute_results_recursively($currentresultarray, $matrix, $cmp);
             if ($compmean >= 0) {
                 $compresult[] = $compmean;

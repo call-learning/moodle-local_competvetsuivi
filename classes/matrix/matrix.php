@@ -91,6 +91,8 @@ class matrix {
 
     protected $dataloaded = false;
 
+    protected $compdirectchildarray = []; // To optimise the retrieval of direct children competencies
+
     /**
      * Constructor.
      *
@@ -176,7 +178,7 @@ class matrix {
             $value = new \stdClass();
             $value->type = $cuv->type;
             $value->value = ($cuv->value == 0 || $cuv->value > matrix::MAX_VALUE_PER_STRAND[$cuv->type]) ?
-                    matrix::MAX_VALUE_PER_STRAND[$cuv->type] : $cuv->value; // Normalize value
+                    matrix::MAX_VALUE_PER_STRAND[$cuv->type] : intval($cuv->value); // Normalize value
 
             if (empty($this->compuevalues[$cuv->ueid][$cuv->compid])) {
                 $this->compuevalues[$cuv->ueid][$cuv->compid] = array();
@@ -285,7 +287,10 @@ class matrix {
 
     protected function get_associative_array_value_for_ue($ueid, $compid) {
         $currentvalue = [];
-        if (!isset($this->compuevalues[$ueid]) || !isset($this->compuevalues[$ueid][$compid])) {
+        // isset && isnull faster than key_exists
+        $exists = isset($this->compuevalues[$ueid]) && !is_null($this->compuevalues[$ueid]);
+        $exists = $exists && isset($this->compuevalues[$ueid][$compid]) && !is_null($this->compuevalues[$ueid][$compid]);
+        if (!$exists) {
             foreach (array_keys(static::MATRIX_COMP_TYPE_NAMES) as $strandid) {
                 $currentvalue[$strandid] = new \stdClass();
                 $currentvalue[$strandid]->type = $strandid;
@@ -294,8 +299,7 @@ class matrix {
         } else {
             $currentvalue = [];
             foreach ($this->compuevalues[$ueid][$compid] as $val) {
-                $val->value = intval($val->value);
-                $currentvalue[$val->type] = $val;
+                $currentvalue[$val->type] = clone $val;
             }
         }
         return $currentvalue;
@@ -356,15 +360,22 @@ class matrix {
      * @throws matrix_exception
      */
     public function get_total_values_for_ue_and_competency($ueid, $compid, $recursive = false) {
+        static $totalvalues = [];
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
+
+        if($totalvalues && isset($totalvalues[$ueid]) && isset($totalvalues[$ueid][$compid]) &&  !is_null($totalvalues[$ueid][$compid])) {
+           // return $totalvalues[$ueid][$compid];
+        }
+
         $currentvalue = $this->get_associative_array_value_for_ue($ueid, $compid);
         foreach (array_keys(static::MATRIX_COMP_TYPE_NAMES) as $strandid) {
             $currentvalue[$strandid]->totalvalue = static::get_real_value_from_strand($strandid, $currentvalue[$strandid]->value);
         }
         if ($recursive) {
-            foreach ($this->get_child_competencies($compid, true) as $cmp) {
+            $childcomps = $this->get_child_competencies($compid, true);
+            foreach ($childcomps as $cmp) {
                 $childvalues = $this->get_total_values_for_ue_and_competency($ueid, $cmp->id, true);
                 foreach ($childvalues as $key => $cv) {
                     /*
@@ -379,7 +390,12 @@ class matrix {
                     $currentvalue[$key]->value = min($currentvalue[$key]->value, $cv->value);
                     $currentvalue[$key]->totalvalue += $cv->totalvalue;
                 }
+
             }
+            if (!isset($totalvalues[$ueid])) {
+                $totalvalues[$ueid] = [];
+            }
+            $totalvalues[$ueid][$compid] = $currentvalue;
         }
         return $currentvalue;
     }
@@ -406,6 +422,35 @@ class matrix {
     }
 
     /**
+     * Build a cache of direct child
+     * @throws matrix_exception
+     */
+    protected function build_direct_child_array() {
+        if (empty($this->compdirectchildarray)) {
+            $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded
+            foreach ($complist as $cid => $cmp) {
+                $allparentsid = explode('/', $cmp->path);
+                $pid = 0;
+                $allparentsiddepth = count($allparentsid);
+                if ($allparentsiddepth > 2) {
+                    $pid = $allparentsid[$allparentsiddepth-2];
+                    if (empty($pid)) {
+                        $pid = 0;
+                    }
+                }
+                // Create entry for the child itself if it does not exist
+                if (!isset($this->compdirectchildarray[$cid])) {
+                    $this->compdirectchildarray[$cid] = [];
+                }
+                if (!isset($this->compdirectchildarray[$pid])) {
+                    $this->compdirectchildarray[$pid] = [];
+                }
+                $this->compdirectchildarray[$pid][$cid] = $cmp;
+            }
+        }
+    }
+
+    /**
      * Get all direct child competencies or direct child competencies
      *
      * @param $compid
@@ -413,11 +458,11 @@ class matrix {
      * @throws \dml_exception
      */
     public function get_child_competencies($compid = 0, $directchildonly = false) {
-        static $directchildsarray = [];
 
+        $this->build_direct_child_array();
         // To avoid going through the array for direct child (optimisation)
-        if (!empty($directchildsarray) && key_exists($compid, $directchildsarray)) {
-            return $directchildsarray[$compid];
+        if ($directchildonly && key_exists($compid, $this->compdirectchildarray)) {
+            return $this->compdirectchildarray[$compid];
         }
 
         // Usual case
@@ -435,12 +480,6 @@ class matrix {
                 $isdirectchild = substr_count($cmp->path, "/", strlen($currentpath)) == 0;
                 if (!$directchildonly || $isdirectchild) {
                     $comps[$cid] = $cmp;
-                }
-                if ($isdirectchild) {
-                    if (!key_exists($compid, $directchildsarray)) {
-                        $directchildsarray[$compid] = [];
-                    }
-                    $directchildsarray[$compid][$cid] = $cmp;
                 }
             }
         }

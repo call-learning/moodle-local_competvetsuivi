@@ -203,6 +203,33 @@ class matrix_tests extends competvetsuivi_tests {
         }
     }
 
+    public function test_get_total_values_for_ue_and_competency_caching() {
+        $this->resetAfterTest();
+        $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
+        $uc54 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC54');
+        $values = $this->matrix->get_total_values_for_ue_and_competency($uc54->id, $comp->id, true);
+
+        $this->assertEquals(3,
+                $values[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
+
+
+        $values = $this->matrix->get_total_values_for_ue_and_competency($uc54->id, $comp->id, true);
+        $this->assertEquals(3,
+                $values[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
+
+        // Do a couple of other $ue and check if the result is right
+        $ueselection = \local_competvetsuivi\ueutils::get_ues_for_semester(1, $this->matrix);
+        foreach ($ueselection as $ue) {
+            $values = $this->matrix->get_total_values_for_ue_and_competency($ue->id, $comp->id, true);
+        }
+
+
+        $values = $this->matrix->get_total_values_for_ue_and_competency($uc54->id, $comp->id, true);
+        $this->assertEquals(3,
+                $values[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
+
+    }
+
     public function test_get_total_values_for_ue_and_competency() {
         global $DB;
         $this->resetAfterTest();
@@ -309,13 +336,6 @@ class matrix_tests extends competvetsuivi_tests {
         $this->assertEquals('COPREV', $rootcomp->shortname);
     }
 
-    public function test_get_child_competencies_root_direct_child() {
-        $this->resetAfterTest();
-        $comps = $this->matrix->get_child_competencies(0, true);
-        $this->assertCount(1, $comps); // This should be COPREV
-        $coprev = reset($comps);
-        $this->assertEquals('COPREV', $coprev->shortname);
-    }
 
     public function test_get_child_competencies_coprev_direct_child() {
         $this->resetAfterTest();
@@ -330,6 +350,14 @@ class matrix_tests extends competvetsuivi_tests {
         $this->resetAfterTest();
         $comps = $this->matrix->get_child_competencies();
         $this->assertCount(23, $comps); // ALL COPREV competencies including COPREV itself
+    }
+
+    public function test_get_child_competencies_root_direct_child() {
+        $this->resetAfterTest();
+        $comps = $this->matrix->get_child_competencies(0, true);
+        $this->assertCount(1, $comps); // This should be COPREV
+        $coprev = reset($comps);
+        $this->assertEquals('COPREV', $coprev->shortname);
     }
 
     public function test_get_child_competencies_coprev2() {
@@ -350,4 +378,13 @@ class matrix_tests extends competvetsuivi_tests {
         $this->assertCount(10, $compsv2);
         $this->assertArraySubset($compsv1, $compsv2);
     }
+    public function test_get_child_competencies_coprev1_directchild_cache() {
+        $this->resetAfterTest();
+        $coprev1 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
+        $comps = $this->matrix->get_child_competencies($coprev1->id, true);
+        $this->assertCount(5, $comps);
+        $comps = $this->matrix->get_child_competencies($coprev1->id, true);
+        $this->assertCount(5, $comps);
+    }
+
 }

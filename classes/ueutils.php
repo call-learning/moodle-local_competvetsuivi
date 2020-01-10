@@ -195,6 +195,7 @@ class ueutils {
      */
     public static function get_ue_vs_competencies_percent($matrix, $currentue, $strandids, $rootcompid = 0) {
 
+        /** @var $matrix matrix */
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
         $compuevalues = [];
@@ -203,7 +204,7 @@ class ueutils {
         $maxval = 0;
 
         foreach ($allcomps as $comp) {
-            $currentuevals = $matrix->get_values_for_ue_and_competency($currentue->id, $comp->id, true);
+            $currentuevals = $matrix->get_total_values_for_ue_and_competency($currentue->id, $comp->id, true);
             foreach ($currentuevals as $strandval) {
                 if (!in_array($strandval->type, $strandids)) {
                     continue;
@@ -214,10 +215,8 @@ class ueutils {
                 if (!key_exists($strandval->type, $compuevalues[$comp->id])) {
                     $compuevalues[$comp->id][$strandval->type] = 0;
                 }
-                $value = matrix::get_real_value_from_strand($strandval->type,
-                        $strandval->value);
-                $maxval += $value;
-                $compuevalues[$comp->id][$strandval->type] += $value;
+                $maxval += $strandval->totalvalue;
+                $compuevalues[$comp->id][$strandval->type] += $strandval->totalvalue;
             }
         }
         // Now calculate the results for each competency
@@ -226,9 +225,13 @@ class ueutils {
             - We want to obtain a percentage of contribution to the competency ref. the total : so val is this percentage
             - within each competency, we want to obtain the contribution of each strand
         */
+
         $results = new \stdClass();
         $results->compsvalues = [];
         $index = 0;
+        if (!$maxval) {
+            return $results; // Nothing if no max val attained.
+        }
         foreach ($compuevalues as $compid => $strandvalues) {
             // Get the max value across all strands
             $totalforcomp = array_sum($strandvalues);

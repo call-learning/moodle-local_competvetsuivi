@@ -165,9 +165,16 @@ class ueutils_tests extends competvetsuivi_tests {
     public function test_get_ue_vs_competencies_percent() {
         $this->resetAfterTest();
         $ue51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
+        $coprev = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
+        $coprev1 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
+        $coprev2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
+        $coprev3 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3');
         $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
-        $ueresults = \local_competvetsuivi\ueutils::get_ue_vs_competencies_percent($this->matrix, $ue51, $strands);
-        $this->assertFalse(true);
+        $ueresults = \local_competvetsuivi\ueutils::get_ue_vs_competencies_percent($this->matrix, $ue51, $strands, $coprev->id);
+        $this->assertArraySubset(array($coprev2->id, $coprev3->id), array_keys($ueresults->compsvalues));
+        $this->assertTrue(!key_exists($coprev1->id, $ueresults->compsvalues));
+        $this->assertEquals(0.5, $ueresults->compsvalues[$coprev2->id]->val);
+        $this->assertEquals(0.5, $ueresults->compsvalues[$coprev3->id]->val);
     }
 }
 

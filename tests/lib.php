@@ -27,14 +27,15 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Load data from a series of JSON representing the table data
+ *
  * @param $fixturepath
  * @throws coding_exception
  */
 function load_data_from_json_fixtures($fixturepath) {
     $generator = testing_util::get_data_generator()->get_plugin_generator('local_competvetsuivi');
-    $tables =  array('matrix','matrix_cohorts','matrix_ue','matrix_comp', 'matrix_comp_ue', 'userdata');
-    foreach($tables as $tablename) {
-        $filename = $fixturepath . '/' . $tablename.'.json';
+    $tables = array('matrix', 'matrix_cohorts', 'matrix_ue', 'matrix_comp', 'matrix_comp_ue', 'userdata');
+    foreach ($tables as $tablename) {
+        $filename = $fixturepath . '/' . $tablename . '.json';
         if (file_exists($filename)) {
             $generatorfn = "create_$tablename";
             $records = json_decode(file_get_contents($filename), true);
@@ -66,6 +67,7 @@ class competvetsuivi_tests extends advanced_testcase {
         $this->cohort1 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT1'));
         $this->cohort2 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT2'));
     }
+
     /**
      * Load the model data
      *
@@ -80,6 +82,7 @@ class competvetsuivi_tests extends advanced_testcase {
         // Setup Matrix as it is used often in tests
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+
         $matrix->load_data();
         $this->matrix = $matrix;
     }
