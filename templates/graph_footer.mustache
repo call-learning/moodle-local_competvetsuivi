@@ -42,7 +42,7 @@
     <div class="progress-cvs col-8 span8">
         <div class="row row-fluid">
             {{#comp_types}}
-                <div class="col">
+                <div class="col span3">
                     <div class="d-flex flex-column justify-content-center">
                         <svg width="1.5em" height="1.5em">
                             <g class="comptype-{{comp_type_id}}">
@@ -61,7 +61,7 @@
                 </div>
             {{/comp_types}}
             {{$has_no_milestone}}
-                <div class="col">
+                <div class="col span3">
                     <div class="flex-column justify-content-center">
                         <div>
                             <svg width="1.5em" height="1.5em">
@@ -80,7 +80,7 @@
                 </div>
             {{/has_no_milestone}}
             {{#has_self_assessment}}
-                <div class="col">
+                <div class="col span3">
                     <div class="flex-column justify-content-center">
                         <div>
                             <svg width="3em" height="2em">
