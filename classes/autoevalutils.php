@@ -56,7 +56,7 @@ class autoevalutils {
         $complist = $matrix->get_matrix_competencies();
         $compassociation = [];
         if ($rootcomp) {
-            $compassociation[$rootcomp->shortname] = $rootcomp->id; // We add the root competency to the set
+            $compassociation[$rootcomp->shortname] = intval($rootcomp->id); // We add the root competency to the set
         }
         $currentpath = $rootcomp ? $rootcomp->path . '/' : '/';
         foreach ($complist as $cid => $cmp) {
