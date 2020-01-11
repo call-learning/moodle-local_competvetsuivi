@@ -86,6 +86,7 @@ class utils {
 
     /**
      * Assign a cohort to a matrix if it is not already assigned to
+     *
      * @param $matrixid
      * @param $cohortid
      * @throws \dml_exception
@@ -102,16 +103,32 @@ class utils {
 
     /**
      * Hash a series of objects so to be able to check if the value is already there in a cache
+     *
      * @param $arrayobjectohash
      * @return string sha1 of the concatentation of all serialized version of the objects
      */
     public static function cache_parameter_hash($arrayobjectohash) {
         $serialized = '';
         foreach ($arrayobjectohash as $o) {
-            if($o) {
+            if ($o) {
                 $serialized .= serialize($o);
             } // Null objects or value will not count
         }
-        return hash('sha1',$serialized);
+        return hash('sha1', $serialized);
+    }
+
+    const DEFAULT_QUESTION_BANK_CATEGORY_SN = 'COMPETVETSUIVI';
+
+    public static function get_question_bank_category_name() {
+        static $globalcfg = null;
+        if (!$globalcfg) {
+            global $CFG;
+            $globalcfg = get_config('local_competvetsuivi', 'cvsquestionbankcategoryname');
+            if (!$globalcfg) {
+                $globalcfg = !$CFG->cvsquestionbankcategory ? static::DEFAULT_QUESTION_BANK_CATEGORY_SN
+                        : $CFG->cvsquestionbankcategory;
+            }
+        }
+        return $globalcfg;
     }
 }

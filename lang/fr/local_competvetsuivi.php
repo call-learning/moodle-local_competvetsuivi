@@ -31,6 +31,7 @@ $string['competencies'] = 'Compétences';
 $string['competencyfullname'] = 'Nom Complet';
 $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Gestion de l\'importation des données Utilisateur';
+$string['competvetgeneralsettings'] = 'Paramètres Généraux';
 $string['currentprogress'] = 'Avancement';
 $string['contribution:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et des compétences au 
 <strong>sein de l\'ensemble du cursus</strong>';
@@ -79,6 +80,14 @@ $string['matrix:view'] = 'Voir la matrice {$a}';
 $string['matrix:viewtestresults'] = 'Voir les résultats du test';
 $string['milestone'] = 'Niveau à atteindre à la fin du semestre (n)';
 $string['nomatrixerror'] = 'Pas de feuille avec le préfixe ${a} dans le fichier uploadé';
+$string['questionbankcategoryname'] = 'Nom de la catégorie de la banque de question';
+$string['questionbankcategoryname_desc'] = 'Nom de la catégorie de la banque de question desquelles sont tirées les questions';
+$string['cvsquestionbankcategoryname_help'] = 'Il faut que toutes les question concernant l\'autoevaluation soient dans la même banque 
+de questions. Et cette banque de question doit être catégorisée 
+(voir: https://docs.moodle.org/38/en/Question_categories#Category_Set_Up_and_Management).
+Autre prérequis: l\'idnumber ou le numéro identification unique doit être exactement le nom court de la compétences (par exemple
+COPREV ou COPREV.1).
+';
 $string['readmore'] = 'plus';
 $string['readless'] = 'moins';
 $string['repartition:title'] = 'Répartition des connaissances sous-jacentes et compétences au sein de l\'{$a}';

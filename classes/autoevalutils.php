@@ -30,16 +30,24 @@ use mod_quiz\question\qubaids_for_users_attempts;
 
 class autoevalutils {
 
+    /**
+     * Get all question from a specific category shortname. The shortname is trimmed and put to upper
+     * case letter before comparison
+     *
+     * @param $questionbankcategorysn
+     * @return array
+     * @throws \dml_exception
+     */
     public static function get_all_question_from_qbank_category($questionbankcategorysn) {
         global $DB;
         // Get all relevant questions
-        $params = array('competvetid' => $questionbankcategorysn);
+        $params = array('competvetid' => trim(strtoupper($questionbankcategorysn)));
         $sql = "SELECT "
                 . $DB->sql_concat_join("'-'", ["q.id", "qc.id", "qs.id"])
                 . " AS uniqueid, qs.quizid AS quizid, qs.questionid AS questionid FROM {question} q "
                 . "LEFT JOIN {question_categories} qc ON qc.id = q.category "
                 . "LEFT JOIN {quiz_slots} qs ON qs.questionid = q.id "
-                . "WHERE qc.idnumber=:competvetid";
+                . "WHERE qc.idnumber=UPPER(:competvetid)";
 
         return $DB->get_records_sql($sql, $params);
     }

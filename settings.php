@@ -31,8 +31,28 @@ if ($hassiteconfig) {
             get_string('competvetmanagement', 'local_competvetsuivi')
     );
 
+    // General settings
+    $pagedesc = get_string('competvetgeneralsettings', 'local_competvetsuivi');
+    $generalsettingspage = new admin_settingpage('competvetgeneral',
+            $pagedesc,
+            array('local/competvetsuivi:managesettings'),
+            empty($CFG->enablecompetvetsuivi));
 
+    $settingname = get_string('questionbankcategoryname', 'local_competvetsuivi');
+    $settingdescription = get_string('questionbankcategoryname_desc', 'local_competvetsuivi');
+    $settingdefault = 'COMPETVETSUIVI';
 
+    $questionbankcategoryname = new admin_setting_configtext(
+            'cvsquestionbankcategoryname',
+            $settingname,
+            $settingdescription,
+            $settingdefault
+    );
+
+    $generalsettingspage->add($questionbankcategoryname);
+    $compvetmanagement->add('competvetmanagement', $generalsettingspage);
+
+    // Data management page
     $pagedesc = get_string('competvetuserdatamgmt', 'local_competvetsuivi');
     $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/userdata.php');
     $compvetmanagement->add('competvetmanagement',
@@ -45,6 +65,7 @@ if ($hassiteconfig) {
             )
     );
 
+    // Matrix Management page
     $pagedesc = get_string('managematrix', 'local_competvetsuivi');
     $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 

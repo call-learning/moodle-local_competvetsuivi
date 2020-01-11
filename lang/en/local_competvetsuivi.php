@@ -31,6 +31,7 @@ $string['competencies'] = 'Competencies';
 $string['competencyfullname'] = 'Full Name';
 $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Manage user data importation';
+$string['competvetgeneralsettings'] = 'General Settings';
 $string['contribution:title'] = 'Percentage the {$a} contributes to competencies and knowledge for the <strong>whole cursus</strong>';
 $string['currentprogress'] = 'Current Progress';
 $string['directorydoesnotexist'] = 'Le répertoire n\'existe pas';
@@ -77,6 +78,14 @@ $string['matrix:view'] = 'View matrix {$a}';
 $string['matrix:viewtestresults'] = 'View test results';
 $string['milestone'] = 'Target leve at the end of Semester(n)';
 $string['nomatrixerror'] = 'No worksheet with the prefix ${a} in the file uploaded';
+$string['questionbankcategoryname'] = 'Question bank category name';
+$string['questionbankcategoryname_desc'] = 'Question bank category name to pick Autoevaluation questions from';
+$string['cvsquestionbankcategoryname_help'] = 'All questions for autoevaluation must be in the same question bank.
+This question bank must have a specific category 
+(voir: https://docs.moodle.org/38/en/Question_categories#Category_Set_Up_and_Management).
+Another prerequisite: the question idnumber must be the exact short name of the competency (for example
+COPREV ou COPREV.1).
+';
 $string['repartition:title'] = 'Percentage of competences and knowledge in {$a}';
 $string['readmore'] = 'more';
 $string['readless'] = 'less';

@@ -26,6 +26,7 @@
 namespace local_competvetsuivi\renderable;
 
 use local_competvetsuivi\autoevalutils;
+use local_competvetsuivi\utils;
 use renderer_base;
 use stdClass;
 use templatable;
@@ -47,7 +48,7 @@ class competency_progress_overview extends graph_overview_base implements \rende
         $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback);
         $autoevalresults = autoevalutils::get_student_results( $userid,
                 $matrix,
-                $CFG->questionbankcategory,
+                utils::get_question_bank_category_name(),
                 $rootcomp
                 );
         // Autoeval only valid for competences
