@@ -546,6 +546,13 @@ class matrix {
         global $CFG, $DB;
         require_once("$CFG->libdir/phpexcel/PHPExcel/IOFactory.php");
         raise_memory_limit(MEMORY_HUGE);
+
+        // Log for later
+        $logcontent = new \stdClass();
+        $logcontent->compcount = 0;
+        $logcontent->macrocompcount = 0;
+        $logcontent->uecount = 0;
+        // END Log for later
         $reader = PHPExcel_IOFactory::createReaderForFile($filepath);
         $reader->setReadDataOnly(true);
         $allsheetsnames = $reader->listWorksheetNames($filepath);
@@ -577,8 +584,9 @@ class matrix {
         // Start a delegated transation here so it is all or nothing
         $delegatedtransaction = $DB->start_delegated_transaction();
 
-        list($firstuecolumn, $lastuecolumn) =
+        list($firstuecolumn, $lastuecolumn, $uecount) =
                 static::get_matrix_layout_from_file($rowiterator->current(), $matrixobject, $columnsvsue);
+        $logcontent->uecount = $uecount;
 
         // Then we iterate through the rest of the worksheet
         $rowiterator->seek(4); // We start at row 4
@@ -591,6 +599,7 @@ class matrix {
             if (!$compref) {
                 break; // We finished
             }
+            $logcontent->compcount++;
             // We should have the reference in the first column
             // And the description in the second
             $competencypath = explode('.', $compref);
@@ -620,6 +629,9 @@ class matrix {
             }
             $DB->update_record('cvs_matrix_comp', $competency); // Update path
 
+            if (!$parentcomp) $logcontent->macrocompcount++; // Log only macrocomps
+
+
             if (!empty($competency->id)) {
                 // We skip all other columns until the first column containing the UC/UE
                 $celliterator->seek($firstuecolumn);
@@ -643,7 +655,9 @@ class matrix {
             $rowiterator->next(); // Next Value
         }
         $DB->commit_delegated_transaction($delegatedtransaction);
-        return $matrixobject;
+
+        $logmessage = get_string('matrixaddedlog', 'local_competvetsuivi', $logcontent);
+        return array($matrixobject, $logmessage);
 
     }
 
@@ -666,6 +680,7 @@ class matrix {
                 matrix::MATRIX_COMP_TYPE_EVALUATION];
         $currentypecol = 0;
 
+        $uecount = 0;
         $firstuecolumn = "";
         $lastuecolumn = "";
         // First we get the UE names
@@ -697,6 +712,7 @@ class matrix {
                 $existingue = $DB->get_record('cvs_matrix_ue', array('matrixid' => $matrixobject->id, 'fullname' => $ue->fullname));
                 if (!$existingue) {
                     $ue->id = $DB->insert_record('cvs_matrix_ue', $ue);
+                    $uecount ++;
                 } else {
                     $ue = $existingue; // We don't insert the UE twice
                 }
@@ -704,7 +720,7 @@ class matrix {
                 $currentypecol++;
             }
         }
-        return array($firstuecolumn, $lastuecolumn);
+        return array($firstuecolumn, $lastuecolumn, $uecount);
     }
 
     public static function get_all_competency_types_names() {

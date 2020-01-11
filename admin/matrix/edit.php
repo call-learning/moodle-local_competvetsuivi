@@ -28,7 +28,7 @@ use local_competvetsuivi\matrix\matrix_list_renderable;
 require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 require_once('add_edit_form.php');
 
 admin_externalpage_setup('managematrix');
@@ -42,15 +42,14 @@ $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php');
 $PAGE->set_url($pageurl);
 // Navbar
-$listpageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+$listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 $PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
 $PAGE->navbar->add($header, null);
 
-
 $matrix = new \local_competvetsuivi\matrix\matrix($id);
 
-$matrixdata = array('fullname'=>$matrix->fullname, 'shortname'=>$matrix->shortname,'id'=>$matrix->id);
-$mform = new add_edit_form(null, array('fullname'=>$matrix->fullname, 'shortname'=>$matrix->shortname,'id'=>$matrix->id));
+$matrixdata = array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id);
+$mform = new add_edit_form(null, array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id));
 $mform->set_data($matrixdata);
 
 $listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
@@ -71,15 +70,17 @@ if ($data = $mform->get_data()) {
         $filename = $mform->get_new_filename('matrixfile');
         $tempfile = $mform->save_temp_file('matrixfile');
         $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
-        \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname, $matrix);
+        list($matrixobject, $logmessage) =
+                \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname, $matrix);
 
+        echo $OUTPUT->notification(get_string('matrixupdated', 'local_competvetsuivi', $logmessage), 'notifysuccess');
     }
     $matrix->save(); // Save shortname, fullname but also hash
     $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
     $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);
     $event->trigger();
 
-    echo $OUTPUT->notification(get_string('matrixupdated', 'local_competvetsuivi'), 'notifysuccess');
+    echo $OUTPUT->notification(get_string('matrixinfoupdated', 'local_competvetsuivi'), 'notifysuccess');
     echo $OUTPUT->single_button($listpageurl, get_string('continue'));
 } else {
     $mform->display();

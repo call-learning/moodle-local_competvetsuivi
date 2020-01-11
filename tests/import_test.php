@@ -52,7 +52,7 @@ class import_test extends advanced_testcase {
         $filename = dirname(__FILE__) . '/fixtures/matrix_sample.xlsx';
         $content = file_get_contents($filename);
         $hash = sha1($content);
-        $matrixobject = matrix::import_from_file(
+        list($matrixobject, $logmessage) = matrix::import_from_file(
                 $filename,
                 $hash,
                 'TestMatrix',
@@ -70,6 +70,8 @@ class import_test extends advanced_testcase {
         $this->assertEquals("/{$mastercomp->id}/{$childcomp->id}", $childcomp->path);
         $this->assertEquals('COPREV.1.2', $leafcomp->shortname);
         $this->assertEquals("/{$mastercomp->id}/{$childcomp->id}/{$leafcomp->id}", $leafcomp->path);
+        $this->assertEquals("Competencies loaded 73, Macrocompetencies 2, UC/UE number 50.", $logmessage);
+
     }
 
     public function test_import_users() {

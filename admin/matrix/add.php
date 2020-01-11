@@ -56,11 +56,11 @@ if ($mform->is_cancelled()) {
     $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
 
     try {
-        $matrix = \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname);
+        list($matrix, $logmessage) = \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname);
         $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
         $event = \local_competvetsuivi\event\matrix_added::create($eventparams);
         $event->trigger();
-        $OUTPUT->notification(get_string('matrixadded', 'local_competvetsuivi'), 'notifysuccess');
+        $OUTPUT->notification(get_string('matrixadded', 'local_competvetsuivi', $logmessage), 'notifysuccess');
     } catch (\local_competvetsuivi\matrix\matrix_exception $e) {
         $OUTPUT->notification($e->getMessage(), 'notifyfailure');
     }
