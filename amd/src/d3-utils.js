@@ -51,43 +51,51 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
             },
             progress_charts: function (svgid, data) {
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
-                var thisutils = this;
-                $(document).ready(function () {
-                        var svgselector = '#' + svgid;
-                        var svgelement = $(svgselector).first();
-                        var padding = Object.assign(data.padding || {}, thisutils.default_padding);
-                        var width = svgelement.width() - padding.left - padding.right;
-                        var height = svgelement.height() - padding.top - padding.bottom;
+                var svgselector = '#' + svgid;
+                var svgelement = $(svgselector).first();
+                var display_chart = function () {
+                    var width = svgelement.parent().innerWidth();
+                    var height = svgelement.height();
 
-                        var chart = d3progress.progress()
-                            .width(width)
-                            .height(height)
-                            .data(data);
-                        d3.select(svgselector)
-                            .call(chart);
-                    }
-                );
+                    var chart = d3progress.progress()
+                        .width(width)
+                        .height(height)
+                        .data(data);
+                    d3.select(svgselector)
+                        .call(chart);
+                };
+                $(document).ready(display_chart);
+                $(window).bind('resize', function () {
+                    $(svgelement).empty();
+                    display_chart();
+                });
             },
 
             ring_charts: function (svgid, data) {
                 var thisutils = this;
-                $(document).ready(function () {
-                    thisutils.add_patterns_definitions();
-                    var svgselector = '#' + svgid;
-                    var svgelement = $(svgselector).first();
-                    var padding = thisutils.default_padding;
-                    var width = svgelement.parent().width() - padding.left - padding.right;
-                    var height = svgelement.parent().height() - padding.top - padding.bottom;
-                    var radius = Math.min(width, height) / 2.2;
+                thisutils.add_patterns_definitions();
+                var svgselector = '#' + svgid;
+                var svgelement = $(svgselector).first();
+                var padding = thisutils.default_padding;
+
+                var display_chart = function () {
+
+                    var width = svgelement.parent().innerWidth();
+                    var height = svgelement.parent().innerHeight();
+                    var radius = Math.min(width, height) / 3;
+                    var lineheight = parseInt(svgelement.css('font-size'));
 
                     var arc = d3.arc()
                         .outerRadius(radius - 10)
                         .innerRadius(radius / 1.3);
 
-                    var outerArc = d3.arc()
-                        .outerRadius(radius)
-                        .innerRadius(radius - 10);
+                    var outerArcV1 = d3.arc()
+                        .outerRadius(radius * 1.2)
+                        .innerRadius(radius * 1.2 - lineheight);
 
+                    var outerArcV2 = d3.arc()
+                        .outerRadius(radius * 1.5)
+                        .innerRadius(radius * 1.5 - lineheight);
                     // Create the basic drawing / container
                     var svg = d3.select(svgselector).attr("width", width)
                         .attr("height", height)
@@ -98,7 +106,9 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
                     // Pie chart return just the value
                     var pie = d3.pie().value(function (d) {
                         return d.val;
-                    });
+                    }).sort(null);
+                    // Rearrange data so we get big + small values interleaved, this is to make sure labels
+                    // are not to close to each other
                     var d3piedata = pie(Object.values(data.compsvalues));
 
                     var g = svg.selectAll(".arc")
@@ -107,7 +117,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
                         .append("g")
                         .attr("class", "arc");
 
-                    //Draw, Style and color the arc
+                    // Draw, Style and color the arc
                     g.append("path")
                         .attr("d", arc)
                         .attr("class", function (d) {
@@ -117,46 +127,63 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
                         var anglediff = d.endAngle - d.startAngle;
                         var modifieddata = Object.assign({}, d); // Assuming copy on write (at first level of nesting)
                         var overlaystrandval = d.data.strandvals[data.overlaystrandid] !== 'undefined' ?
-                                d.data.strandvals[data.overlaystrandid].val: 0;
+                            d.data.strandvals[data.overlaystrandid].val : 0;
                         modifieddata.endAngle = d.startAngle + overlaystrandval * anglediff;
                         return arc(modifieddata);
                     };
                     g.append("path")
-                        .attr("d", function(d) { return calulateOverlayArc(d);})
+                        .attr("d", function (d) {
+                            return calulateOverlayArc(d);
+                        })
                         .attr("fill", 'url(#d3utils-whitecarbon)')
                         .attr("fill-opacity", '60%');
                     // Add the polylines between chart and labels (see https://www.d3-graph-gallery.com/graph/donut_label.html)
+
+
                     svg.append('g').classed('lines', true);
                     svg.append('g').classed('labels', true);
+
+                    // Store all end position for label so we check if there is any overlap
+                    var labelPositions = Array.from(d3piedata).map(function (d, index) {
+                        var oarc = index % 2 ? outerArcV1 : outerArcV2;
+                        var posLabel = oarc.centroid(d);
+                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                        var side = (midangle < Math.PI ? 1 : -1);
+
+                        var factor = index % 4 + 1 ;
+                        posLabel[0] = radius * factor * side;
+                        return posLabel;
+                    });
+
                     svg
                         .select('.lines')
                         .selectAll('polyline')
                         .data(d3piedata)
                         .enter()
                         .append('polyline')
-                        .attr("stroke", "black")
+                        .attr("stroke", "lightgray")
                         .style("fill", "none")
                         .attr("stroke-width", 1)
-                        .attr('points', function (d) {
+                        .attr('points', function (d, index) {
+                            var oarc = index % 2 ? outerArcV1 : outerArcV2;
                             var posA = arc.centroid(d); // line insertion in the slice
-                            var posB = outerArc.centroid(d);
-                            var posC = outerArc.centroid(d);
-                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                            posC[0] = radius * 0.95 * (midangle < Math.PI ? 1 : -1);
+                            var posB = oarc.centroid(d);
+                            var posC = labelPositions[index];
+                            posC[0] = posC[0] * 0.85;
                             return [posA, posB, posC];
                         });
 
-                    // Add the polylines between chart and labels:
+                    // Add the polylines between chart and labels, and make sure there is no overlap
+
                     var labels = svg
                         .select('.labels')
                         .selectAll('text')
                         .data(d3piedata)
                         .enter()
                         .append('text')
-                        .attr('transform', function (d) {
-                            var pos = outerArc.centroid(d);
-                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                            pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
+                        .attr('transform', function (d, index) {
+                            var pos = labelPositions[index];
+                            pos[0] = pos[0] * 0.99;
                             return 'translate(' + pos + ')';
                         });
                     labels.append('tspan')
@@ -179,8 +206,11 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
                             var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
                             return (midangle < Math.PI ? 'start' : 'end');
                         });
-
-
+                };
+                $(document).ready(display_chart);
+                $(window).bind('resize', function () {
+                    $(svgelement).empty();
+                    display_chart();
                 });
             },
             load_css: function (path) {
