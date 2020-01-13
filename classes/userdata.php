@@ -55,7 +55,7 @@ class userdata {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function import_user_data_from_file($filename) {
+    public static function import_user_data_from_file($filename, $separator = 'semicolon') {
         global $CFG, $DB;
         require_once($CFG->libdir . '/csvlib.class.php');
         $returnvalue = true;
@@ -64,69 +64,77 @@ class userdata {
 
         $importer = new csv_import_reader($importid, $type);
         $content = file_get_contents($filename);
-        $importer->load_csv_content($content, 'utf-8', 'semicolon');
+        $importer->load_csv_content($content, 'utf-8', $separator); // Here we use
+        // the default Excel format for Europe (semicolumn)
 
         // If there are no import errors then proceed.
         if (empty($importer->get_error())) {
 
             // Get header (field names).
             $headers = $importer->get_columns();
-            self::trim_headers($headers);
-            if (($columnerror = self::check_columns($headers)) === true) {
+            if (!is_array($headers) || count($headers) < 2) {
+                $returnvalue = array('errormsg' => get_string('csvinvalidcols', 'error'));
 
-                $importer->init();
-                $emailcolumnindex = array_search(static::MAIL_COLUMN_NAME, $headers);
-                $useddataheaders = array_splice($headers, $emailcolumnindex + 1);
-                // TODO: This is a hack: We either need to change the header in the user data source or the matrix
-                $useddataheaders = array_map(function($label) {
-                    return matrix::normalize_uc_name($label);
-                }, $useddataheaders);
-
-                $inserteduser = 0;
-                $updateduser = 0;
-                while ($userrecord = $importer->next()) {
-                    $useremail = $userrecord[$emailcolumnindex]; // Get user email
-                    if (!trim($useremail)) continue; // Skip empty lines
-                    // The email is followed by the data itself
-                    $userdatarow = array_splice($userrecord, $emailcolumnindex + 1);
-
-                    $userdata = new \stdClass();
-                    $userdata->useremail = $useremail;
-
-                    $finaldatarow = array();
-                    $userdata->lastseenunit = $useddataheaders[0];
-                    // Convert heading and content to a more useable one (like boolean)
-                    foreach ($userdatarow as $k => $row) {
-                        if ($row !== "") {
-                            $userdata->lastseenunit = $useddataheaders[$k];
-                        }
-                        $userdatarow[$k] = $row ? 1 : 0;
-                    }
-
-                    // We combine the two array and render a json
-                    $userdata->userdata = json_encode(array_combine($useddataheaders, $userdatarow));
-
-                    $toupdate = $DB->get_field('cvs_userdata', 'id', array('useremail' => $useremail));
-                    if ($toupdate) {
-                        $userdata->id = $toupdate;
-                        $DB->update_record('cvs_userdata', $userdata);
-                        $updateduser++;
-                    } else {
-                        $DB->insert_record('cvs_userdata', $userdata);
-                        $inserteduser++;
-                    }
-                }
-
-                // Send an event after importation
-                $eventparams = array('context' => \context_system::instance(),
-                        'other' => array('filename' => $filename, 'inserted' => $inserteduser, 'updated' => $updateduser));
-                $event = \local_competvetsuivi\event\userdata_imported::create($eventparams);
-                $event->trigger();
             } else {
-                $returnvalue = array('importerror' => get_string('csvloaderror', 'error', $columnerror));
+                self::trim_headers($headers);
+                if (($columnerror = self::check_columns($headers)) === true) {
+
+                    $importer->init();
+                    $emailcolumnindex = array_search(static::MAIL_COLUMN_NAME, $headers);
+                    $useddataheaders = array_splice($headers, $emailcolumnindex + 1);
+                    // TODO: This is a hack: We either need to change the header in the user data source or the matrix
+                    $useddataheaders = array_map(function($label) {
+                        return matrix::normalize_uc_name($label);
+                    }, $useddataheaders);
+
+                    $inserteduser = 0;
+                    $updateduser = 0;
+                    while ($userrecord = $importer->next()) {
+                        $useremail = $userrecord[$emailcolumnindex]; // Get user email
+                        if (!trim($useremail)) {
+                            continue;
+                        } // Skip empty lines
+                        // The email is followed by the data itself
+                        $userdatarow = array_splice($userrecord, $emailcolumnindex + 1);
+
+                        $userdata = new \stdClass();
+                        $userdata->useremail = $useremail;
+
+                        $finaldatarow = array();
+                        $userdata->lastseenunit = $useddataheaders[0];
+                        // Convert heading and content to a more useable one (like boolean)
+                        foreach ($userdatarow as $k => $row) {
+                            if ($row !== "") {
+                                $userdata->lastseenunit = $useddataheaders[$k];
+                            }
+                            $userdatarow[$k] = $row ? 1 : 0;
+                        }
+
+                        // We combine the two array and render a json
+                        $userdata->userdata = json_encode(array_combine($useddataheaders, $userdatarow));
+
+                        $toupdate = $DB->get_field('cvs_userdata', 'id', array('useremail' => $useremail));
+                        if ($toupdate) {
+                            $userdata->id = $toupdate;
+                            $DB->update_record('cvs_userdata', $userdata);
+                            $updateduser++;
+                        } else {
+                            $DB->insert_record('cvs_userdata', $userdata);
+                            $inserteduser++;
+                        }
+                    }
+
+                    // Send an event after importation
+                    $eventparams = array('context' => \context_system::instance(),
+                            'other' => array('filename' => $filename, 'inserted' => $inserteduser, 'updated' => $updateduser));
+                    $event = \local_competvetsuivi\event\userdata_imported::create($eventparams);
+                    $event->trigger();
+                } else {
+                    $returnvalue = array('errormsg' => get_string('csvloaderror', 'error', $columnerror));
+                }
             }
         } else {
-            $returnvalue = array('importerror' => $importer->get_error());
+            $returnvalue = array('errormsg' => $importer->get_error());
         }
 
         $importer->cleanup();

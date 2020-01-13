@@ -27,6 +27,7 @@ require_once(__DIR__ . '/../../../config.php');
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/csvlib.class.php');
 global $CFG;
 
 /**
@@ -65,6 +66,15 @@ class user_data_form extends moodleform {
         $mform->addHelpButton('filetoupload', 'userdatafile', 'local_competvetsuivi');
         $mform->setType('filetoupload', PARAM_FILE);
 
+        $choices = csv_import_reader::get_delimiter_list();
+        $mform->addElement('select', 'delimiter_name', get_string('csvdelimiter', 'tool_lpimportcsv'), $choices);
+        if (array_key_exists('cfg', $choices)) {
+            $mform->setDefault('delimiter_name', 'cfg');
+        } else if (get_string('listsep', 'langconfig') == ';') {
+            $mform->setDefault('delimiter_name', 'semicolon');
+        } else {
+            $mform->setDefault('delimiter_name', 'comma');
+        }
         $this->add_action_buttons(true, get_string('save'));
     }
 

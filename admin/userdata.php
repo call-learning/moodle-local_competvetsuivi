@@ -43,10 +43,10 @@ $PAGE->set_url($pageurl);
 $mform = new user_data_form();
 
 $defaultdt = [];
-if (get_config('local_competvetsuivi','userdatafilepath')) {
-    $defaultdt['userdatafilepath'] = get_config('local_competvetsuivi','userdatafilepath');
+if (get_config('local_competvetsuivi', 'userdatafilepath')) {
+    $defaultdt['userdatafilepath'] = get_config('local_competvetsuivi', 'userdatafilepath');
 }
-
+$message = "";
 if ($mform->is_cancelled()) {
     redirect($pageurl);
 } else if ($data = $mform->get_data()) {
@@ -57,19 +57,25 @@ if ($mform->is_cancelled()) {
     }
     if ($mform->get_new_filename('filetoupload')) {
         $tempfile = $mform->save_temp_file('filetoupload');
-        $status = local_competvetsuivi\userdata::import_user_data_from_file($tempfile);
-        if ($status) {
-            $OUTPUT->notification(get_string('userdataimported', 'local_competvetsuivi'), 'notifysuccess');
+        $delimiter = $data->delimiter_name;
+        $status = local_competvetsuivi\userdata::import_user_data_from_file($tempfile, $delimiter);
+        if ($status === true) {
+            /** @var $OUTPUT core_renderer */
+            $message = $OUTPUT->notification(get_string('userdataimported', 'local_competvetsuivi'), 'notifysuccess');
         } else {
-            $errors = "";
-            foreach ($status as $error => $params) {
-                $errors .= get_string($error, 'local_competvetsuivi', $params);
+            $errormsg = "";
+            if (key_exists('errormsg', $status)) {
+                $errormsg = $status['errormsg'];
             }
-            $OUTPUT->notification(get_string('userdataimportationfailure', 'local_competvetsuivi', $errors), 'notifyfailure');
+
+            $message = $OUTPUT->notification(get_string('importerror',
+                    'local_competvetsuivi',
+                    $errormsg),
+                    'notifyfailure'
+            );
         }
         unlink($tempfile); // Remove temp file
     }
-    redirect($pageurl);
 }
 
 $mform->set_data($defaultdt);
@@ -78,6 +84,7 @@ $renderer = $PAGE->get_renderer('core');
 $renderable = new local_competvetsuivi\renderable\userdata_log();
 
 echo $OUTPUT->header();
+echo $message;
 $mform->display();
 echo $renderer->render($renderable);
 echo $OUTPUT->footer();
