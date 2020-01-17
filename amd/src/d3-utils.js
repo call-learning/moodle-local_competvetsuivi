@@ -21,23 +21,39 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progress'],
-    function ($, cfg, d3config, d3, d3bulletcvs, d3progress) {
+    function($, cfg, d3config, d3, d3progress) {
         return {
             default_padding: {top: 10, right: 5, bottom: 1, left: 5},
+            default_progress_chart_height: 100,
+            default_doghnut_chart_height: 400,
 
             /**
              *
              * @param svgid SVG item to draw the graph into
              * @param data : an array of data
+             * @param paddingandsize: optional padding and size parameter
              */
-            progress_charts: function (svgid, data) {
+            progress_charts: function(svgid, data, paddingandsize) {
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
                 var svgselector = '#' + svgid;
                 var svgelement = $(svgselector).first();
-                var display_chart = function () {
+                var thisutils = this;
+                var display_chart = function() {
                     var width = svgelement.parent().innerWidth();
-                    var height = svgelement.height();
+                    var height = thisutils.default_progress_chart_height;
+                    if (paddingandsize) {
+                        if (paddingandsize.size !== undefined) {
+                            if (paddingandsize.size.height !== undefined) {
+                                // If set to 0 then autosize it
+                                height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
+                            }
+                            if (paddingandsize.size.width !== undefined) {
+                                // If set to 0 then autosize it
+                                width = paddingandsize.size.width ? paddingandsize.size.width : width;
+                            }
 
+                        }
+                    }
                     var chart = d3progress.progress()
                         .width(width)
                         .height(height)
@@ -46,23 +62,50 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         .call(chart);
                 };
                 $(document).ready(display_chart);
-                $(window).bind('resize', function () {
+                $(window).bind('resize', function() {
                     $(svgelement).empty();
                     display_chart();
                 });
             },
 
-            ring_charts: function (svgid, data) {
+            /**
+             *
+             * @param svgid SVG item to draw the graph into
+             * @param data : an array of data
+             * @param paddingandsize: optional padding and size parameter
+             */
+            ring_charts: function(svgid, data, paddingandsize) {
                 var thisutils = this;
                 thisutils.add_patterns_definitions();
                 var svgselector = '#' + svgid;
                 var svgelement = $(svgselector).first();
                 var padding = thisutils.default_padding;
 
-                var display_chart = function () {
+                var display_chart = function() {
 
                     var width = svgelement.parent().innerWidth();
                     var height = svgelement.parent().innerHeight();
+
+                    if (paddingandsize) {
+                        if (paddingandsize.size !== undefined) {
+                            if (paddingandsize.size.height !== undefined) {
+                                // If set to 0 then autosize it
+                                height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
+                            }
+                            if (paddingandsize.size.width !== undefined) {
+                                // If set to 0 then autosize it
+                                width = paddingandsize.size.width ? paddingandsize.size.width : width;
+                            }
+                        }
+                        if (paddingandsize.padding !== undefined
+                            && paddingandsize.padding.top !== undefined
+                            && paddingandsize.padding.left !== undefined
+                            && paddingandsize.padding.right !== undefined
+                            && paddingandsize.padding.bottom !== undefined) {
+                            padding = paddingandsize.padding;
+                        }
+
+                    }
                     var radius = Math.min(width, height) / 3;
                     var lineheight = parseInt(svgelement.css('font-size'));
 
@@ -85,7 +128,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                             + "," + (height / 2 + padding.top) + ")");
 
                     // Pie chart return just the value
-                    var pie = d3.pie().value(function (d) {
+                    var pie = d3.pie().value(function(d) {
                         return d.val;
                     }).sort(null);
                     // Rearrange data so we get big + small values interleaved, this is to make sure labels
@@ -101,10 +144,10 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                     // Draw, Style and color the arc
                     g.append("path")
                         .attr("d", arc)
-                        .attr("class", function (d) {
+                        .attr("class", function(d) {
                             return 'macrocomp-' + d.data.colorindex + ' arc-bg';
                         });
-                    var calulateOverlayArc = function (d) {
+                    var calulateOverlayArc = function(d) {
                         var anglediff = d.endAngle - d.startAngle;
                         var modifieddata = Object.assign({}, d); // Assuming copy on write (at first level of nesting)
                         var overlaystrandval = d.data.strandvals[data.overlaystrandid] !== 'undefined' ?
@@ -113,7 +156,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         return arc(modifieddata);
                     };
                     g.append("path")
-                        .attr("d", function (d) {
+                        .attr("d", function(d) {
                             return calulateOverlayArc(d);
                         })
                         .attr("fill", 'url(#d3utils-whitecarbon)')
@@ -125,7 +168,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                     svg.append('g').classed('labels', true);
 
                     // Store all end position for label so we check if there is any overlap
-                    var labelPositions = Array.from(d3piedata).map(function (d, index) {
+                    var labelPositions = Array.from(d3piedata).map(function(d, index) {
                         var oarc = index % 2 ? outerArcV1 : outerArcV2;
                         var posLabel = oarc.centroid(d);
                         var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
@@ -145,9 +188,9 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         .attr("stroke", "lightgray")
                         .style("fill", "none")
                         .attr("stroke-width", 1)
-                        .attr('points', function (d, index) {
+                        .attr('points', function(d, index) {
                             var oarc = index % 2 ? outerArcV1 : outerArcV2;
-                            var posA = arc.centroid(d); // line insertion in the slice
+                            var posA = arc.centroid(d); // Line insertion in the slice
                             var posB = oarc.centroid(d);
                             var posC = labelPositions[index];
                             posC[0] = posC[0] * 0.85;
@@ -162,46 +205,46 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         .data(d3piedata)
                         .enter()
                         .append('text')
-                        .attr('transform', function (d, index) {
+                        .attr('transform', function(d, index) {
                             var pos = labelPositions[index];
                             pos[0] = pos[0] * 0.99;
                             return 'translate(' + pos + ')';
                         });
                     labels.append('tspan')
-                        .text(function (d) {
+                        .text(function(d) {
                             return d.data.shortname + ' - ' + (Math.round(d.data.val * 100)) + '%';
                         })
                         .attr('class', 'sn-label')
-                        .style('text-anchor', function (d) {
+                        .style('text-anchor', function(d) {
                             var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
                             return (midangle < Math.PI ? 'start' : 'end');
                         });
                     labels.append('tspan')
-                        .text(function (d) {
+                        .text(function(d) {
                             return d.data.fullname;
                         })
                         .attr('class', 'fn-label')
                         .attr('dy', '1em')
                         .attr('x', '0')
-                        .style('text-anchor', function (d) {
+                        .style('text-anchor', function(d) {
                             var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
                             return (midangle < Math.PI ? 'start' : 'end');
                         });
                 };
                 $(document).ready(display_chart);
-                $(window).bind('resize', function () {
+                $(window).bind('resize', function() {
                     $(svgelement).empty();
                     display_chart();
                 });
             },
-            load_css: function (path) {
+            load_css: function(path) {
                 var link = document.createElement('link');
                 link.type = 'text/css';
                 link.rel = 'stylesheet';
                 link.href = cfg.wwwroot + path;
                 document.getElementsByTagName("head")[0].appendChild(link);
             },
-            add_patterns_definitions: function () {
+            add_patterns_definitions: function() {
                 // See https://iros.github.io/patternfills/sample_d3.html
                 var availablepatterns = [
                     {
@@ -221,14 +264,14 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         .data(availablepatterns)
                         .enter()
                         .append('pattern')
-                        .attr('id', function (d) {
+                        .attr('id', function(d) {
                             return d.pattername;
                         })
                         .attr('patternUnits', 'userSpaceOnUse')
                         .attr('width', 10)
                         .attr('height', 10)
                         .append('image')
-                        .attr('xlink:href', function (d) {
+                        .attr('xlink:href', function(d) {
                             return d.imagedef;
                         })
                         .attr('x', 0)

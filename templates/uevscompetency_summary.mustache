@@ -52,5 +52,8 @@
         {{#chartdata}}
             {{> local_competvetsuivi/chart_item }}
         {{/chartdata}}
+        {{< local_competvetsuivi/graph_footer}}
+            {{$has_no_milestone}}{{/has_no_milestone}}
+        {{/ local_competvetsuivi/graph_footer}}
     </div>
 </div>

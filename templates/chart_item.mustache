@@ -32,16 +32,25 @@
     compid : competency id
     uniqueidentifier: unique identifier for this graph
     type : graph type (bullet, progress)
-    data: data
+    data: data,
+    paddingandsize: {
+        "padding": {
+            "top": 10, "right": 5, "bottom": 1, "left": 5
+            },
+         "size": {"height":100,"width": 200}
+       }
   }
 
 }}
 
 <svg id="{{uniqueidentifier}}" class="chart-item" data-graph-type="{{type}}" width="100%" height="100%"></svg>
 
+
 {{#js}}
     require(['local_competvetsuivi/config', 'local_competvetsuivi/d3-utils'], function(config, d3utils) {
     var uid = '{{uniqueidentifier}}';
-    var d3chart = d3utils.{{type}}_charts(uid,{{{data}}});
+    var d3chart = d3utils.{{type}}_charts(uid,
+    {{{data}}} {{#paddingandsize}}, {{{paddingandsize}}} {{/paddingandsize}}
+    );
     });
 {{/js}}

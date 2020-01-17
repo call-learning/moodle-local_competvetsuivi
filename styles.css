@@ -19,11 +19,6 @@
     font-weight: bold;
 }
 
-
-.cvs-summary-chart {
-    min-height: 400px;
-}
-
 .cvs-summary-chart .fn-label {
     fill: gray;
 }

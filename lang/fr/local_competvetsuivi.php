@@ -36,6 +36,8 @@ $string['currentprogress'] = 'Avancement';
 $string['contribution:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et des compétences au 
 <strong>sein de l\'ensemble du cursus</strong>';
 $string['directorydoesnotexist'] = 'Directory does not exist';
+$string['doghnutchartheight'] = 'Hauteur du graphe en Doghnut';
+$string['doghnutchartheight_desc'] = 'Cela affecte tous les graphes UC vs UE';
 $string['enablecompetvetsuivi'] = 'Activer le plugin Compet Vetsuivi';
 $string['enablecompetvetsuivi_help'] = 'Activer le plugin Compet Vetsuivi';
 $string['foundnomatchingue'] = 'Pas d\'UE/UC trouvées';
@@ -83,6 +85,8 @@ $string['matrix:view'] = 'Voir la matrice {$a}';
 $string['matrix:viewtestresults'] = 'Voir les résultats du test';
 $string['milestone'] = 'Niveau à atteindre à la fin du semestre (n)';
 $string['nomatrixerror'] = 'Pas de feuille avec le préfixe ${a} dans le fichier uploadé';
+$string['progresschartheight'] = 'Hauteur du graphe de progression';
+$string['progresschartheight_desc'] = 'Cela affecte tous les graphes de progression';
 $string['questionbankcategoryname'] = 'Nom de la catégorie de la banque de question';
 $string['questionbankcategoryname_desc'] = 'Nom de la catégorie de la banque de question desquelles sont tirées les questions';
 $string['cvsquestionbankcategoryname_help'] = 'Il faut que toutes les question concernant l\'autoevaluation soient dans la même banque 

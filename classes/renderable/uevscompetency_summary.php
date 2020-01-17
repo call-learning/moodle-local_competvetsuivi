@@ -34,6 +34,7 @@ use templatable;
 class uevscompetency_summary extends graph_overview_base implements \renderable, templatable {
     const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait)
 
+
     protected $ue = null;
 
     public function __construct(
@@ -41,12 +42,12 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
             $ueid,
             $rootcomp = null
     ) {
-        $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
-        $this->init_bar_chart($matrix, $strands, $rootcomp, null);
+        $this->strandlist = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];;
+        $this->init_bar_chart($matrix,  $this->strandlist , $rootcomp, null);
         $rootcompid = $rootcomp ? $rootcomp->id : 0;
 
         $this->ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
-        $chartdata = ueutils::get_ue_vs_competencies_percent($matrix, $this->ue, $strands, $rootcompid);
+        $chartdata = ueutils::get_ue_vs_competencies_percent($matrix, $this->ue, $this->strandlist , $rootcompid);
         $chartdata->overlaystrandid = matrix::MATRIX_COMP_TYPE_KNOWLEDGE;
         $this->chart = new chart_item($chartdata, 'ring');
     }
@@ -63,6 +64,8 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
         $exportablecontext = new stdClass();
         $exportablecontext->chartdata = $this->chart->export_for_template($output);
         $exportablecontext->graph_title = get_string('repartition:title', 'local_competvetsuivi', $this->ue->shortname);
+
+        $this->export_strand_list($exportablecontext);
         return $exportablecontext;
     }
 }

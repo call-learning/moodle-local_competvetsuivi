@@ -78,16 +78,16 @@
 
 {{#js}}
     require(['jquery'], function($) {
-    var comptoggler = function(e) {
-        var parent = $(e.target).parent().parent();
-        parent.children('.competency-desc').toggleClass('text-truncate');
-        parent.find('.comp-readless').toggleClass('invisible');
-        parent.find('.comp-readmore').toggleClass('invisible');
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return false;
-    };
-    $('.comp-readless').click(comptoggler);
-    $('.comp-readmore').click(comptoggler);
+        var comptoggler = function(e) {
+            var parent = $(e.target).parent().parent();
+            parent.children('.competency-desc').toggleClass('text-truncate');
+            parent.find('.comp-readless').toggleClass('invisible');
+            parent.find('.comp-readmore').toggleClass('invisible');
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        };
+        $('.comp-readless').click(comptoggler);
+        $('.comp-readmore').click(comptoggler);
     });
 {{/js}}

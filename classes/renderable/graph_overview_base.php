@@ -57,17 +57,20 @@ abstract class graph_overview_base {
         $this->childrencomps = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0, true);
     }
 
+    protected function export_strand_list(&$exportablecontext) {
+        $exportablecontext->comp_types = array_map(function($comptypeid) {
+            return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
+        }, $this->strandlist);
+    }
     protected function get_bar_chart_exportable_context(renderer_base $output) {
         global $FULLME;
         // TODO : fix this, we should have a way to override
         $exportablecontext = new \stdClass();
         $exportablecontext->graph_title = get_string('graphtitle:level0', 'local_competvetsuivi');
-
+        $this->export_strand_list($exportablecontext);
         $exportablecontext->competency_desc = $this->rootcomp ?
                 format_text($this->rootcomp->description,$this->rootcomp->descriptionformat) : "";
-        $exportablecontext->comp_types = array_map(function($comptypeid) {
-            return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
-        }, $this->strandlist);
+
         $exportablecontext->breadcrumbs = array();
 
         $allcomps = $this->matrix->get_matrix_competencies();

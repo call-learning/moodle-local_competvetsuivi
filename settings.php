@@ -43,13 +43,41 @@ if ($hassiteconfig) {
     $settingdefault = 'COMPETVETSUIVI';
 
     $questionbankcategoryname = new admin_setting_configtext(
-            'cvsquestionbankcategoryname',
+            'local_competvetsuivi/cvsquestionbankcategoryname',
             $settingname,
             $settingdescription,
             $settingdefault
     );
-
     $generalsettingspage->add($questionbankcategoryname);
+
+    // Progress & Doghnut chart height
+    $settingname = get_string('progresschartheight', 'local_competvetsuivi');
+    $settingdescription = get_string('progresschartheight_desc', 'local_competvetsuivi');
+    $settingdefault = 100;
+
+    $progresschartheight = new admin_setting_configtext(
+            'local_competvetsuivi/progresschartheight',
+            $settingname,
+            $settingdescription,
+            $settingdefault,
+            PARAM_INT
+    );
+    $generalsettingspage->add($progresschartheight);
+
+    $settingname = get_string('doghnutchartheight', 'local_competvetsuivi');
+    $settingdescription = get_string('doghnutchartheight_desc', 'local_competvetsuivi');
+    $settingdefault = 400;
+
+    $doghnutchartheight = new admin_setting_configtext(
+            'local_competvetsuivi/doghnutchartheight',
+            $settingname,
+            $settingdescription,
+            $settingdefault,
+            PARAM_INT
+    );
+    $generalsettingspage->add($doghnutchartheight);
+
+
     $compvetmanagement->add('competvetmanagement', $generalsettingspage);
 
     // Data management page

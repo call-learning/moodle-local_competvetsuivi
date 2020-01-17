@@ -38,7 +38,7 @@ class chart_item implements \renderable, templatable {
             $data,
             $charttype = 'progress',
             $options = array()) {
-        $this->type  = $charttype;
+        $this->type = $charttype;
         $this->data = $data;
         $this->options = $options;
     }
@@ -57,7 +57,26 @@ class chart_item implements \renderable, templatable {
         $exportablecontext->type = $this->type;
         $exportablecontext->data = json_encode($this->data, true);
         $exportablecontext->options = json_encode($this->options, true);
-        $exportablecontext->uniqueidentifier = \html_writer::random_id('chart'.$this->type);
+        $exportablecontext->uniqueidentifier = \html_writer::random_id('chart' . $this->type);
+
+        $sizeparams = [];
+        switch ($this->type) {
+            case 'progress':
+                $sizeparams = [
+                        "size" => ["height" => $height =
+                                get_config('local_competvetsuivi', 'progresschartheight')]
+                ];
+                break;
+            case 'ring':
+                $sizeparams = [
+                        "size" => ["height" =>
+                                get_config('local_competvetsuivi', 'doghnutchartheight')]
+                ];
+                break;
+        }
+        if ($sizeparams) {
+            $exportablecontext->paddingandsize = json_encode($sizeparams);
+        }
         return $exportablecontext;
     }
 }
