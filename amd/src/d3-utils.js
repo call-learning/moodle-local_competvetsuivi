@@ -111,7 +111,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
 
                     var arc = d3.arc()
                         .outerRadius(radius - 10)
-                        .innerRadius(radius / 1.3);
+                        .innerRadius(radius / 1.5);
 
                     var outerArcV1 = d3.arc()
                         .outerRadius(radius * 1.2)
@@ -175,7 +175,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         var side = (midangle < Math.PI ? 1 : -1);
 
                         var factor = index % 4 + 1;
-                        posLabel[0] = radius * factor * side;
+                        posLabel[0] = radius * factor * side / 1.5;
                         return posLabel;
                     });
 
