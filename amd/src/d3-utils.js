@@ -20,35 +20,16 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet-cvs', 'd3-progress'],
+define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progress'],
     function ($, cfg, d3config, d3, d3bulletcvs, d3progress) {
         return {
             default_padding: {top: 10, right: 5, bottom: 1, left: 5},
+
             /**
              *
              * @param svgid SVG item to draw the graph into
-             * @param data : an array of data composed of
-             * { categorysn: "S1",categorydesc:"Semestre 1", data: [value1, value2, value...], markers:[value4, value5...],
-             * padding:{top:, right...} }
+             * @param data : an array of data
              */
-
-            bullet_charts: function (svgid, data) {
-                this.load_css('/local/competvetsuivi/js/d3-libraries/bullet-cvs/d3-bullet-cvs.css');
-
-                var svgselector = '#' + svgid;
-                var svgelement = $(svgselector).first();
-                var padding = Object.assign(data.padding || {}, this.default_padding);
-                var width = svgelement.parent().width() - padding.left - padding.right;
-                var height = svgelement.parent().height() - padding.top - padding.bottom;
-
-                var chart = d3bulletcvs.bulletcvs()
-                    .width(width)
-                    .height(height)
-                    .data(data);
-                d3.select(svgselector)
-                    .call(chart);
-
-            },
             progress_charts: function (svgid, data) {
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
                 var svgselector = '#' + svgid;
@@ -150,7 +131,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-bullet
                         var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
                         var side = (midangle < Math.PI ? 1 : -1);
 
-                        var factor = index % 4 + 1 ;
+                        var factor = index % 4 + 1;
                         posLabel[0] = radius * factor * side;
                         return posLabel;
                     });

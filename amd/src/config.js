@@ -24,19 +24,9 @@ define(['core/config'], function (config) {
     window.requirejs.config({
         paths: {
             "d3": config.wwwroot + '/local/competvetsuivi/js/d3/d3',
-            "d3-bullet-cvs": config.wwwroot + '/local/competvetsuivi/js/d3-libraries/bullet-cvs/d3-bullet-cvs',
             "d3-progress": config.wwwroot + '/local/competvetsuivi/js/d3-libraries/progress/d3-progress',
         },
         map: {
-            'd3-bullet-cvs': {
-                'd3-axis': 'd3',
-                'd3-scale': 'd3',
-                'd3-selection': 'd3',
-                'd3-timer': 'd3',
-                'd3-transition': 'd3',
-                'd3-scale-chromatic': 'd3',
-                'd3-format': 'd3',
-            },
             'd3-progress': {
                 'd3-axis': 'd3',
                 'd3-scale': 'd3',
@@ -49,9 +39,6 @@ define(['core/config'], function (config) {
         shim: {
             'd3': {
                 exports: 'd3'
-            },
-            'd3-bullet-cvs': {
-                deps: ['d3', 'd3-axis', 'd3-scale', 'd3-selection', 'd3-timer', 'd3-transition', 'd3-scale-chromatic'],
             },
             'd3-progress': {
                 deps: ['d3', 'd3-axis', 'd3-scale', 'd3-format', 'd3-transition','d3-shape', 'd3-selection'],
