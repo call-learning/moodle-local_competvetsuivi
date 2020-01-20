@@ -83,6 +83,9 @@ class uevscompetency_overview extends graph_overview_base implements \renderable
     public function export_for_template(renderer_base $output) {
         $exportablecontext = $this->get_bar_chart_exportable_context($output);
         $exportablecontext->graph_title = get_string('contribution:title', 'local_competvetsuivi', $this->ue->shortname);
+        if ($this->samesemesteronly) {
+            $exportablecontext->graph_title = get_string('contributionsamesemester:title', 'local_competvetsuivi', $this->ue->shortname);
+        }
         return $exportablecontext;
     }
 }

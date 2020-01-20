@@ -21,7 +21,11 @@ Dans tous les cas cela peut être changé dans les paramètres de la tâche.
 
 Alternativement on peut synchroniser la liste des utilisateurs par le script suivant:
 
-php local/competvetsuivi/cli/uploaduserdata.php --file=<csv file>
+``
+
+    php local/competvetsuivi/cli/uploaduserdata.php --file=<csv file>
+    
+``
 
 # Gestion des matrices de compétences
 
@@ -35,9 +39,31 @@ Elle pourra:
  
 # Format des données d'entrée
 
-## Importation des utilisateurs
+## Format des données utilisateurs
 
-## Importation des données de matrice
+Le fichier contenant les données utilisateur est un fichier CSV. Attention Excel est connu pour ne pas gérer tout à fait de manière standard ce type de fichier. Il est recommandé d’utiliser OpenOffice/LibreOffice pour cela.
+Le format est celui classique d’un CSV (séparé par une virgule) avec une colonne appelée “Mail” et qui est juste placée avant la première colonne des UC.
+Par exemple voici la première ligne d’un fichier type
+
+``
+  
+    Prénom Nom;Identifiant scolarité;Identifiant Moodle;Mail;UE51;UE52;UE53;UE54;UE55;UE61;UE62;UE63;UE64;UE65;UE66;UE71;UE72;UE73;UE74;UE75;UE76;UE77;UE78;UE81;UE82;UE83;UE84;UE85;UE86;....
+``
+
+Pour chaque étudiant identifié par son email, on a une liste de valeurs (1, 0 ou vide) qui corresponds à chaque UE. Une UE est validée si la valeur est 1.
+
+## Format des données de matrice
+
+La matrice de compétences est un fichier Excel (compatible Excel 2007). Sa disposition est la suivante:
+Une feuille de calcul dont le nom commence par “Matrice”, par exemple “Matrice XXXX” (Matrice Enva par exemple).
+Dans cette feuille:
+ * La première colonne est le nom court de chaque compétence
+ * La deuxième est le nom long/description de la compétence
+ * Un ensemble de colonnes qui sont ignorées
+ * Une colonne vide (ceci est le marqueur permettant de savoir que l’on commence à lister les valeurs par UC/UE)
+    * En colonne les UC (4 colonnes par UC/UE)
+    * Dans les colonnes des UC, les valeurs sont 1, 2, 3 (et leurs multiples de 10).
+
 
 ## Visualisation des données (temporaire)
 
@@ -56,14 +82,27 @@ en regardant son profil.
 
 Pour initialiser l'environnement de test (attention de bien mettre la configuration souhaitée dans config.php):
 
-      php admin/tool/phpunit/cli/init.php
+``
+
+     php admin/tool/phpunit/cli/init.php     
      php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
+     
+``
 
 Après l'initialisation de l'environnement de test, l'ensemble des tests unitaires
 peut être passé par la ligne de commande suivante:
 
-     ./vendor/phpunit/phpunit/phpunit --testsuite local_competvetsuivi_testsuite
+``
 
+     ./vendor/phpunit/phpunit/phpunit --testsuite local_competvetsuivi_testsuite
+     
+``
+
+## Problèmes connus
+
+Voici quelques un des problèmes non encore résolus qui n’empêchent pas le module de fonctionner mais qui peuvent être présent dans certains cas.
+  * Affectation de plusieurs matrices à la même cohorte: pour l’utilisateur  la première matrice sera sélectionnée (dans l’ordre chronologique d’affectation). Cela peut avoir des effets de bord peu compréhensible pour l’utilisateur final. Le mieux sera de vérifier de manière générale qu’une matrice est affectée à une seule cohorte.
+  * Dépassements des libellés dans le graphe en anneau. Selon la taille et le contenu des libellés, certains textes peuvent dépasser en dehors de la fenêtre visible. Pour l’instant ce problème n’est pas résolu car il dépend fortement des contraintes imposées par le thème (testé sur lambda, fordson et boost).
 
  
 ## License ##
