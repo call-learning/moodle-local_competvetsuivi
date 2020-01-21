@@ -24,7 +24,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
     function($, cfg, d3config, d3, d3progress) {
         return {
             default_padding: {top: 10, right: 5, bottom: 1, left: 5},
-            default_progress_chart_height: 100,
+            default_progress_chart_height: 125,
             default_doghnut_chart_height: 400,
 
             /**
@@ -43,11 +43,11 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                     var height = thisutils.default_progress_chart_height;
                     if (paddingandsize) {
                         if (paddingandsize.size !== undefined) {
-                            if (paddingandsize.size.height !== undefined) {
+                            if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
                                 // If set to 0 then autosize it
                                 height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
                             }
-                            if (paddingandsize.size.width !== undefined) {
+                            if (paddingandsize.size.width !== undefined && paddingandsize.size.height != 0) {
                                 // If set to 0 then autosize it
                                 width = paddingandsize.size.width ? paddingandsize.size.width : width;
                             }
@@ -88,11 +88,11 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
 
                     if (paddingandsize) {
                         if (paddingandsize.size !== undefined) {
-                            if (paddingandsize.size.height !== undefined) {
+                            if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
                                 // If set to 0 then autosize it
                                 height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
                             }
-                            if (paddingandsize.size.width !== undefined) {
+                            if (paddingandsize.size.width !== undefined && paddingandsize.size.width != 0) {
                                 // If set to 0 then autosize it
                                 width = paddingandsize.size.width ? paddingandsize.size.width : width;
                             }
