@@ -43,7 +43,7 @@ if ($hassiteconfig) {
     $settingdefault = 'COMPETVETSUIVI';
 
     $questionbankcategoryname = new admin_setting_configtext(
-            'local_competvetsuivi/cvsquestionbankcategoryname',
+            'local_competvetsuivi/cvsquestionbankdefaultcategoryname',
             $settingname,
             $settingdescription,
             $settingdefault

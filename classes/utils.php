@@ -103,15 +103,12 @@ class utils {
 
     const DEFAULT_QUESTION_BANK_CATEGORY_SN = 'COMPETVETSUIVI';
 
-    public static function get_question_bank_category_name() {
-        static $globalcfg = null;
+    public static function get_default_question_bank_category_name() {
+        global $CFG;
+        $globalcfg = get_config('local_competvetsuivi', 'cvsquestionbankdefaultcategoryname');
         if (!$globalcfg) {
-            global $CFG;
-            $globalcfg = get_config('local_competvetsuivi', 'cvsquestionbankcategoryname');
-            if (!$globalcfg) {
-                $globalcfg = !$CFG->cvsquestionbankcategory ? static::DEFAULT_QUESTION_BANK_CATEGORY_SN
-                        : $CFG->cvsquestionbankcategory;
-            }
+            $globalcfg = empty($CFG->cvsquestionbankdefaultcategoryname) ? static::DEFAULT_QUESTION_BANK_CATEGORY_SN
+                    : $CFG->cvsquestionbankdefaultcategoryname;
         }
         return $globalcfg;
     }

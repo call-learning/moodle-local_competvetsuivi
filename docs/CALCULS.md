@@ -26,18 +26,28 @@ compétence (on ignore les sous-compétences).
 
 ## Calcul de la contribution d'une UC/UE à l'ensemble du cursus ou un semestre
 
-Il y a deux calculs. Le premier, plus simple correspond à la visualisation sous forme de barre de progression.
+Il y a deux calculs. 
+
+
+Le premier, plus simple correspond à la visualisation sous forme de barre de progression. Il corresponds à regarder une ligne de la matrice à travers toutes les UE/UC et
+regarder la contribution particulière de cette UE/UC sur cette compétence.
+
 Ce calcul corresponds à obtenir pour toutes les compétences et sous-compétence le score maximal global que l'on peut obtenir (sur une année ou un semestre). 
 Ce total est le score maximal.
 Ensuite on voit que l'on peut l'on peut obtenir pour l'UE concernée (par exemple UC/UE 51), sur l'ensemble des compétences (score maximal pour l'UE).
 Le pourcentage calculé et affiché dans la barre de progression sera donc le score maximal pour l'UE / le score maximal (global).
 
-Le calcul n'est pas beaucoup plus compliqué mais la visualisation associée est un peu plus complexe. 
-Il permet d'obtenir pour chaque compétences (ici on parle souvent des macro-compétences), le pourcentage que peut contribuer l'UE dans le cursus général.
-Comme pour le premier cas on calcule une valeur maxmale par type (compétence, connaissances) et par compétence. La différence est que le total/maximal sera pris sur l'ensemble 
-compétences/connaissances. On regarde donc pour une compétence donnée, la valeur maximale qu'elle peut avoir (ceci en additionnant tous les points
-possible sur les compétences et connaissances). Cela nous permet d'obtenir le pourcentage que prendra cette connaissance dans l'anneau (la part
-de l'arc de cercle): on fait le calcul valeur possible pour cette UE (competences+connaissances) / valeur max (competences + connaissance) 
+
+
+Pour le second graphe en anneau, le calcul n'est pas beaucoup plus compliqué mais la visualisation associée est un peu plus complexe. 
+On fait un calcul en colonne sur une UE donnée afin de calculer la contribution de chaque compétence/capacité pour cette UE en pourcentage.
+ 
+Il permet d'obtenir pour chaque capacité (ici on parle souvent des macro-compétences), le pourcentage qu'il contribue dans l'UE.
+Comme pour le premier cas on calcule une valeur maxmale par type (compétence, connaissances) et par capacité MAIS seulement pour cette UE/UC. 
+La différence est que le total/maximal sera pris sur l'ensemble compétences/connaissances et seulement pour cette UE/UC. 
+On regarde donc pour une capacité donnée, la valeur maximale qu'elle peut avoir (ceci en additionnant tous les points possible sur les compétences et connaissances). 
+Cela nous permet d'obtenir le pourcentage que prendra cette connaissance dans l'anneau (la part de l'arc de cercle): on fait le calcul valeur possible pour cette UE 
+(competences+connaissances) / valeur max (competences + connaissance) 
 
 Ensuite nous prenons pour chaque type (connaissance et compétence), la part qu'elle prendront dans ce morceau d'anneau (donc quel est le pourcentage pour la connaissance, 
 et pour la compétence). Normalement on a un pourcentage de 100% pour la plus grande des valeurs.

@@ -134,4 +134,17 @@ class utils_test extends competvetsuivi_tests {
         $this->assertEquals(4, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES]);
         $this->assertEquals(2.5, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION]);
     }
+    public function test_get_default_question_bank_category_name() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $currentconfig = get_config('local_competvetsuivi', 'cvsquestionbankdefaultcategoryname');
+        $categoryname = utils::get_default_question_bank_category_name();
+        $this->assertEquals(utils::DEFAULT_QUESTION_BANK_CATEGORY_SN, $categoryname);
+
+        set_config('cvsquestionbankdefaultcategoryname', 'AAAAAAAAAA', 'local_competvetsuivi');
+        $categoryname = utils::get_default_question_bank_category_name();
+        $this->assertEquals('AAAAAAAAAA', $categoryname);
+
+    }
 }

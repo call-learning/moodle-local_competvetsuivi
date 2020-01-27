@@ -46,11 +46,7 @@ class competency_progress_overview extends graph_overview_base implements \rende
             $linkbuildercallback = null) {
         global $CFG;
         $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback);
-        $autoevalresults = autoevalutils::get_student_results( $userid,
-                $matrix,
-                utils::get_question_bank_category_name(),
-                $rootcomp
-                );
+        $autoevalresults = autoevalutils::get_student_results($userid, $matrix, $rootcomp);
         // Autoeval only valid for competences
         $this->studentautoevalresults = [matrix::MATRIX_COMP_TYPE_ABILITY=>$autoevalresults,
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [],

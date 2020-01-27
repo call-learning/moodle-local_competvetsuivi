@@ -91,8 +91,10 @@ $string['progresschartheight'] = 'Hauteur du graphe de progression';
 $string['progresschartheight_desc'] = 'Cela affecte tous les graphes de progression';
 $string['questionbankcategoryname'] = 'Nom de la catégorie de la banque de question';
 $string['questionbankcategoryname_desc'] = 'Nom de la catégorie de la banque de question desquelles sont tirées les questions';
-$string['cvsquestionbankcategoryname_help'] = 'Il faut que toutes les question concernant l\'autoevaluation soient dans la même banque 
-de questions. Et cette banque de question doit être catégorisée 
+$string['cvsquestionbankdefaultcategoryname_help'] = 'Il faut que toutes les question concernant l\'autoevaluation soient dans la même banque 
+de questions. Et cette banque de question doit être catégorisée. Normalement le nom court de la matrice doit correspondre au nom de la
+banque de question. Si aucune banque de question ne correspond, on regarde la valeur de ce paramètre et on essaie de trouver une banque
+de question avec cette catégorie. 
 (voir: https://docs.moodle.org/38/en/Question_categories#Category_Set_Up_and_Management).
 Autre prérequis: l\'idnumber ou le numéro identification unique doit être exactement le nom court de la compétences (par exemple
 COPREV ou COPREV.1).

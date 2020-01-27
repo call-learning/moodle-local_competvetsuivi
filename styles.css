@@ -25,6 +25,12 @@
 
 .graph-header-title {
     border-bottom: solid 2px lightgrey;
+
+}
+
+.graph-current-comp-name {
+    font-weight: bolder;
+    font-size: large;
 }
 
 /* Bar Styling for macro competencies 0 to 7 */

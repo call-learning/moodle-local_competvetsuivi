@@ -66,8 +66,7 @@ echo $OUTPUT->heading(get_string('usertestresults', 'local_competvetsuivi',
 $matrix->load_data();
 $questionresults = local_competvetsuivi\autoevalutils::get_student_results(
         $userid,
-        $matrix,
-        utils::get_question_bank_category_name());
+        $matrix);
 
 var_dump($questionresults);
 // http://competvetsuivi.local/local/competvetsuivi/viewtestresults.php?userid=3&matrixid=4

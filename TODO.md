@@ -9,6 +9,40 @@ The matrix should:
 
 
 # TODO
+
+Question auto-évaluation
+------------------------
+* Génère les question à partir de la matrice (en prenant en compte la colonne D - niveau REF)
+N'ai pas abordé (0)
+A vu (30)
+A fait (70)
+Sait faire (100)
+(On met 100 à partir du critère D)
+* Echelle de Likert
+* Gestion de la matrice <=> Banque de question 
+
+* Echelle de likert
+
+Impression
+----------
+Un tableau par étudiant en développé complet:
+Grand tableau de récap de toutes les infos d'un étudiant (1 macro compétence par
+page) -  1 tableau en PDF (joint au au fichier de note des étudiants).
+
+Possiblement ignorer les habileté
+
+
+Une impression par UC en développé complet.
+
+
+
+Potentiels 
+----------
+Echelle de la barre de progression à changer
+
+Ajouter le bloc ou l'on veut (voir le coté responsive + et un click pour aller sur une autre page)
+
+
 Additional features:
 * Spider graph
 * Filtre pour cours (ue / competency)
@@ -32,4 +66,6 @@ Testing:
 Documentation 
 * Make sure graph can be themed and document it
 * Other graph (spider)
+
+
 

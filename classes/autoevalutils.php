@@ -38,16 +38,19 @@ class autoevalutils {
      * @return array
      * @throws \dml_exception
      */
-    public static function get_all_question_from_qbank_category($questionbankcategorysn) {
+    public static function get_all_question_from_qbank_category($matrix) {
         global $DB;
+
+        $matrixsnkey = trim(strtoupper($matrix->shortname));
+        $defaultcategoryname = utils::get_default_question_bank_category_name();
         // Get all relevant questions
-        $params = array('competvetid' => trim(strtoupper($questionbankcategorysn)));
+        $params = array('matrixsn' => $matrixsnkey, 'defaultbanksn'=>$defaultcategoryname);
         $sql = "SELECT "
                 . $DB->sql_concat_join("'-'", ["q.id", "qc.id", "qs.id"])
                 . " AS uniqueid, qs.quizid AS quizid, qs.questionid AS questionid FROM {question} q "
                 . "LEFT JOIN {question_categories} qc ON qc.id = q.category "
                 . "LEFT JOIN {quiz_slots} qs ON qs.questionid = q.id "
-                . "WHERE qc.idnumber=UPPER(:competvetid)";
+                . "WHERE UPPER(qc.idnumber)=:matrixsn OR UPPER(qc.idnumber)=:defaultbanksn";
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -92,17 +95,16 @@ class autoevalutils {
      *
      * @param $userid
      * @param $matrix
-     * @param $questionbankcategorysn
      * @param null $rootcomp
      * @return array An array indexed by competency id and the numerical result
      * @throws \dml_exception
      */
-    public static function get_student_results($userid, $matrix, $questionbankcategorysn, $rootcomp = null) {
+    public static function get_student_results($userid, $matrix, $rootcomp = null) {
         global $CFG, $DB;
         include_once($CFG->dirroot . '/question/engine/lib.php');
         include_once($CFG->dirroot . '/mod/quiz/locallib.php'); // Yeah, if not quiz_attempt not defined
 
-        $allquestions = static::get_all_question_from_qbank_category($questionbankcategorysn);
+        $allquestions = static::get_all_question_from_qbank_category($matrix);
         $allquestionsid = array_map(function($q) {
             return $q->questionid;
         }, $allquestions);

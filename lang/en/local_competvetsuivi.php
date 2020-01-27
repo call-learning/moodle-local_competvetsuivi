@@ -87,8 +87,9 @@ $string['progresschartheight'] = 'Progress chart height';
 $string['progresschartheight_desc'] = 'This setting affects all progress chart graphs';
 $string['questionbankcategoryname'] = 'Question bank category name';
 $string['questionbankcategoryname_desc'] = 'Question bank category name to pick Autoevaluation questions from';
-$string['cvsquestionbankcategoryname_help'] = 'All questions for autoevaluation must be in the same question bank.
-This question bank must have a specific category 
+$string['cvsquestionbankdefaultcategoryname_help'] = 'All questions for autoevaluation must be in the same question bank.
+This question bank must have a specific category. The category idnumber is matched to the matrix shortname, but if it does not match
+we check the value of this parameter to match a question bank to it.
 (voir: https://docs.moodle.org/38/en/Question_categories#Category_Set_Up_and_Management).
 Another prerequisite: the question idnumber must be the exact short name of the competency (for example
 COPREV ou COPREV.1).

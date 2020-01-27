@@ -63,7 +63,6 @@ class autoevalutils_test extends competvetsuivi_tests {
             'COPREV.3.1' => 'Two',
             'COPREV.3.4' => 'Four',
     ];
-    const QBANK_CATEGORY_ID = 'qbankcat';
     const QUESTION_POSSIBLE_ANSWERS = array('One' => '1', 'Two' => '0.75', 'Three' => '0.5', 'Four' => '0.25', 'Five' => '0');
 
     protected static function get_mc_question_data($competency) {
@@ -197,7 +196,7 @@ class autoevalutils_test extends competvetsuivi_tests {
         // Create a specific question bank category
 
         $category = $questiongenerator->create_question_category(array('name' => 'Question CATEGORY',
-                'idnumber' => self::QBANK_CATEGORY_ID));
+                'idnumber' => $this->matrix->shortname));
 
         // Create all questions now
 
@@ -247,9 +246,7 @@ class autoevalutils_test extends competvetsuivi_tests {
 
     public function test_get_all_question_from_qbank_category() {
         $this->resetAfterTest();
-        $allquestions = \local_competvetsuivi\autoevalutils::get_all_question_from_qbank_category(
-                self::QBANK_CATEGORY_ID
-        );
+        $allquestions = \local_competvetsuivi\autoevalutils::get_all_question_from_qbank_category($this->matrix);
         // We have two quiz with the same questions, so it will be 10
         $this->assertCount(count(self::QBANK_QUESTION_COMP) * 2, $allquestions);
     }
@@ -368,7 +365,6 @@ class autoevalutils_test extends competvetsuivi_tests {
                 \local_competvetsuivi\autoevalutils::get_student_results(
                         $this->user->id,
                         $this->matrix,
-                        self::QBANK_CATEGORY_ID,
                         $comp3);
 
         $this->assertEquals(0.75, $resultforallcomps[$comp3->id]);
@@ -381,7 +377,6 @@ class autoevalutils_test extends competvetsuivi_tests {
                 \local_competvetsuivi\autoevalutils::get_student_results(
                         $this->user->id,
                         $this->matrix,
-                        self::QBANK_CATEGORY_ID,
                         $comp2);
         $this->assertEquals(0.75, $resultforallcomps[$comp2->id]); // Here the result below are overriden
     }
@@ -392,8 +387,7 @@ class autoevalutils_test extends competvetsuivi_tests {
         $resultforallcomps =
                 \local_competvetsuivi\autoevalutils::get_student_results(
                         $this->user->id,
-                        $this->matrix,
-                        self::QBANK_CATEGORY_ID);
+                        $this->matrix);
         $this->assertEquals(0.5, $resultforallcomps[$comp1->id]); // Here the result below are the mean of
         // sub competencies
     }
@@ -405,8 +399,7 @@ class autoevalutils_test extends competvetsuivi_tests {
         $resultforallcomps =
                 \local_competvetsuivi\autoevalutils::get_student_results(
                         $this->user->id,
-                        $this->matrix,
-                        self::QBANK_CATEGORY_ID);
+                        $this->matrix);
         $this->assertEquals(0.75, $resultforallcomps[$comp->id]); // Here the result below are the mean of
         // sub competencies
     }
