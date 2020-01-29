@@ -41,18 +41,18 @@ class cacheutils {
                 $currentue->shortname . $strandstrings . strval($rootcompid));
     }
 
-    public static function get_comp_progress_hash($matrix, $currentcomp, $userdata, $strands,
-            $ueselection) {
+    public static function get_comp_progress_hash($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
         /** @var $matrix matrix */
-        $userdatastring = array_reduce($userdata, function($acc, $item) {
-            return $acc . $item->shortname;
-        }, "");
+        $userdatastring = json_encode($userdata);
         $strandstrings = join('', $strands);
-        $uestring = array_reduce($ueselection, function($acc, $item) {
-            return $acc . $item->shortname;
-        }, "");
+        $uestring = $ueselection ?
+                array_reduce($ueselection, function($acc, $item) {
+                    return $acc . $item->shortname;
+                }, "") : "";
 
-        return hash('sha256', strval($matrix->id) . strval($matrix->timemodified) . $currentcomp->shortname . $userdatastring);
+        return hash('sha256',
+                strval($matrix->id) . strval($matrix->timemodified) . $currentcomp->shortname . $userdatastring . $strandstrings .
+                $uestring);
     }
 
     public static function get($hashkey, $cachetype) {

@@ -40,7 +40,7 @@ class chartingutils {
     public static function get_comp_progress($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
 
         // Deal with cache
-        $hash = cacheutils::get_comp_progress_hash($matrix, $currentcomp, $ueselection, $strands, $ueselection);
+        $hash = cacheutils::get_comp_progress_hash($matrix, $currentcomp, $userdata, $strands, $ueselection);
         $cachedvalue = cacheutils::get($hash, 'comp_progress');
         if ($cachedvalue) {
             return $cachedvalue;

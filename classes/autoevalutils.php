@@ -41,16 +41,16 @@ class autoevalutils {
     public static function get_all_question_from_qbank_category($matrix) {
         global $DB;
 
-        $matrixsnkey = trim(strtoupper($matrix->shortname));
+        // $matrixsnkey = trim(strtoupper($matrix->shortname));
         $defaultcategoryname = utils::get_default_question_bank_category_name();
         // Get all relevant questions
-        $params = array('matrixsn' => $matrixsnkey, 'defaultbanksn'=>$defaultcategoryname);
+        $params = array('defaultbanksn'=>$defaultcategoryname);
         $sql = "SELECT "
                 . $DB->sql_concat_join("'-'", ["q.id", "qc.id", "qs.id"])
                 . " AS uniqueid, qs.quizid AS quizid, qs.questionid AS questionid FROM {question} q "
                 . "LEFT JOIN {question_categories} qc ON qc.id = q.category "
                 . "LEFT JOIN {quiz_slots} qs ON qs.questionid = q.id "
-                . "WHERE UPPER(qc.idnumber)=:matrixsn OR UPPER(qc.idnumber)=:defaultbanksn";
+                . "WHERE UPPER(qc.idnumber)=:defaultbanksn";
 
         return $DB->get_records_sql($sql, $params);
     }
