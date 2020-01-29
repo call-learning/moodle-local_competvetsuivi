@@ -42,7 +42,7 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
             $ueid,
             $rootcomp = null
     ) {
-        $this->strandlist = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];;
+        $this->strandlist = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY];
         $this->init_bar_chart($matrix,  $this->strandlist , $rootcomp, null);
         $rootcompid = $rootcomp ? $rootcomp->id : 0;
 
