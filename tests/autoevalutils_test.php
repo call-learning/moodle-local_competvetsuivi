@@ -69,8 +69,7 @@ class autoevalutils_test extends competvetsuivi_tests {
         global $USER;
         $qdata = new stdClass();
 
-        $qdata->name = 'multiple choice question';
-        $qdata->idnumber = $competency->shortname;
+        $qdata->name = $competency->shortname;
         $qdata->questiontext = array('text' => "Question for {$competency->shortname}", 'format' => FORMAT_HTML);
         $qdata->generalfeedback = array('text' => "Question for {$competency->shortname} answered.", 'format' => FORMAT_HTML);
         $qdata->defaultmark = 1;
@@ -160,7 +159,6 @@ class autoevalutils_test extends competvetsuivi_tests {
         $question->category = $categoryid;
         $question->qtype = 'multichoice';
         $question->createdby = 0;
-        $question->idnumber = null;
         $fromform->category = $categoryid;
 
         /** @var core_question_generator $questiongenerator */
@@ -228,12 +226,12 @@ class autoevalutils_test extends competvetsuivi_tests {
             $tosubmit = [];
             foreach ($attemptobj->get_slots() as $slot) {
                 $cquestion = $quba->get_question($slot);
-                if (key_exists($cquestion->idnumber, self::QBANK_QUESTION_COMP)) {
-                    $tosubmit[$slot] = array('answer' => self::QBANK_QUESTION_COMP[$cquestion->idnumber]);
+                if (key_exists($cquestion->name, self::QBANK_QUESTION_COMP)) {
+                    $tosubmit[$slot] = array('answer' => self::QBANK_QUESTION_COMP[$cquestion->name]);
                 }
                 // Just an exception for COPREV3.4, we have two different answers so we can check
                 // if we take the max
-                if ($cquestion->idnumber == 'COPREV.3.4' && $qid % 2) {
+                if ($cquestion->name == 'COPREV.3.4' && $qid % 2) {
                     $tosubmit[$slot] = array('answer' => 'Two');
                 }
             }

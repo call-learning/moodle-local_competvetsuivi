@@ -128,7 +128,7 @@ class autoevalutils {
                 foreach ($quba->get_attempt_iterator() as $qa) {
                     $question = $qa->get_question();
                     if (in_array($question->id, $allquestionsid)) {
-                        $questionsn = trim(strtoupper(trim($question->idnumber)), '.');
+                        $questionsn = trim(strtoupper(trim($question->name)), '.');
                         if (key_exists($questionsn, $allcompetenciesmatch)) {
                             $competencyid = $allcompetenciesmatch[$questionsn]; // The key is now the competency id
                             $qmark = static::get_question_mark($qa);

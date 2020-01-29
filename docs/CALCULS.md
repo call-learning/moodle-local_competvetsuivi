@@ -17,7 +17,7 @@ On obtient par la suite un résultat en pourcentage pour l'étudiant et le semes
 
 Le calcul se fait en regardant tous les quiz qui ont des questions appartenant à une banque de question donnée (ciblée par le nom de sa catégorie, voir paramétrage des tests 
 d'évaluation dans la documentation).
-Parmi ces quiz on prends toutes les questions qui ont un identifiant correspondant au nom d'une des compétences. On fait la correspondance entre le score obtenu par l'utilisateur 
+Parmi ces quiz on prends toutes les questions qui ont un nom (champ 'name' de la question) correspondant au nom d'une des compétences. On fait la correspondance entre le score obtenu par l'utilisateur 
 et la compétence. Si l'utilisateur a répondu plusieurs fois à la même question dans plusieurs quiz, on prends la meilleure note.
 
 Le système aussi va vérifier pour toutes les compétences, la valeur obtenue dans ses sous-compétences. On fait la moyenne des résultats  obtenus dans les sous-compétences pour 
