@@ -57,19 +57,10 @@
     stroke: #bbb;
 }
 
-.progress-cvs path.value-arrow {
-    stroke: #aaa;
-    fill: #aaa;
-}
-
-.progress-cvs  .labelbar path.value-arrow {
-    fill: #afa;
-    stroke: #383;
-}
 
 /* Labels */
 
-.progress-cvs .labelmarker, .progress-cvs .labelbar {
+.progress-cvs .labelmarker, .progress-cvs .stoplabelbar  {
     text-anchor: middle;
     font-family: sans-serif;
     font-variant: small-caps;
@@ -81,6 +72,10 @@
     stroke: #aaa;
     stroke-width: 1px;
     filter: url(#d3std-dropshadow);
+}
+.progress-cvs  .stoplabelbar-bg {
+    fill: #afa;
+    stroke: #383;
 }
 
 .progress-cvs .labelbar-bg {
