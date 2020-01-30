@@ -70,6 +70,18 @@
     font-size: xx-small;
 }
 
+@media (max-width: 768px) {
+    .fn-label {
+        display: none;
+    }
+    .comp-readmore, .comp-readless {
+        display: none;
+    }
+    .competency-desc {
+        display: none;
+    }
+}
+
 .comp-readmore, .comp-readless {
     position: absolute;
     padding-bottom: 2px;
@@ -78,3 +90,4 @@
 .mltoggle {
     float: right;
 }
+

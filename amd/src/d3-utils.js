@@ -81,7 +81,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                 var svgselector = '#' + svgid;
                 var svgelement = $(svgselector).first();
                 var padding = thisutils.default_padding;
-
+                var innerRadiusFactor = 1.8;
                 var display_chart = function() {
 
                     var width = svgelement.parent().innerWidth();
@@ -107,7 +107,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         }
 
                     }
-                    var radius = Math.min(width, height) / 3;
+                    var radius = Math.min(width, height) / 4;
                     var lineheight = parseInt(svgelement.css('font-size'));
 
                     var arc = d3.arc()
@@ -115,12 +115,12 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         .innerRadius(radius / 1.5);
 
                     var outerArcV1 = d3.arc()
-                        .outerRadius(radius * 1.2)
-                        .innerRadius(radius * 1.2 - lineheight);
+                        .outerRadius(radius)
+                        .innerRadius(radius - lineheight);
 
                     var outerArcV2 = d3.arc()
-                        .outerRadius(radius * 1.5)
-                        .innerRadius(radius * 1.5 - lineheight);
+                        .outerRadius(radius * innerRadiusFactor)
+                        .innerRadius(radius * innerRadiusFactor - lineheight);
                     // Create the basic drawing / container
                     var svg = d3.select(svgselector).attr("width", width)
                         .attr("height", height)
@@ -176,7 +176,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         var side = (midangle < Math.PI ? 1 : -1);
 
                         var factor = index % 4 + 1;
-                        posLabel[0] = radius * factor * side / 1.5;
+                        posLabel[0] = radius * factor * side / innerRadiusFactor;
                         return posLabel;
                     });
 
@@ -194,7 +194,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                             var posA = arc.centroid(d); // Line insertion in the slice
                             var posB = oarc.centroid(d);
                             var posC = labelPositions[index];
-                            posC[0] = posC[0] * 0.85;
+                            posC[0] = posC[0] * 0.75;
                             return [posA, posB, posC];
                         });
 
@@ -208,7 +208,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         .append('text')
                         .attr('transform', function(d, index) {
                             var pos = labelPositions[index];
-                            pos[0] = pos[0] * 0.99;
+                            pos[0] = pos[0] * 0.85;
                             return 'translate(' + pos + ')';
                         });
                     labels.append('tspan')
