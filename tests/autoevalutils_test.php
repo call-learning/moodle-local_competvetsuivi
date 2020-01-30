@@ -193,8 +193,8 @@ class autoevalutils_test extends competvetsuivi_tests {
 
         // Create a specific question bank category
 
-        $category = $questiongenerator->create_question_category(array('name' => 'Question CATEGORY',
-                'idnumber' => local_competvetsuivi\utils::get_default_question_bank_category_name()));
+        $category = $questiongenerator->create_question_category(array('name' =>
+                local_competvetsuivi\utils::get_default_question_bank_category_name()));
 
         // Create all questions now
 

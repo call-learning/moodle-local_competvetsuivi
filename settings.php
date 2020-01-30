@@ -40,7 +40,7 @@ if ($hassiteconfig) {
 
     $settingname = get_string('questionbankcategoryname', 'local_competvetsuivi');
     $settingdescription = get_string('questionbankcategoryname_desc', 'local_competvetsuivi');
-    $settingdefault = 'COMPETVETSUIVI';
+    $settingdefault = 'Auto-evaluation_competences';
 
     $questionbankcategoryname = new admin_setting_configtext(
             'local_competvetsuivi/cvsquestionbankdefaultcategoryname',

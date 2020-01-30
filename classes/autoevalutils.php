@@ -42,7 +42,7 @@ class autoevalutils {
         global $DB;
 
         // $matrixsnkey = trim(strtoupper($matrix->shortname));
-        $defaultcategoryname = utils::get_default_question_bank_category_name();
+        $defaultcategoryname = trim(strtoupper(utils::get_default_question_bank_category_name()));
         // Get all relevant questions
         $params = array('defaultbanksn'=>$defaultcategoryname);
         $sql = "SELECT "
@@ -50,7 +50,7 @@ class autoevalutils {
                 . " AS uniqueid, qs.quizid AS quizid, qs.questionid AS questionid FROM {question} q "
                 . "LEFT JOIN {question_categories} qc ON qc.id = q.category "
                 . "LEFT JOIN {quiz_slots} qs ON qs.questionid = q.id "
-                . "WHERE UPPER(qc.idnumber)=:defaultbanksn";
+                . "WHERE UPPER(qc.name)=:defaultbanksn";
 
         return $DB->get_records_sql($sql, $params);
     }

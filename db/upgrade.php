@@ -88,5 +88,9 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019080110, 'local', 'competvetsuivi');
     }
 
+    if ($oldversion < 2019080214) {
+        set_config('cvsquestionbankdefaultcategoryname','Auto-evaluation_competences','local_competvetsuivi');
+        upgrade_plugin_savepoint(true, 2019080214, 'local', 'competvetsuivi');
+    }
     return true;
 }
