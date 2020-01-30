@@ -61,7 +61,6 @@
 /* Labels */
 
 .progress-cvs .labelmarker, .progress-cvs .stoplabelbar  {
-    text-anchor: middle;
     font-family: sans-serif;
     font-variant: small-caps;
 }

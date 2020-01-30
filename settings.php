@@ -53,7 +53,7 @@ if ($hassiteconfig) {
     // Progress & Doghnut chart height
     $settingname = get_string('progresschartheight', 'local_competvetsuivi');
     $settingdescription = get_string('progresschartheight_desc', 'local_competvetsuivi');
-    $settingdefault = 125;
+    $settingdefault = 108;
 
     $progresschartheight = new admin_setting_configtext(
             'local_competvetsuivi/progresschartheight',

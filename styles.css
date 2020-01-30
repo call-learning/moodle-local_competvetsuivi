@@ -67,5 +67,14 @@
 }
 
 .fn-label {
-    font-size: x-small;
+    font-size: xx-small;
+}
+
+.comp-readmore, .comp-readless {
+    position: absolute;
+    padding-bottom: 2px;
+}
+
+.mltoggle {
+    float: right;
 }
