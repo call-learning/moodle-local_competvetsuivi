@@ -143,6 +143,7 @@ class matrix {
                 'compid IN (SELECT c.id FROM {cvs_matrix_comp} c WHERE c.matrixid = :matrixid)',
                 array('matrixid' => $this->id));
         $DB->delete_records('cvs_matrix_comp', array('matrixid' => $this->id));
+        $DB->delete_records('cvs_matrix_cohorts', array('matrixid' => $this->id));
     }
 
     public function save() {

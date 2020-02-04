@@ -80,7 +80,13 @@ class utils {
             list($insql, $inparams) = $DB->get_in_or_equal($cohortsid);
             $matrixid = $DB->get_field_sql('SELECT matrixid FROM {cvs_matrix_cohorts} WHERE cohortid ' . $insql . ' LIMIT 1',
                     $inparams);
+
+            $matrixexists = $DB->record_exists('cvs_matrix', ['id' => $matrixid]);
+            if (!$matrixexists) {
+                $matrixid = false;
+            }
         }
+
         return $matrixid;
     }
 
