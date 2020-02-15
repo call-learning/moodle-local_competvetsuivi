@@ -49,6 +49,26 @@ use local_competvetsuivi\chartingutils;
  */
 class chartingutils_test extends competvetsuivi_tests {
 
+    protected function assert_competencies_results($computedresults) {
+        foreach ($computedresults as $compname => $expectedresults) {
+            $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
+            $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
+            // User has been validated up to and including UC55
+            $strands = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION);
+            list($progressperstrand, $maxperstrand) =
+                    chartingutils::get_comp_progress($this->matrix, $comp, $userdata, $strands);
+            foreach ($strands as $strand) {
+                $this->assertEquals($expectedresults[$strand][1],
+                        $maxperstrand[$strand],
+                        "Max calculation issue - Strand($strand) : $compname");
+                $this->assertEquals($expectedresults[$strand][0],
+                        $progressperstrand[$strand],
+                        "Progress calculation Issue - Strand($strand) : $compname");
+            }
+        }
+    }
+
     public function test_get_comp_progress() {
         global $DB;
         $this->resetAfterTest();
@@ -81,23 +101,8 @@ class chartingutils_test extends competvetsuivi_tests {
                 ),
 
         );
-        foreach ($computedresults as $compname => $expectedresults) {
-            $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
-            $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
-            // User has been validated up to and including UC55
-            $strands = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
-                    matrix::MATRIX_COMP_TYPE_EVALUATION);
-            list($progressperstrand, $maxperstrand) =
-                    chartingutils::get_comp_progress($this->matrix, $comp, $userdata, $strands);
-            foreach ($strands as $strand) {
-                $this->assertEquals($expectedresults[$strand][1],
-                        $maxperstrand[$strand],
-                        "Max calculation issue - Strand($strand) : $compname");
-                $this->assertEquals($expectedresults[$strand][0],
-                        $progressperstrand[$strand],
-                        "Progress calculation Issue - Strand($strand) : $compname");
-            }
-        }
+        $this->assert_competencies_results($computedresults);
+
     }
 
     public function test_get_comp_progress_aggregated() {
@@ -111,25 +116,7 @@ class chartingutils_test extends competvetsuivi_tests {
                         matrix::MATRIX_COMP_TYPE_OBJECTIVES => [4, 16.5],
                         matrix::MATRIX_COMP_TYPE_EVALUATION => [2.5, 12.5]
                 ));
-        $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', "COPREV.1");
-        $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
-        foreach ($computedresults as $compname => $expectedresults) {
-            $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
-            $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
-            // User has been validated up to and including UC55
-            $strands = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
-                    matrix::MATRIX_COMP_TYPE_EVALUATION);
-            list($progressperstrand, $maxperstrand) =
-                    chartingutils::get_comp_progress($this->matrix, $comp, $userdata, $strands);
-            foreach ($strands as $strand) {
-                $this->assertEquals($expectedresults[$strand][1],
-                        $maxperstrand[$strand],
-                        "Max calculation issue - Strand($strand) : $compname");
-                $this->assertEquals($expectedresults[$strand][0],
-                        $progressperstrand[$strand],
-                        "Progress calculation Issue - Strand($strand) : $compname");
-            }
-        }
+        $this->assert_competencies_results($computedresults);
     }
 
     public function test_get_data_for_progressbar() {
@@ -167,31 +154,7 @@ class chartingutils_test extends competvetsuivi_tests {
                         '12' => (0.5 + 0.5 + 1 + 1.5 + 0.5) / 4, // 100%
                 ]
         );
-        $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_KNOWLEDGE], $data[0]->result->value);
-        $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_ABILITY], $data[1]->result->value);
-        foreach ($markers as $strandid => $results) {
-            $markersforsemester = array_filter($data, function($d) use ($strandid) {
-                return $d->result->type == $strandid;
-            });
-            $markersforsemester = reset($markersforsemester);
-
-            foreach ($results as $semesterlabel => $cumulativeresult) {
-                $currentmarker = array_filter($markersforsemester->markers, function($m) use ($semesterlabel) {
-                    return $m->label == $semesterlabel;
-                });
-                $currentmarker = reset($currentmarker);
-                $this->assertEquals($cumulativeresult, $currentmarker->value,
-                        "Current marker {$currentmarker->label} within strand({$strandid}), should have a value of {$cumulativeresult} but has a value of {$currentmarker->value}");
-                $shouldbeactive = ($currentmarker->label) > 5; // User is currently looking at UC55
-                if ($shouldbeactive) {
-                    $this->assertTrue($currentmarker->active,
-                            "Current marker {$currentmarker->label} within strand({$strandid}) should be active.");
-                } else {
-                    $this->assertFalse($currentmarker->active,
-                            "Current marker {$currentmarker->label} within strand({$strandid}) should be inactive.");
-                }
-            }
-        }
+        $this->assert_competencies_results_marker($computedresults, $markers, $data);
     }
 
     public function test_get_data_for_progressbar_aggregated() {
@@ -215,8 +178,8 @@ class chartingutils_test extends competvetsuivi_tests {
         $markers = array( // Markers positions are cumulative and we only see markers who have a different percentage
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [
                         '5' => 4.5 / 28.5,
-                        '6' =>  (4.5 + 1.5) / 28.5,
-                        '8' =>  (4.5 + 1.5 + 5.5) / 28.5,
+                        '6' => (4.5 + 1.5) / 28.5,
+                        '8' => (4.5 + 1.5 + 5.5) / 28.5,
                         '10' => (4.5 + 1.5 + 5.5 + 4) / 28.5,
                         '11' => (4.5 + 1.5 + 5.5 + 4 + 9.5) / 28.5,
                         '12' => (4.5 + 1.5 + 5.5 + 4 + 9.5 + 3.5) / 28.5,
@@ -226,10 +189,14 @@ class chartingutils_test extends competvetsuivi_tests {
                         '6' => (3 + 1) / 20,
                         '8' => (3 + 1 + 2.5) / 20,
                         '10' => (3 + 1 + 2.5 + 3) / 20,
-                        '11' => (3 + 1 + 2.5 +3 + 6.5) / 20,
-                        '12' => (3 + 1 + 2.5 +3 + 6.5 + 4) / 20,
+                        '11' => (3 + 1 + 2.5 + 3 + 6.5) / 20,
+                        '12' => (3 + 1 + 2.5 + 3 + 6.5 + 4) / 20,
                 ]
         );
+        $this->assert_competencies_results_marker($computedresults, $markers, $data);
+    }
+
+    protected function assert_competencies_results_marker($computedresults, $markers, $data) {
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_KNOWLEDGE], $data[0]->result->value);
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_ABILITY], $data[1]->result->value);
         foreach ($markers as $strandid => $results) {
@@ -256,5 +223,4 @@ class chartingutils_test extends competvetsuivi_tests {
             }
         }
     }
-
 }

@@ -23,10 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_competvetsuivi\chartingutils;
-use local_competvetsuivi\matrix\matrix_list_renderable;
-use local_competvetsuivi\matrix\matrix;
-use local_competvetsuivi\ueutils;
 use local_competvetsuivi\utils;
 
 require_once(__DIR__ . '/../../config.php');

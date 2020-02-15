@@ -24,7 +24,6 @@
  */
 
 use local_competvetsuivi\matrix\matrix;
-use local_competvetsuivi\ueutils;
 
 require_once(__DIR__ . '/../../config.php');
 
@@ -44,7 +43,6 @@ if(!$matrixid || !$DB->record_exists(matrix::CLASS_TABLE, array('id'=>$matrixid)
 if (!$ueid) {
     print_error('nouegiven');
 }
-
 $matrix = new matrix($matrixid);
 
 // Override pagetype to show blocks properly.
