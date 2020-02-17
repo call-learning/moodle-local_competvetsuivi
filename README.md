@@ -10,6 +10,10 @@ Pour les matrices de compétence, il suffit de les télécharger dans la section
 
 Les paramètres du plugin se situent dans le menu adminstration ("Administration du Site") dans la partie générale (Notifications, ...)
 
+Notez bien que cet outil a besoin de Bootstrap 4 pour fonctionner parfaitement.
+Il faut donc que votre thème inclue les classes Bootstrap ou soit un thème enfant
+du thème Boost (de base de Moodle).
+
 # Synchronisation des données utilisateurs
 
 La synchronisation se fait de manière périodique par une tâche Moodle. Dans les paramètre du plugin on spécifie
