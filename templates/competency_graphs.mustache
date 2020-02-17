@@ -48,7 +48,7 @@
     <div class="row mb-1 mt-1 row-fluid">
         <div class="col-sm-4 span4">
             <div class="flex-column">
-                <div class="competency-sn-link">
+                <div class="competency-sn-link btn btn-secondary">
                     {{#competency_link}}
                     <a href="{{competency_link}}">
                     {{/competency_link}}
@@ -57,12 +57,9 @@
                     </a>
                     {{/competency_link}}
                 </div>
-                <div class="competency-desc text-truncate">
+                <div class="d-block competency-desc text-truncate"
+                     data-toggle="tooltip" data-placement="top" title="{{competency_desc}}">
                     {{competency_desc}}
-                </div>
-                <div class="mltoggle">
-                    <a href='#' class="comp-readmore">({{#str}}readmore, local_competvetsuivi{{/str}})</a>
-                    <a href='#' class="invisible comp-readless">({{#str}}readless, local_competvetsuivi{{/str}})</a>
                 </div>
             </div>
         </div>
@@ -75,19 +72,3 @@
         </div>
     </div>
 {{/compitems}}
-
-{{#js}}
-    require(['jquery'], function($) {
-        var comptoggler = function(e) {
-            var parent = $(e.target).parent().parent();
-            parent.children('.competency-desc').toggleClass('text-truncate');
-            parent.find('.comp-readless').toggleClass('invisible');
-            parent.find('.comp-readmore').toggleClass('invisible');
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
-        };
-        $('.comp-readless').click(comptoggler);
-        $('.comp-readmore').click(comptoggler);
-    });
-{{/js}}

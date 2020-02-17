@@ -21,7 +21,7 @@
 .progress-cvs .marker text {
     text-anchor: middle;
     dominant-baseline: middle;
-    font-weight: bolder;
+    font-weight: normal;
 }
 
 /*   Competency Type : Generic  */
@@ -60,30 +60,27 @@
 
 /* Labels */
 
-.progress-cvs .labelmarker, .progress-cvs .stoplabelbar  {
+.progress-cvs .labelmarker, .progress-cvs .stoplabelstar  {
     font-family: sans-serif;
     font-variant: small-caps;
 }
 
 
-.progress-cvs .labelmarker-bg, .progress-cvs .labelbar-bg {
+.progress-cvs .labelmarker-bg, .progress-cvs .stoplabelstar-bg {
     fill: white;
-    stroke: #aaa;
+    stroke: #eee;
     stroke-width: 1px;
     filter: url(#d3std-dropshadow);
 }
-.progress-cvs  .stoplabelbar-bg {
-    fill: #afa;
-    stroke: #383;
+.progress-cvs  .stoplabelstar-bg {
+    fill: #dfd;
+    stroke: #dfd;
 }
 
-.progress-cvs .labelbar-bg {
-    fill: #afa;
+.progress-cvs .starmarker {
+    filter: url(#d3std-dropshadow);
     stroke: #383;
-}
-.progress-cvs .barlabelbar {
-    fill: #383;
-    fill-opacity: 0.8;
+    fill:white;
 }
 
 

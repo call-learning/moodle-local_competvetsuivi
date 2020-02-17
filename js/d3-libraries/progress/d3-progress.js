@@ -20,7 +20,7 @@ function progress () {
   let marginW = 0.05;
   let marginH = 0.1;
 
-  let ticksValues = [0, 0.25, 0.50, 0.75, 1];
+  let ticksValues = [0, 0.50, 1];
 
   // For each small multiple…
   function progressCVS (svgitem) {
@@ -92,17 +92,16 @@ function progress () {
       let maxHeight = extentY / data.length;
       progressCVS.barCVS(currentData, wrapper, maxHeight, scaleX, extentX, extentY);
 
-      // Now the marker bars
-      if ('stopbars' in currentData) {
-        wrapper.selectAll('g.labelbar')
-          .data(currentData.stopbars)
-          .enter()
-          .append('rect')
-          .attr('class', 'barlabelbar')
-          .attr('width', graphWidth() * marginW / 10)
-          .attr('height', function () {return progressCVS.barHeight(maxHeight);})
-          .attr('x', function (r) { return scaleX(r); })
-          .attr('y', function () { return progressCVS.barMiddlePosition(maxHeight);});
+      // Now the marker stars
+      if ('starmarkers' in currentData) {
+        var starSymbol =  d3Shape.symbol().size(progressCVS.barHeight(maxHeight)*4).type(d3Shape.symbolStar);
+        var ypos = progressCVS.barHeight(maxHeight)/2  + maxHeight * marginH;
+        wrapper.append('g')
+          .data(currentData.starmarkers)
+          .attr('class','starmarker')
+          .append('path')
+          .attr('transform', function (r)  {return `translate(${scaleX(r)},${ypos})`;})
+          .attr('d', starSymbol);
       }
     });
     let resultsmarkervalues =
@@ -115,12 +114,12 @@ function progress () {
 
     progressCVS.displayLabels(resultsmarkervalues, 'labelmarker', tickSize, wrap, extentY, scaleX);
 
-    // Add stop bar labels
-    let labelbarvalues =
+    // Add stars labels labels
+    let labelstarvalues =
       data.reduce(function (acc, currentData, dataIndex) {
         let labelData = {};
-        if ('stopbars' in currentData) {
-          currentData.stopbars.forEach(function (val) {
+        if ('starmarkers' in currentData) {
+          currentData.starmarkers.forEach(function (val) {
             labelData.value = val;
             labelData.position = 1 - dataIndex % 2;
             acc.push(labelData);
@@ -128,7 +127,7 @@ function progress () {
         }
         return acc;
       }, []);
-    progressCVS.displayLabels(labelbarvalues, 'stoplabelbar', tickSize, wrap, extentY, scaleX);
+    progressCVS.displayLabels(labelstarvalues, 'stoplabelstar', tickSize, wrap, extentY, scaleX);
   }
 
   progressCVS.barCVS = function (currentData, wrapper, maxHeight, scaleX, extentX) {
@@ -356,6 +355,7 @@ function progress () {
       var feMerge = filter.append('feMerge');
       feMerge.append('feMergeNode');
       feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+
     }
   };
 

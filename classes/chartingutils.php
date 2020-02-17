@@ -143,7 +143,7 @@ class chartingutils {
             if ($userselftestresults
                     && key_exists($comptypeid, $userselftestresults)
                     && key_exists($comp->id, $userselftestresults[$comptypeid])) {
-                $data->stopbars = [$userselftestresults[$comptypeid][$comp->id]];
+                $data->starmarkers = [$userselftestresults[$comptypeid][$comp->id]];
             }
             $alldata[] = $data;
         }

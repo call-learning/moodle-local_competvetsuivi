@@ -6,7 +6,7 @@
 
 .competency-sn-link a, .competency-sn-link {
     font-weight: bolder;
-    color: #0A246A;
+    color: #0a246a;
 }
 
 .competency-sn-link a:hover {
@@ -74,20 +74,10 @@
     .fn-label {
         display: none;
     }
-    .comp-readmore, .comp-readless {
-        display: none;
-    }
+
     .competency-desc {
         display: none;
     }
 }
 
-.comp-readmore, .comp-readless {
-    position: absolute;
-    padding-bottom: 2px;
-}
-
-.mltoggle {
-    float: right;
-}
 

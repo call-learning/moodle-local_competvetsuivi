@@ -81,7 +81,6 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                 var svgselector = '#' + svgid;
                 var svgelement = $(svgselector).first();
                 var padding = thisutils.default_padding;
-                var innerRadiusFactor = 1.8;
                 var display_chart = function() {
 
                     var width = svgelement.parent().innerWidth();
@@ -107,20 +106,11 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         }
 
                     }
-                    var radius = Math.min(width, height) / 4;
-                    var lineheight = parseInt(svgelement.css('font-size'));
+                    var radius = Math.min(width, height)/2;
 
                     var arc = d3.arc()
                         .outerRadius(radius - 10)
-                        .innerRadius(radius / 1.5);
-
-                    var outerArcV1 = d3.arc()
-                        .outerRadius(radius)
-                        .innerRadius(radius - lineheight);
-
-                    var outerArcV2 = d3.arc()
-                        .outerRadius(radius * innerRadiusFactor)
-                        .innerRadius(radius * innerRadiusFactor - lineheight);
+                        .innerRadius(radius / 1.3);
                     // Create the basic drawing / container
                     var svg = d3.select(svgselector).attr("width", width)
                         .attr("height", height)
@@ -163,74 +153,6 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         .attr("fill", 'url(#whitecarbon)')
                         .attr("fill-opacity", '60%');
                     // Add the polylines between chart and labels (see https://www.d3-graph-gallery.com/graph/donut_label.html)
-
-
-                    svg.append('g').classed('lines', true);
-                    svg.append('g').classed('labels', true);
-
-                    // Store all end position for label so we check if there is any overlap
-                    var labelPositions = Array.from(d3piedata).map(function(d, index) {
-                        var oarc = index % 2 ? outerArcV1 : outerArcV2;
-                        var posLabel = oarc.centroid(d);
-                        var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                        var side = (midangle < Math.PI ? 1 : -1);
-
-                        var factor = index % 4 + 1;
-                        posLabel[0] = radius * factor * side / innerRadiusFactor;
-                        return posLabel;
-                    });
-
-                    svg
-                        .select('.lines')
-                        .selectAll('polyline')
-                        .data(d3piedata)
-                        .enter()
-                        .append('polyline')
-                        .attr("stroke", "lightgray")
-                        .style("fill", "none")
-                        .attr("stroke-width", 1)
-                        .attr('points', function(d, index) {
-                            var oarc = index % 2 ? outerArcV1 : outerArcV2;
-                            var posA = arc.centroid(d); // Line insertion in the slice
-                            var posB = oarc.centroid(d);
-                            var posC = labelPositions[index];
-                            posC[0] = posC[0] * 0.75;
-                            return [posA, posB, posC];
-                        });
-
-                    // Add the polylines between chart and labels, and make sure there is no overlap
-
-                    var labels = svg
-                        .select('.labels')
-                        .selectAll('text')
-                        .data(d3piedata)
-                        .enter()
-                        .append('text')
-                        .attr('transform', function(d, index) {
-                            var pos = labelPositions[index];
-                            pos[0] = pos[0] * 0.85;
-                            return 'translate(' + pos + ')';
-                        });
-                    labels.append('tspan')
-                        .text(function(d) {
-                            return d.data.shortname + ' - ' + (Math.round(d.data.val * 100)) + '%';
-                        })
-                        .attr('class', 'sn-label')
-                        .style('text-anchor', function(d) {
-                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                            return (midangle < Math.PI ? 'start' : 'end');
-                        });
-                    labels.append('tspan')
-                        .text(function(d) {
-                            return d.data.fullname;
-                        })
-                        .attr('class', 'fn-label')
-                        .attr('dy', '1em')
-                        .attr('x', '0')
-                        .style('text-anchor', function(d) {
-                            var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-                            return (midangle < Math.PI ? 'start' : 'end');
-                        });
                 };
                 $(document).ready(display_chart);
                 $(window).bind('resize', function() {
