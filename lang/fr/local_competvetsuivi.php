@@ -49,6 +49,7 @@ $string['foundtoomanymatchingcompetency'] = 'Trop de Compétences correspondent 
 $string['graphtitle:level0'] = 'Macro-Compétences';
 $string['graphtitle:level1'] = 'Compétences';
 $string['graphtitle:level2'] = 'Capacités';
+$string['home'] = 'Macro-compétences';
 $string['importerror'] = 'Erreur d\'importation: {$a}';
 $string['legend'] = 'Légende';
 $string['managematrix'] = 'Gérer les matrices de compétences';

@@ -47,6 +47,7 @@ $string['foundtoomanymatchingcompetency'] = 'Too many matching Competencies foun
 $string['graphtitle:level0'] = 'Root Competencies';
 $string['graphtitle:level1'] = 'Competencies';
 $string['graphtitle:level2'] = 'Abilities';
+$string['home'] = 'Macrocompetencies';
 $string['importerror'] = 'Importation error: {$a}';
 $string['legend'] = 'Legend';
 $string['managematrix'] = 'Manage Competencies Matrix';

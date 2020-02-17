@@ -63,6 +63,7 @@ class matrix_list_renderable implements renderable, templatable {
                         array('matrixid'=>$matrix->id));
 
                 $matrix->cohortsnames = join(',',$cohorts);
+                $matrix->lastmodified = $matrix->timemodified;
                 $matrix->editurl = new moodle_url(
                         $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php',
                         array('id' => $matrix->id)

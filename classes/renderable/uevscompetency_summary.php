@@ -34,8 +34,8 @@ use templatable;
 class uevscompetency_summary extends graph_overview_base implements \renderable, templatable {
     const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait)
 
-
     protected $ue = null;
+    protected $chartdata = null;
 
     public function __construct(
             $matrix,
@@ -43,12 +43,13 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
             $rootcomp = null
     ) {
         $this->strandlist = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY];
-        $this->init_bar_chart($matrix,  $this->strandlist , $rootcomp, null);
+        $this->init_bar_chart($matrix, $this->strandlist, $rootcomp, null);
         $rootcompid = $rootcomp ? $rootcomp->id : 0;
 
         $this->ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
-        $chartdata = ueutils::get_ue_vs_competencies_percent($matrix, $this->ue, $this->strandlist , $rootcompid);
+        $chartdata = ueutils::get_ue_vs_competencies_percent($matrix, $this->ue, $this->strandlist, $rootcompid);
         $chartdata->overlaystrandid = matrix::MATRIX_COMP_TYPE_KNOWLEDGE;
+        $this->chartdata = $chartdata;
         $this->chart = new chart_item($chartdata, 'ring');
     }
 
@@ -59,6 +60,7 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
      *
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
      * @return stdClass|array
+     * @throws \coding_exception
      */
     public function export_for_template(renderer_base $output) {
         $exportablecontext = new stdClass();
@@ -66,6 +68,12 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
         $exportablecontext->graph_title = get_string('repartition:title', 'local_competvetsuivi', $this->ue->shortname);
 
         $this->export_strand_list($exportablecontext);
+        $exportablecontext->comps_legend = array_values(
+                array_map(function($v) {
+                    return array_intersect_key((array) $v, array_flip(['colorindex', 'shortname', 'fullname']));
+                },
+                        $this->chartdata->compsvalues
+                ));
         return $exportablecontext;
     }
 }

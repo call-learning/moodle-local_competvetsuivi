@@ -103,7 +103,7 @@ abstract class graph_overview_base {
             $homeurl = new  \moodle_url($FULLME);
             $homeurl->remove_params(static::PARAM_COMPID);
             array_unshift($exportablecontext->breadcrumbs, (object) [
-                    'name' => get_string('home'),
+                    'name' => get_string('home','local_competvetsuivi'),
                     'link' => $homeurl->out(false),
             ]);
 

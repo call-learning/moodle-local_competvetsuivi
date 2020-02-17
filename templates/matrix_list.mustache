@@ -31,6 +31,7 @@
                 <th scope="col">{{#str}}matrixname, local_competvetsuivi{{/str}}</th>
                 <th scope="col">{{#str}}matrixshortname, local_competvetsuivi{{/str}}</th>
                 <th scope="col">{{#str}}matrixassignedcohorts, local_competvetsuivi{{/str}}</th>
+                <th scope="col">{{#str}}lastmodified{{/str}}</th>
                 <th scope="col">{{#str}}action{{/str}}</th>
             </tr>
             </thead>
@@ -40,6 +41,7 @@
                     <td>{{fullname}}</td>
                     <td>{{shortname}}</td>
                     <td>{{cohortsnames}}</td>
+                    <td>{{#userdate}} {{lastmodified}}, {{#str}} strftimedate {{/str}} {{/userdate}}</td>
                     <td>
                         <a href="{{viewurl}}">{{# pix }} t/viewdetails, core, {{# str }} matrix:view, local_competvetsuivi {{/ str }} {{/ pix }}</a>
                         <a href="{{editurl}}">{{# pix }} t/edit, core, {{# str }} matrix:edit, local_competvetsuivi {{/ str }} {{/ pix }}</a>

@@ -36,6 +36,7 @@
                         ]
 
     ],
+    "comps_legend": [ {'fullname': 'Conseiller et prévenir', 'shortname':COPREV, 'colorindex':0}, ...]
   }
 
   Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
@@ -52,6 +53,26 @@
         {{#chartdata}}
             {{> local_competvetsuivi/chart_item }}
         {{/chartdata}}
+        <!-- Now the graph legend -->
+        {{#comps_legend}}
+            <div class="row mb-1 mt-1 row-fluid">
+                <div class="col span2">
+                    <svg width="1.5em" height="1.5em">
+                        <g class="macrocomp-{{colorindex}} arc-bg">
+                            <g class="marker">
+                                <circle cx="0.75em" cy="0.75em" r="0.5em"/>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="col span4">
+                    {{ shortname }}
+                </div>
+                <div class="col span6  competency-desc">
+                    {{ fullname }}
+                </div>
+            </div>
+        {{/comps_legend}}
         {{< local_competvetsuivi/graph_footer}}
             {{$has_no_milestone}}{{/has_no_milestone}}
         {{/ local_competvetsuivi/graph_footer}}

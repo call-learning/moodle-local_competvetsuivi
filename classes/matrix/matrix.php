@@ -148,6 +148,7 @@ class matrix {
 
     public function save() {
         global $DB;
+        $this->timemodified = time();
         $DB->update_record(static::CLASS_TABLE, $this);
     }
 
