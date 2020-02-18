@@ -36,9 +36,11 @@
 }}
 
 <div class="row pt-3 pb-3 row-fluid">
-    <div class="legend-title col-4 span4">
-        {{#str}}legend, local_competvetsuivi{{/str}}
-    </div>
+    {{$has_no_legend_title}}
+        <div class="legend-title col-4 span4">
+            {{#str}}legend, local_competvetsuivi{{/str}}
+        </div>
+    {{/has_no_legend_title}}
     <div class="progress-cvs col-8 span8">
         <div class="row row-fluid">
             {{#comp_types}}
@@ -84,9 +86,10 @@
                     <div class="flex-column justify-content-center">
                         <div>
                             <svg width="3em" height="2em">
-                                <g class="labelbar" >
-                                    <ellipse class="labelbar-bg" cx="1.5em" cy="1em" rx="1em" ry="0.75em" />
+                                <g class="starmarker" >
+                                    <path transform="scale(2,2) translate(10,10)" d="M0,-8.1L1.8,-2.5L7.7,-2.5L2.9,0.9L4.7,6.5L4.4e-16,3.1L-4.7,6.5L-2.9,0.9L-7.7,-2.5L-1.8,-2.5Z"></path>
                                 </g>
+
                             </svg>
                         </div>
                         <div>
