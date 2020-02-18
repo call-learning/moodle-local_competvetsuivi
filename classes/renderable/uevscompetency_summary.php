@@ -68,12 +68,23 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
         $exportablecontext->graph_title = get_string('repartition:title', 'local_competvetsuivi', $this->ue->shortname);
 
         $this->export_strand_list($exportablecontext);
-        $exportablecontext->comps_legend = array_values(
-                array_map(function($v) {
-                    return array_intersect_key((array) $v, array_flip(['colorindex', 'shortname', 'fullname']));
-                },
-                        $this->chartdata->compsvalues
-                ));
+
+        $legendvals = [];
+        foreach ($this->chartdata->compsvalues as $cval) {
+            $newval = $cval;
+            $newval->val = round($newval->val * 100, 0);
+            $strandvals = [];
+            foreach ($newval->strandvals as $st) {
+                $stval = strval(round($st->val * 100, 0)) . '%';
+                $strandvals[] = $stval;
+            }
+            $newval->strandvals = join(',', $strandvals);
+            $legendvals[] = $newval;
+        }
+        $exportablecontext->comps_legend = $legendvals;
+        $exportablecontext->comp_strandlist_string=  join(',', array_map(function($comptypeid) {
+            return matrix::get_competency_type_name($comptypeid);
+        }, $this->strandlist));
         return $exportablecontext;
     }
 }
