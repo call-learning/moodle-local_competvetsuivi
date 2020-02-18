@@ -44,7 +44,7 @@
     <div class="progress-cvs col-8 span8">
         <div class="row row-fluid">
             {{#comp_types}}
-                <div class="col span3">
+                <div class="col {{#has_self_assessment}}span3{{/has_self_assessment}}">
                     <div class="d-flex flex-column justify-content-center">
                         <svg width="1.5em" height="1.5em">
                             <g class="comptype-{{comp_type_id}}">
@@ -87,7 +87,7 @@
                         <div>
                             <svg width="3em" height="2em">
                                 <g class="starmarker" >
-                                    <path transform="scale(2,2) translate(10,10)" d="M0,-8.1L1.8,-2.5L7.7,-2.5L2.9,0.9L4.7,6.5L4.4e-16,3.1L-4.7,6.5L-2.9,0.9L-7.7,-2.5L-1.8,-2.5Z"></path>
+                                    <path transform="scale(1.5,1.5) translate(10,10)" d="M0,-8.1L1.8,-2.5L7.7,-2.5L2.9,0.9L4.7,6.5L4.4e-16,3.1L-4.7,6.5L-2.9,0.9L-7.7,-2.5L-1.8,-2.5Z"></path>
                                 </g>
 
                             </svg>
