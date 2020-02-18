@@ -261,6 +261,7 @@ class ueutils {
                     $compvalue->strandvals[$strandid] = new \stdClass();
                     $compvalue->strandvals[$strandid]->val = $strandtotal / $totalforcomp;
                     $compvalue->strandvals[$strandid]->type = $strandid;
+                    $compvalue->strandvals[$strandid]->patternindex = $strandid;
                 }
                 $compvalue->colorindex = $index; // Index for color => this works because get_child_competencies orders by id
                 $compvalue->fullname = $allcomps[$compid]->fullname;

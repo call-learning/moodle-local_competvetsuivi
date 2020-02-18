@@ -77,7 +77,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
             ring_charts: function(svgid, data, paddingandsize) {
                 var thisutils = this;
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
-                thisutils.add_patterns_definitions();
+                thisutils.add_doghnut_patterns_definitions();
                 var svgselector = '#' + svgid;
                 var svgelement = $(svgselector).first();
                 var padding = thisutils.default_padding;
@@ -147,15 +147,34 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                         return arc(modifieddata);
                     };
                     g.append("path")
-                        .attr("d", function(d) {
+                        .attr("d", function (d) {
                             return calulateOverlayArc(d);
                         })
-                        .attr("fill", 'url(#whitecarbon)')
+                        .attr("fill", function () {
+                            return 'url(#doghnut-p' + data.overlaystrandid + ')';
+                        })
                         .attr("fill-opacity", '60%');
-                    // Add the polylines between chart and labels (see https://www.d3-graph-gallery.com/graph/donut_label.html)
+                    // Add the percent on the label
+                    g.append("text")
+                        .attr("class", "doghnut-text-percent")
+                        .attr("transform", function (d) {
+                            var d = arc.centroid(d);
+                            d[0] *= 0.6;
+                            d[1] *= 0.6;
+                            return "translate(" + d + ")";
+                        })
+                        .attr("dy", ".50em")
+                        .style("text-anchor", "middle")
+                        .text(function (d) {
+                            var rval = Math.round(d.value * 100);
+                            if (rval < 10) {
+                                return '';
+                            }
+                            return rval + '%';
+                        });
                 };
                 $(document).ready(display_chart);
-                $(window).bind('resize', function() {
+                $(window).bind('resize', function () {
                     $(svgelement).empty();
                     display_chart();
                 });
@@ -170,11 +189,11 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                     document.getElementsByTagName("head")[0].appendChild(link);
                 }
             },
-            add_patterns_definitions: function() {
+            add_doghnut_patterns_definitions: function() {
                 // See https://iros.github.io/patternfills/sample_d3.html
                 var availablepatterns = [
                     {
-                        pattername: 'whitecarbon',
+                        pattername: 'doghnut-p1',
                         // eslint-disable-next-line max-len
                         imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR0aD0nNicgaGVpZ2h0PSc2Jz4KICA8cmVjdCB3aWR0aD0nNicgaGVpZ2h0PSc2JyBmaWxsPScjZWVlZWVlJy8+CiAgPGcgaWQ9J2MnPgogICAgPHJlY3Qgd2lkdGg9JzMnIGhlaWdodD0nMycgZmlsbD0nI2U2ZTZlNicvPgogICAgPHJlY3QgeT0nMScgd2lkdGg9JzMnIGhlaWdodD0nMicgZmlsbD0nI2Q4ZDhkOCcvPgogIDwvZz4KICA8dXNlIHhsaW5rOmhyZWY9JyNjJyB4PSczJyB5PSczJy8+Cjwvc3ZnPg=='
                     },

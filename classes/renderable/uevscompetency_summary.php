@@ -71,18 +71,26 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
 
         $legendvals = [];
         foreach ($this->chartdata->compsvalues as $cval) {
-            $newval = $cval;
-            $newval->val = round($newval->val * 100, 0);
+            $newval = new \stdClass();
+            $newval->fullname = $cval->fullname;
+            $newval->shortname = $cval->shortname;
+            $newval->colorindex = $cval->colorindex;
+            $newval->val = round($cval->val * 100);
             $strandvals = [];
-            foreach ($newval->strandvals as $st) {
-                $stval = strval(round($st->val * 100, 0)) . '%';
+            foreach ($cval->strandvals as $type => $st) {
+                $stval = new \stdClass();
+                $stval->isoverlaystrand = ($type == $this->chartdata->overlaystrandid);
+                $percentval = $st->val * $cval->val * 100;
+                // We try to round it to the right amount so we can add the percentages to the right full value
+                // For example if we have a whole percentage of 34%, we should have 33 + 1.
+                $stval->percentval = round($percentval);
                 $strandvals[] = $stval;
             }
-            $newval->strandvals = join(',', $strandvals);
+            $newval->strandvals = $strandvals;
             $legendvals[] = $newval;
         }
         $exportablecontext->comps_legend = $legendvals;
-        $exportablecontext->comp_strandlist_string=  join(',', array_map(function($comptypeid) {
+        $exportablecontext->comp_strandlist_string = join(',', array_map(function($comptypeid) {
             return matrix::get_competency_type_name($comptypeid);
         }, $this->strandlist));
         return $exportablecontext;
