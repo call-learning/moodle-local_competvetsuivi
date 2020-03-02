@@ -708,8 +708,8 @@ class matrix {
                     }
                 }
                 $ue = new \stdClass();
-                $ue->fullname = $previousuename; // We fill the array with the same value if null
-                $ue->shortname = $previousuename;
+                $ue->fullname = $previousuename; // We fill the array with the same value if null.
+                $ue->shortname = self::normalize_uc_name($previousuename); // Make sure we normalize data here, especially shortname.
                 $ue->matrixid = $matrixobject->id;
                 $existingue = $DB->get_record('cvs_matrix_ue', array('matrixid' => $matrixobject->id, 'fullname' => $ue->fullname));
                 if (!$existingue) {
