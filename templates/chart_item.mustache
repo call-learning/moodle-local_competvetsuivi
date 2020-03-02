@@ -47,7 +47,7 @@
 
 
 {{#js}}
-    require(['local_competvetsuivi/config', 'local_competvetsuivi/d3-utils'], function(config, d3utils) {
+    require(['local_competvetsuivi/d3-utils'], function(d3utils) {
     var uid = '{{uniqueidentifier}}';
     var d3chart = d3utils.{{type}}_charts(uid,
     {{{data}}} {{#paddingandsize}}, {{{paddingandsize}}} {{/paddingandsize}}

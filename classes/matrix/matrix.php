@@ -24,9 +24,6 @@
 
 namespace local_competvetsuivi\matrix;
 
-use file_storage;
-use PHPExcel_IOFactory;
-
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
@@ -546,7 +543,7 @@ class matrix {
      */
     public static function import_from_file($filepath, $hash, $fullname, $shortname, &$matrixobject = null) {
         global $CFG, $DB;
-        require_once("$CFG->libdir/phpexcel/PHPExcel/IOFactory.php");
+        require_once("$CFG->dirroot/local/competvetsuivi/lib/phpexcel/PHPExcel/IOFactory.php");
         raise_memory_limit(MEMORY_HUGE);
 
         // Log for later
@@ -555,7 +552,7 @@ class matrix {
         $logcontent->macrocompcount = 0;
         $logcontent->uecount = 0;
         // END Log for later
-        $reader = PHPExcel_IOFactory::createReaderForFile($filepath);
+        $reader = \PHPExcel_IOFactory::createReaderForFile($filepath);
         $reader->setReadDataOnly(true);
         $allsheetsnames = $reader->listWorksheetNames($filepath);
         $matrixsheet = null;

@@ -20,8 +20,40 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progress'],
-    function($, cfg, d3config, d3, d3progress) {
+define(['jquery', 'core/config'],
+    function($, cfg) {
+        var requirejsd3 = require.config({
+            paths: {
+                "d3-progress": cfg.wwwroot
+                    + '/lib/javascript.php/'
+                    + cfg.jsrev
+                    + '/local/competvetsuivi/js/d3-libraries/progress/d3-progress'
+                    + (cfg.developerdebug ? '.min' : ''),
+                "d3": cfg.wwwroot
+                    + '/lib/javascript.php/'
+                    + cfg.jsrev
+                    + '/local/competvetsuivi/js/d3/d3'
+                    + (cfg.developerdebug ? '.min' : ''),
+            },
+            map: {
+                'd3-progress': {
+                    'd3-axis': 'd3',
+                    'd3-scale': 'd3',
+                    'd3-format': 'd3',
+                    'd3-transition': 'd3',
+                    'd3-shape': 'd3',
+                    'd3-selection': 'd3',
+                }
+            },
+            shim: {
+                'd3-progress': {
+                    deps: ['d3', 'd3-axis', 'd3-scale', 'd3-format', 'd3-transition', 'd3-shape', 'd3-selection'],
+                },
+                'd3': {
+                    exports: 'd3'
+                },
+            }
+        });
         return {
             default_padding: {top: 10, right: 5, bottom: 1, left: 5},
             default_progress_chart_height: 125,
@@ -35,36 +67,38 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
              */
             progress_charts: function(svgid, data, paddingandsize) {
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
-                var svgselector = '#' + svgid;
-                var svgelement = $(svgselector).first();
-                var thisutils = this;
-                var display_chart = function() {
-                    var width = svgelement.parent().innerWidth();
-                    var height = thisutils.default_progress_chart_height;
-                    if (paddingandsize) {
-                        if (paddingandsize.size !== undefined) {
-                            if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
-                                // If set to 0 then autosize it
-                                height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
-                            }
-                            if (paddingandsize.size.width !== undefined && paddingandsize.size.height != 0) {
-                                // If set to 0 then autosize it
-                                width = paddingandsize.size.width ? paddingandsize.size.width : width;
-                            }
+                requirejsd3(['d3', 'd3-progress'], function(d3,d3progress) {
+                    var svgselector = '#' + svgid;
+                    var svgelement = $(svgselector).first();
+                    var thisutils = this;
+                    var display_chart = function () {
+                        var width = svgelement.parent().innerWidth();
+                        var height = thisutils.default_progress_chart_height;
+                        if (paddingandsize) {
+                            if (paddingandsize.size !== undefined) {
+                                if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
+                                    // If set to 0 then autosize it
+                                    height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
+                                }
+                                if (paddingandsize.size.width !== undefined && paddingandsize.size.height != 0) {
+                                    // If set to 0 then autosize it
+                                    width = paddingandsize.size.width ? paddingandsize.size.width : width;
+                                }
 
+                            }
                         }
-                    }
-                    var chart = d3progress.progress()
-                        .width(width)
-                        .height(height)
-                        .data(data);
-                    d3.select(svgselector)
-                        .call(chart);
-                };
-                $(document).ready(display_chart);
-                $(window).bind('resize', function() {
-                    $(svgelement).empty();
-                    display_chart();
+                        var chart = d3progress.progress()
+                            .width(width)
+                            .height(height)
+                            .data(data);
+                        d3.select(svgselector)
+                            .call(chart);
+                    };
+                    $(document).ready(display_chart);
+                    $(window).bind('resize', function () {
+                        $(svgelement).empty();
+                        display_chart();
+                    });
                 });
             },
 
@@ -77,106 +111,108 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
             ring_charts: function(svgid, data, paddingandsize) {
                 var thisutils = this;
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
-                thisutils.add_doghnut_patterns_definitions();
-                var svgselector = '#' + svgid;
-                var svgelement = $(svgselector).first();
-                var padding = thisutils.default_padding;
-                var display_chart = function() {
+                requirejsd3(['d3'], function(d3) {
+                    thisutils.add_doghnut_patterns_definitions(d3);
+                    var svgselector = '#' + svgid;
+                    var svgelement = $(svgselector).first();
+                    var padding = thisutils.default_padding;
+                    var display_chart = function () {
 
-                    var width = svgelement.parent().innerWidth();
-                    var height = svgelement.parent().innerHeight();
+                        var width = svgelement.parent().innerWidth();
+                        var height = svgelement.parent().innerHeight();
 
-                    if (paddingandsize) {
-                        if (paddingandsize.size !== undefined) {
-                            if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
-                                // If set to 0 then autosize it
-                                height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
+                        if (paddingandsize) {
+                            if (paddingandsize.size !== undefined) {
+                                if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
+                                    // If set to 0 then autosize it
+                                    height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
+                                }
+                                if (paddingandsize.size.width !== undefined && paddingandsize.size.width != 0) {
+                                    // If set to 0 then autosize it
+                                    width = paddingandsize.size.width ? paddingandsize.size.width : width;
+                                }
                             }
-                            if (paddingandsize.size.width !== undefined && paddingandsize.size.width != 0) {
-                                // If set to 0 then autosize it
-                                width = paddingandsize.size.width ? paddingandsize.size.width : width;
+                            if (paddingandsize.padding !== undefined
+                                && paddingandsize.padding.top !== undefined
+                                && paddingandsize.padding.left !== undefined
+                                && paddingandsize.padding.right !== undefined
+                                && paddingandsize.padding.bottom !== undefined) {
+                                padding = paddingandsize.padding;
                             }
+
                         }
-                        if (paddingandsize.padding !== undefined
-                            && paddingandsize.padding.top !== undefined
-                            && paddingandsize.padding.left !== undefined
-                            && paddingandsize.padding.right !== undefined
-                            && paddingandsize.padding.bottom !== undefined) {
-                            padding = paddingandsize.padding;
-                        }
+                        var radius = Math.min(width, height) / 2;
 
-                    }
-                    var radius = Math.min(width, height)/2;
+                        var arc = d3.arc()
+                            .outerRadius(radius - 10)
+                            .innerRadius(radius / 1.3);
+                        // Create the basic drawing / container
+                        var svg = d3.select(svgselector).attr("width", width)
+                            .attr("height", height)
+                            .append("g")
+                            .attr("transform", "translate(" + (width / 2 + padding.left)
+                                + "," + (height / 2 + padding.top) + ")");
 
-                    var arc = d3.arc()
-                        .outerRadius(radius - 10)
-                        .innerRadius(radius / 1.3);
-                    // Create the basic drawing / container
-                    var svg = d3.select(svgselector).attr("width", width)
-                        .attr("height", height)
-                        .append("g")
-                        .attr("transform", "translate(" + (width / 2 + padding.left)
-                            + "," + (height / 2 + padding.top) + ")");
+                        // Pie chart return just the value
+                        var pie = d3.pie().value(function (d) {
+                            return d.val;
+                        }).sort(null);
+                        // Rearrange data so we get big + small values interleaved, this is to make sure labels
+                        // are not to close to each other
+                        var d3piedata = pie(Object.values(data.compsvalues));
 
-                    // Pie chart return just the value
-                    var pie = d3.pie().value(function(d) {
-                        return d.val;
-                    }).sort(null);
-                    // Rearrange data so we get big + small values interleaved, this is to make sure labels
-                    // are not to close to each other
-                    var d3piedata = pie(Object.values(data.compsvalues));
+                        var g = svg.selectAll(".arc")
+                            .data(d3piedata)
+                            .enter()
+                            .append("g")
+                            .attr("class", "arc");
 
-                    var g = svg.selectAll(".arc")
-                        .data(d3piedata)
-                        .enter()
-                        .append("g")
-                        .attr("class", "arc");
-
-                    // Draw, Style and color the arc
-                    g.append("path")
-                        .attr("d", arc)
-                        .attr("class", function(d) {
-                            return 'macrocomp-' + d.data.colorindex + ' arc-bg';
-                        });
-                    var calulateOverlayArc = function(d) {
-                        var anglediff = d.endAngle - d.startAngle;
-                        var modifieddata = Object.assign({}, d); // Assuming copy on write (at first level of nesting)
-                        var overlaystrandval = d.data.strandvals[data.overlaystrandid] !== 'undefined' ?
-                            d.data.strandvals[data.overlaystrandid].val : 0;
-                        modifieddata.endAngle = d.startAngle + overlaystrandval * anglediff;
-                        return arc(modifieddata);
+                        // Draw, Style and color the arc
+                        g.append("path")
+                            .attr("d", arc)
+                            .attr("class", function (d) {
+                                return 'macrocomp-' + d.data.colorindex + ' arc-bg';
+                            });
+                        var calulateOverlayArc = function (d) {
+                            var anglediff = d.endAngle - d.startAngle;
+                            var modifieddata = Object.assign({}, d); // Assuming copy on write (at first level of nesting)
+                            var overlaystrandval = d.data.strandvals[data.overlaystrandid] !== 'undefined' ?
+                                d.data.strandvals[data.overlaystrandid].val : 0;
+                            modifieddata.endAngle = d.startAngle + overlaystrandval * anglediff;
+                            return arc(modifieddata);
+                        };
+                        g.append("path")
+                            .attr("d", function (d) {
+                                return calulateOverlayArc(d);
+                            })
+                            .attr("fill", function () {
+                                return 'url(#doghnut-p' + data.overlaystrandid + ')';
+                            })
+                            .attr("fill-opacity", '60%');
+                        // Add the percent on the label
+                        g.append("text")
+                            .attr("class", "doghnut-text-percent")
+                            .attr("transform", function (d) {
+                                var d = arc.centroid(d);
+                                d[0] *= 0.6;
+                                d[1] *= 0.6;
+                                return "translate(" + d + ")";
+                            })
+                            .attr("dy", ".50em")
+                            .style("text-anchor", "middle")
+                            .text(function (d) {
+                                var rval = Math.round(d.value * 100);
+                                if (rval < 10) {
+                                    return '';
+                                }
+                                return rval + '%';
+                            });
                     };
-                    g.append("path")
-                        .attr("d", function (d) {
-                            return calulateOverlayArc(d);
-                        })
-                        .attr("fill", function () {
-                            return 'url(#doghnut-p' + data.overlaystrandid + ')';
-                        })
-                        .attr("fill-opacity", '60%');
-                    // Add the percent on the label
-                    g.append("text")
-                        .attr("class", "doghnut-text-percent")
-                        .attr("transform", function (d) {
-                            var d = arc.centroid(d);
-                            d[0] *= 0.6;
-                            d[1] *= 0.6;
-                            return "translate(" + d + ")";
-                        })
-                        .attr("dy", ".50em")
-                        .style("text-anchor", "middle")
-                        .text(function (d) {
-                            var rval = Math.round(d.value * 100);
-                            if (rval < 10) {
-                                return '';
-                            }
-                            return rval + '%';
-                        });
-                };
-                $(document).ready(display_chart);
-                $(window).bind('resize', function () {
-                    $(svgelement).empty();
-                    display_chart();
+                    $(document).ready(display_chart);
+                    $(window).bind('resize', function () {
+                        $(svgelement).empty();
+                        display_chart();
+                    });
                 });
             },
             load_css: function (path) {
@@ -189,7 +225,7 @@ define(['jquery', 'core/config', 'local_competvetsuivi/config', 'd3', 'd3-progre
                     document.getElementsByTagName("head")[0].appendChild(link);
                 }
             },
-            add_doghnut_patterns_definitions: function() {
+            add_doghnut_patterns_definitions: function(d3) {
                 // See https://iros.github.io/patternfills/sample_d3.html
                 var availablepatterns = [
                     {

@@ -108,7 +108,12 @@ Voici quelques un des problèmes non encore résolus qui n’empêchent pas le m
   * Affectation de plusieurs matrices à la même cohorte: pour l’utilisateur  la première matrice sera sélectionnée (dans l’ordre chronologique d’affectation). Cela peut avoir des effets de bord peu compréhensible pour l’utilisateur final. Le mieux sera de vérifier de manière générale qu’une matrice est affectée à une seule cohorte.
   * Dépassements des libellés dans le graphe en anneau. Selon la taille et le contenu des libellés, certains textes peuvent dépasser en dehors de la fenêtre visible. Pour l’instant ce problème n’est pas résolu car il dépend fortement des contraintes imposées par le thème (testé sur lambda, fordson et boost).
 
- 
+## Dépendences
+
+Le chargement de la matrice dépends de PHPExcel qui a été remplacé en 3.8 par PHPSpreadsheet (
+MDL-65741). La bibliothèque PHPExcel a été mise en mode "deprecated" en 2015 et donc devra être
+remplacée par PHPSpreadsheet dans le futur proche.
+
 ## License ##
 
 2019 CALL Learning <laurent@call-learning.fr>
