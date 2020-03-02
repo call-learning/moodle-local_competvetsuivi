@@ -54,10 +54,7 @@ class matrix_added extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        $filename = s($this->other['filename']);
-        $inserted = s($this->other['inserted']);
-        $updated = s($this->other['updated']);
-        return "CSV User data has been imported ({$filename}), ({$updated}) modified and ({$inserted}) inserted.";
+        return "Matrix with id '$this->objectid' has been created.";
     }
     /**
      * Get the backup/restore table mapping for this event.

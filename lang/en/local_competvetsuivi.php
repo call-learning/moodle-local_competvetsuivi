@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Compet Vetsuivi Utils';
 
 $string['competencies'] = 'Competencies';
+$string['cohortassigned'] = 'Cohort assignation updated';
 $string['competencyfullname'] = 'Full Name';
 $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Manage user data importation';

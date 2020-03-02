@@ -65,16 +65,19 @@ if ($data = $mform->get_data()) {
     global $DB;
     // First delete all assignments for this matrix
 
-    $DB->delete_records('cvs_matrix_cohorts', array('matrixid'=>$matrix->id));
+    $DB->delete_records('cvs_matrix_cohorts', array('matrixid' => $matrix->id));
 
-    foreach($data->matrixcohortsassignment as $cohortid) {
+    foreach ($data->matrixcohortsassignment as $cohortid) {
         \local_competvetsuivi\utils::assign_matrix_cohort($matrix->id, $cohortid);
     }
-    $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
+    $action = get_string('cohortassigned', 'local_competvetsuivi');
+    $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => array(
+        'actions' => $action
+    ));
     $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);
     $event->trigger();
 
-    echo $OUTPUT->notification(get_string('matrixupdated', 'local_competvetsuivi'), 'notifysuccess');
+    echo $OUTPUT->notification($action, 'notifysuccess');
     echo $OUTPUT->single_button($listpageurl, get_string('continue'));
 } else {
     $mform->display();

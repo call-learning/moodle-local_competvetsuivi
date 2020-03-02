@@ -64,6 +64,7 @@ if ($data = $mform->get_data()) {
 
     $matrix->shortname = $data->shortname;
     $matrix->fullname = $data->fullname;
+    $action  = get_string('matrixinfoupdated', 'local_competvetsuivi');
     // Save the file and reload the matrix
     if ($filename) {
         $matrix->reset_matrix();
@@ -73,14 +74,16 @@ if ($data = $mform->get_data()) {
         list($matrixobject, $logmessage) =
                 \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname, $matrix);
 
-        echo $OUTPUT->notification(get_string('matrixupdated', 'local_competvetsuivi', $logmessage), 'notifysuccess');
+        $action = get_string('matrixupdated', 'local_competvetsuivi', $logmessage);
     }
     $matrix->save(); // Save shortname, fullname but also hash
-    $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
+    $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => array(
+        'actions' => $action
+    ));
     $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);
     $event->trigger();
 
-    echo $OUTPUT->notification(get_string('matrixinfoupdated', 'local_competvetsuivi'), 'notifysuccess');
+    echo $OUTPUT->notification($action, 'notifysuccess');
     echo $OUTPUT->single_button($listpageurl, get_string('continue'));
 } else {
     $mform->display();

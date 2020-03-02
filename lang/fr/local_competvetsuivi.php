@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Outils CompetVetSuivi';
 
 $string['competencies'] = 'Compétences';
+$string['cohortassigned'] = 'Affectation des cohortes à la matrice mise à jour';
 $string['competencyfullname'] = 'Nom Complet';
 $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Gestion de l\'importation des données Utilisateur';
@@ -78,7 +79,7 @@ $string['matrixassignedcohorts'] =  'Cohorts';
 $string['matrixcohortsassignment'] = 'Affectation d\'une matrice a une cohorte';
 $string['matrixcohortsassignment_help'] = 'Permet d\'ajouter un ou plusieurs utilisateurs à une matrice via les cohortes';
 $string['matrixshortname'] = 'Nom court';
-$string['matrixupdated'] = 'Contenu de la matrice mis à jour: {$a}';
+$string['matrixupdated'] = 'Contenu de la matrice mis à jour: {$a}.';
 $string['matrixinfoupdated'] = 'Matrice mise à jour';
 $string['matrixviewdatatitle'] = 'Données de la matrice {$a->matrixname} pour l\'utilisateur {$a->username}';
 $string['matrix:viewdata'] = 'Voir la matrice pour l\'utilisateur';

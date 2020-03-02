@@ -45,7 +45,17 @@ class matrix_updated extends \core\event\base {
      * @throws \coding_exception
      */
     public static function get_name() {
-        return get_string('matrixupdated', 'local_competvetsuivi');
+        return get_string('matrixinfoupdated', 'local_competvetsuivi');
+    }
+
+    /**
+     * Returns non-localised event description with id's for admin use only.
+     *
+     * @return string
+     */
+    public function get_description() {
+        $action = s(!empty($this->other['actions']) ? $this->other['actions'] : '');
+        return "Matrix with id '$this->objectid' has been updated ({$action}).";
     }
 
     /**
