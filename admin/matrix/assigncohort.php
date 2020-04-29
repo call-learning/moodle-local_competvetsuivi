@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,12 +22,14 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_competvetsuivi\matrix\matrix_list_renderable;
+use local_competvetsuivi\event\matrix_updated;
+use local_competvetsuivi\matrix\matrix;
+use local_competvetsuivi\utils;
 
 require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 require_once('cohort_assign_form.php');
 
 admin_externalpage_setup('managematrix');
@@ -41,18 +42,22 @@ $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php');
 $PAGE->set_url($pageurl);
-// Navbar
-$listpageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+// Navbar.
+$listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 $PAGE->navbar->add(get_string('matrix:assigncohorts', 'local_competvetsuivi'), new moodle_url($listpageurl));
 $PAGE->navbar->add($header, null);
 
+$matrix = new matrix($id);
 
-$matrix = new \local_competvetsuivi\matrix\matrix($id);
-
-$matrixdata = array('fullname'=>$matrix->fullname, 'shortname'=>$matrix->shortname,'id'=>$matrix->id);
-$mform = new cohort_assign_form(null, array('fullname'=>$matrix->fullname, 'shortname'=>$matrix->shortname,'id'=>$matrix->id));
+$matrixdata = array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id);
+$mform = new cohort_assign_form(null, array(
+        'fullname' => $matrix->fullname,
+        'shortname' => $matrix->shortname,
+        'id' => $matrix->id)
+);
 $currendata = array();
-$currendata['matrixcohortsassignment'] = $DB->get_fieldset_select('cvs_matrix_cohorts','cohortid', 'matrixid = :matrixid', array('matrixid'=>$matrix->id));
+$currendata['matrixcohortsassignment'] =
+    $DB->get_fieldset_select('cvs_matrix_cohorts', 'cohortid', 'matrixid = :matrixid', array('matrixid' => $matrix->id));
 $mform->set_data($currendata);
 
 $listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
@@ -63,18 +68,18 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 if ($data = $mform->get_data()) {
     global $DB;
-    // First delete all assignments for this matrix
+    // First delete all assignments for this matrix.
 
     $DB->delete_records('cvs_matrix_cohorts', array('matrixid' => $matrix->id));
 
     foreach ($data->matrixcohortsassignment as $cohortid) {
-        \local_competvetsuivi\utils::assign_matrix_cohort($matrix->id, $cohortid);
+        utils::assign_matrix_cohort($matrix->id, $cohortid);
     }
     $action = get_string('cohortassigned', 'local_competvetsuivi');
     $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => array(
         'actions' => $action
     ));
-    $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);
+    $event = matrix_updated::create($eventparams);
     $event->trigger();
 
     echo $OUTPUT->notification($action, 'notifysuccess');

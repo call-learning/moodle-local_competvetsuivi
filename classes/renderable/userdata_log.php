@@ -23,12 +23,12 @@
  */
 
 namespace local_competvetsuivi\renderable;
+defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use renderer_base;
 use templatable;
 
-defined('MOODLE_INTERNAL') || die();
 /**
  * Class to list all available matrix
  *
@@ -39,7 +39,7 @@ class userdata_log implements renderable, templatable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output
-     * @return stdClass
+     * @return \stdClass
      */
     public function export_for_template(renderer_base $output) {
         global $DB, $CFG;
@@ -47,16 +47,16 @@ class userdata_log implements renderable, templatable {
         $context->userdatalog = [];
         $logmanager = get_log_manager();
         $readers = $logmanager->get_readers();
-        $store =  $readers['logstore_standard'];
+        $store = $readers['logstore_standard'];
         $allevents = $store->get_events_select('eventname = :eventname',
-                array('eventname' => '\\local_competvetsuivi\\event\\userdata_imported'), 'timecreated DESC',
-                $limitfrom = 0, $limitnum = 0);
+            array('eventname' => '\\local_competvetsuivi\\event\\userdata_imported'), 'timecreated DESC',
+            $limitfrom = 0, $limitnum = 0);
 
         foreach ($allevents as $evt) {
             $data = $evt->get_data();
             $other = $data['other'];
             unset($data['other']);
-            $data  = array_merge($data, $other);
+            $data = array_merge($data, $other);
             $context->userdatalog[] = $data;
         }
         return $context;

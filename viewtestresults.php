@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -48,7 +47,7 @@ $matrix = new \local_competvetsuivi\matrix\matrix($matrixid);
 
 // Override pagetype to show blocks properly.
 $header = get_string('matrix:viewtestresults',
-        'local_competvetsuivi');
+    'local_competvetsuivi');
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title($header);
@@ -58,12 +57,11 @@ $PAGE->set_url($pageurl);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('usertestresults', 'local_competvetsuivi',
-        array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
+    array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
 $matrix->load_data();
 $questionresults = local_competvetsuivi\autoevalutils::get_student_results(
-        $userid,
-        $matrix);
+    $userid,
+    $matrix);
 
 var_dump($questionresults);
-// http://competvetsuivi.local/local/competvetsuivi/viewtestresults.php?userid=3&matrixid=4
 echo $OUTPUT->footer();

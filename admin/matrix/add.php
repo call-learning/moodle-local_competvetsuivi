@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,11 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use local_competvetsuivi\event\matrix_added;
+use local_competvetsuivi\matrix\matrix;
+use local_competvetsuivi\matrix\matrix_exception;
+
 require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
@@ -37,11 +41,10 @@ $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/add.php');
 $PAGE->set_url($pageurl);
-// Navbar
-$listpageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+// Navbar.
+$listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 $PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
 $PAGE->navbar->add($header, null);
-
 
 $mform = new add_edit_form();
 $mform->set_data(array());
@@ -50,21 +53,22 @@ $listurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/li
 if ($mform->is_cancelled()) {
     redirect($listurl);
 } else if ($data = $mform->get_data()) {
-    // Add a new matrix
+    // Add a new matrix.
     $filename = $mform->get_new_filename('matrixfile');
     $tempfile = $mform->save_temp_file('matrixfile');
     $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
 
     try {
-        list($matrix, $logmessage) = \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname);
+        list($matrix, $logmessage) =
+            matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname);
         $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance());
-        $event = \local_competvetsuivi\event\matrix_added::create($eventparams);
+        $event = matrix_added::create($eventparams);
         $event->trigger();
         $OUTPUT->notification(get_string('matrixadded', 'local_competvetsuivi', $logmessage), 'notifysuccess');
-    } catch (\local_competvetsuivi\matrix\matrix_exception $e) {
+    } catch (matrix_exception $e) {
         $OUTPUT->notification($e->getMessage(), 'notifyfailure');
     }
-    unlink($tempfile); // Remove temp file
+    unlink($tempfile); // Remove temp file.
     redirect($listurl);
 }
 

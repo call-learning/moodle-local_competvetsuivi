@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -34,7 +33,7 @@ require_once($CFG->libdir . '/adminlib.php');
 admin_externalpage_setup('managematrix');
 require_login();
 $id = required_param('id', PARAM_INT);
-$matrix = new \local_competvetsuivi\matrix\matrix($id);
+$matrix = new matrix($id);
 
 // Override pagetype to show blocks properly.
 $header = get_string('matrix:view', 'local_competvetsuivi', $matrix->shortname);
@@ -42,7 +41,7 @@ $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/view.php');
 $PAGE->set_url($pageurl);
-// Navbar
+// Navbar.
 $listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 $PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
 $PAGE->navbar->add($header, null);
@@ -57,7 +56,7 @@ $uenames = array_map(function($ue) {
     return $ue->fullname;
 }, $matrix->get_matrix_ues());
 $arrayheader = array(get_string('competencies', 'local_competvetsuivi'),
-        get_string('competencyfullname', 'local_competvetsuivi'));
+    get_string('competencyfullname', 'local_competvetsuivi'));
 $arrayheader = array_merge($arrayheader, $uenames);
 $table->head = $arrayheader;
 
@@ -70,7 +69,7 @@ foreach ($competencies as $comp) {
         foreach ($matrix->get_values_for_ue_and_competency($ue->id, $comp->id) as $compsue) {
             $values[] = matrix::comptype_to_string($compsue->type) . ':' . $compsue->value;
         }
-        $cells[] = new \html_table_cell(\html_writer::alist($values));
+        $cells[] = new html_table_cell(html_writer::alist($values));
     }
     $table->data[] = new html_table_row($cells);
 }

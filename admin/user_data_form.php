@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,9 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../config.php');
-
 defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 global $CFG;
@@ -47,21 +45,21 @@ class user_data_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('text',
-                'userdatafilepath',
-                get_string('userdatafilepath', 'local_competvetsuivi'));
+            'userdatafilepath',
+            get_string('userdatafilepath', 'local_competvetsuivi'));
 
         $mform->addHelpButton('userdatafilepath', 'userdatafilepath', 'local_competvetsuivi');
         $mform->setType('userdatafilepath', PARAM_RAW);
         $mform->setDefault('userdatafilepath', static::DEFAULT_USERDATA_DIR);
 
         $instructions = get_string('userdatadirectupload', 'local_competvetsuivi');
-        $mform->addElement('static', '', \html_writer::div($instructions));
+        $mform->addElement('static', '', html_writer::div($instructions));
 
         $mform->addElement('filepicker',
-                'filetoupload',
-                get_string('userdatafile', 'local_competvetsuivi'),
-                '',
-                array('accepted_types' => array('text/csv'))); // See lib/classes/filetypes.php
+            'filetoupload',
+            get_string('userdatafile', 'local_competvetsuivi'),
+            '',
+            array('accepted_types' => array('text/csv'))); // See lib/classes/filetypes.php.
 
         $mform->addHelpButton('filetoupload', 'userdatafile', 'local_competvetsuivi');
         $mform->setType('filetoupload', PARAM_FILE);

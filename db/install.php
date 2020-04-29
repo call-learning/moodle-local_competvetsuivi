@@ -29,6 +29,5 @@ defined('MOODLE_INTERNAL') || die();
  * Custom code to be run on installing the plugin.
  */
 function xmldb_local_competvetsuivi_install() {
-
     return true;
 }

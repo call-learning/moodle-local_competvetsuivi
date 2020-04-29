@@ -25,6 +25,7 @@
 
 use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\matrix\matrix_exception;
+use local_competvetsuivi\ueutils;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 // https://docs.moodle.org/dev/Writing_PHPUnit_tests
 //
 // The official PHPUnit homepage is at:
-// https://phpunit.de
+// https://phpunit.de .
 
 require_once(__DIR__ . '/lib.php');
 
@@ -53,65 +54,65 @@ class matrix_test extends competvetsuivi_tests {
         global $DB;
         $this->resetAfterTest();
         $strandvalues = array(
-                array(
-                        'result' => 0,
-                        'values' => [
-                                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 0,
-                                matrix::MATRIX_COMP_TYPE_ABILITY => 0,
-                                matrix::MATRIX_COMP_TYPE_OBJECTIVES => 0,
-                                matrix::MATRIX_COMP_TYPE_EVALUATION => 0
-                        ]
-                ),
-                array(
-                        'result' => 1,
-                        'values' => [
-                                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 1,
-                                matrix::MATRIX_COMP_TYPE_ABILITY => 10,
-                                matrix::MATRIX_COMP_TYPE_OBJECTIVES => 100,
-                                matrix::MATRIX_COMP_TYPE_EVALUATION => 1000
-                        ]
-                ),
-                array(
-                        'result' => 0.5,
-                        'values' => [
-                                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 2,
-                                matrix::MATRIX_COMP_TYPE_ABILITY => 20,
-                                matrix::MATRIX_COMP_TYPE_OBJECTIVES => 200,
-                                matrix::MATRIX_COMP_TYPE_EVALUATION => 2000
-                        ]
-                ),
-                array(
-                        'result' => 0,
-                        'values' => [
-                                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 3,
-                                matrix::MATRIX_COMP_TYPE_ABILITY => 30,
-                                matrix::MATRIX_COMP_TYPE_OBJECTIVES => 300,
-                                matrix::MATRIX_COMP_TYPE_EVALUATION => 3000
-                        ]
-                ),
-                array(
-                        'result' => 0,
-                        'values' => [
-                                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 4,
-                                matrix::MATRIX_COMP_TYPE_ABILITY => 40,
-                                matrix::MATRIX_COMP_TYPE_OBJECTIVES => 400,
-                                matrix::MATRIX_COMP_TYPE_EVALUATION => 4000
-                        ]
-                ),
-                array(
-                        'result' => 0,
-                        'values' => [
-                                matrix::MATRIX_COMP_TYPE_KNOWLEDGE => -4,
-                                matrix::MATRIX_COMP_TYPE_ABILITY => -40,
-                                matrix::MATRIX_COMP_TYPE_OBJECTIVES => -400,
-                                matrix::MATRIX_COMP_TYPE_EVALUATION => -4000
-                        ]
-                )
+            array(
+                'result' => 0,
+                'values' => [
+                    matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 0,
+                    matrix::MATRIX_COMP_TYPE_ABILITY => 0,
+                    matrix::MATRIX_COMP_TYPE_OBJECTIVES => 0,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION => 0
+                ]
+            ),
+            array(
+                'result' => 1,
+                'values' => [
+                    matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 1,
+                    matrix::MATRIX_COMP_TYPE_ABILITY => 10,
+                    matrix::MATRIX_COMP_TYPE_OBJECTIVES => 100,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION => 1000
+                ]
+            ),
+            array(
+                'result' => 0.5,
+                'values' => [
+                    matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 2,
+                    matrix::MATRIX_COMP_TYPE_ABILITY => 20,
+                    matrix::MATRIX_COMP_TYPE_OBJECTIVES => 200,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION => 2000
+                ]
+            ),
+            array(
+                'result' => 0,
+                'values' => [
+                    matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 3,
+                    matrix::MATRIX_COMP_TYPE_ABILITY => 30,
+                    matrix::MATRIX_COMP_TYPE_OBJECTIVES => 300,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION => 3000
+                ]
+            ),
+            array(
+                'result' => 0,
+                'values' => [
+                    matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 4,
+                    matrix::MATRIX_COMP_TYPE_ABILITY => 40,
+                    matrix::MATRIX_COMP_TYPE_OBJECTIVES => 400,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION => 4000
+                ]
+            ),
+            array(
+                'result' => 0,
+                'values' => [
+                    matrix::MATRIX_COMP_TYPE_KNOWLEDGE => -4,
+                    matrix::MATRIX_COMP_TYPE_ABILITY => -40,
+                    matrix::MATRIX_COMP_TYPE_OBJECTIVES => -400,
+                    matrix::MATRIX_COMP_TYPE_EVALUATION => -4000
+                ]
+            )
         );
         foreach ($strandvalues as $sv) {
             foreach ($sv['values'] as $type => $value) {
                 $this->assertEquals($sv['result'],
-                        matrix::get_real_value_from_strand($type, $value)
+                    matrix::get_real_value_from_strand($type, $value)
                 );
             }
         }
@@ -141,16 +142,16 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertNotEmpty($values);
         foreach ($values as $val) {
             switch ($val->type) {
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(3, $val->value);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
+                case matrix::MATRIX_COMP_TYPE_ABILITY:
                     $this->assertEquals(30, $val->value);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
+                case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(300, $val->value);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
                     $this->assertEquals(3000, $val->value);
                     break;
             }
@@ -160,16 +161,16 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertNotEmpty($values);
         foreach ($values as $val) {
             switch ($val->type) {
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(1, $val->value);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
+                case matrix::MATRIX_COMP_TYPE_ABILITY:
                     $this->assertEquals(30, $val->value);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
+                case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(300, $val->value);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
                     $this->assertEquals(2000, $val->value);
                     break;
             }
@@ -187,17 +188,17 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertNotEmpty($values);
         foreach ($values as $val) {
             switch ($val->type) {
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(2, $val->value);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
-                    $this->assertEquals(10, $val->value); //CoPrev.2.7bis.
+                case matrix::MATRIX_COMP_TYPE_ABILITY:
+                    $this->assertEquals(10, $val->value); // CoPrev.2.7bis.
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
+                case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(100, $val->value); // CoPrev.2.7bis.
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
-                    $this->assertEquals(1000, $val->value); //CoPrev.2.7bis.
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
+                    $this->assertEquals(1000, $val->value); // CoPrev.2.7bis.
                     break;
             }
         }
@@ -210,23 +211,21 @@ class matrix_test extends competvetsuivi_tests {
         $values = $this->matrix->get_total_values_for_ue_and_competency($uc54->id, $comp->id, true);
 
         $this->assertEquals(3,
-                $values[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
-
+            $values[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
 
         $values = $this->matrix->get_total_values_for_ue_and_competency($uc54->id, $comp->id, true);
         $this->assertEquals(3,
-                $values[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
+            $values[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
 
-        // Do a couple of other $ue and check if the result is right
-        $ueselection = \local_competvetsuivi\ueutils::get_ues_for_semester(1, $this->matrix);
+        // Do a couple of other $ue and check if the result is right.
+        $ueselection = ueutils::get_ues_for_semester(1, $this->matrix);
         foreach ($ueselection as $ue) {
             $values = $this->matrix->get_total_values_for_ue_and_competency($ue->id, $comp->id, true);
         }
 
-
         $values = $this->matrix->get_total_values_for_ue_and_competency($uc54->id, $comp->id, true);
         $this->assertEquals(3,
-                $values[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
+            $values[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]->totalvalue);
 
     }
 
@@ -241,16 +240,16 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertNotEmpty($values);
         foreach ($values as $val) {
             switch ($val->type) {
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(0, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
+                case matrix::MATRIX_COMP_TYPE_ABILITY:
                     $this->assertEquals(0, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
+                case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(0, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
                     $this->assertEquals(0, $val->totalvalue);
                     break;
             }
@@ -260,16 +259,16 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertNotEmpty($values);
         foreach ($values as $val) {
             switch ($val->type) {
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(1, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
+                case matrix::MATRIX_COMP_TYPE_ABILITY:
                     $this->assertEquals(0, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
+                case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(0, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
                     $this->assertEquals(0.5, $val->totalvalue);
                     break;
             }
@@ -288,16 +287,16 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertNotEmpty($values);
         foreach ($values as $val) {
             switch ($val->type) {
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(2.5, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
+                case matrix::MATRIX_COMP_TYPE_ABILITY:
                     $this->assertEquals(3, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
+                case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(5, $val->totalvalue);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
                     $this->assertEquals(3, $val->totalvalue);
                     break;
             }
@@ -324,9 +323,9 @@ class matrix_test extends competvetsuivi_tests {
 
     public function test_normalize_uc_name() {
         $this->resetAfterTest();
-        $this->assertEquals('UC51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UC51'));
-        $this->assertEquals('UC51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UE51'));
-        $this->assertEquals('UCUV51', \local_competvetsuivi\matrix\matrix::normalize_uc_name('UV51'));
+        $this->assertEquals('UC51', matrix::normalize_uc_name('UC51'));
+        $this->assertEquals('UC51', matrix::normalize_uc_name('UE51'));
+        $this->assertEquals('UCUV51', matrix::normalize_uc_name('UV51'));
     }
 
     public function test_get_root_competency() {
@@ -336,12 +335,11 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertEquals('COPREV', $rootcomp->shortname);
     }
 
-
     public function test_get_child_competencies_coprev_direct_child() {
         $this->resetAfterTest();
         $coprev = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
         $comps = $this->matrix->get_child_competencies($coprev->id, true);
-        $this->assertCount(3, $comps); // This should be COPREV
+        $this->assertCount(3, $comps); // This should be COPREV.
         $coprev = reset($comps);
         $this->assertEquals('COPREV.1', $coprev->shortname);
     }
@@ -349,13 +347,13 @@ class matrix_test extends competvetsuivi_tests {
     public function test_get_child_competencies_root() {
         $this->resetAfterTest();
         $comps = $this->matrix->get_child_competencies();
-        $this->assertCount(23, $comps); // ALL COPREV competencies including COPREV itself
+        $this->assertCount(23, $comps); // ALL COPREV competencies including COPREV itself.
     }
 
     public function test_get_child_competencies_root_direct_child() {
         $this->resetAfterTest();
         $comps = $this->matrix->get_child_competencies(0, true);
-        $this->assertCount(1, $comps); // This should be COPREV
+        $this->assertCount(1, $comps); // This should be COPREV.
         $coprev = reset($comps);
         $this->assertEquals('COPREV', $coprev->shortname);
     }
@@ -378,6 +376,7 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertCount(10, $compsv2);
         $this->assertArraySubset($compsv1, $compsv2);
     }
+
     public function test_get_child_competencies_coprev1_directchild_cache() {
         $this->resetAfterTest();
         $coprev1 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
@@ -386,5 +385,4 @@ class matrix_test extends competvetsuivi_tests {
         $comps = $this->matrix->get_child_competencies($coprev1->id, true);
         $this->assertCount(5, $comps);
     }
-
 }

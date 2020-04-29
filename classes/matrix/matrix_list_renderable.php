@@ -24,7 +24,9 @@
 
 namespace local_competvetsuivi\matrix;
 defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
+
 use renderable;
 use renderer_base;
 use templatable;
@@ -47,44 +49,44 @@ class matrix_list_renderable implements renderable, templatable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output
-     * @return stdClass
+     * @return \stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $DB,$CFG;
+        global $DB, $CFG;
         $context = new \stdClass();
         $allmatrix = $DB->get_records('cvs_matrix');
         $context->matrix = [];
         if ($allmatrix) {
-            foreach($allmatrix as $matrix) {
-                $cohorts = $DB->get_records_sql_menu('SELECT c.id, c.name 
-                            FROM {cvs_matrix_cohorts} cm 
-                            LEFT JOIN {cohort} c ON c.id = cm.cohortid 
+            foreach ($allmatrix as $matrix) {
+                $cohorts = $DB->get_records_sql_menu('SELECT c.id, c.name
+                            FROM {cvs_matrix_cohorts} cm
+                            LEFT JOIN {cohort} c ON c.id = cm.cohortid
                             WHERE cm.matrixid = :matrixid',
-                        array('matrixid'=>$matrix->id));
+                    array('matrixid' => $matrix->id));
 
-                $matrix->cohortsnames = join(',',$cohorts);
+                $matrix->cohortsnames = join(',', $cohorts);
                 $matrix->lastmodified = $matrix->timemodified;
                 $matrix->editurl = new moodle_url(
-                        $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php',
-                        array('id' => $matrix->id)
+                    $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php',
+                    array('id' => $matrix->id)
                 );
                 $matrix->deleteurl = new moodle_url(
-                        $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/delete.php',
-                        array('id' => $matrix->id)
+                    $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/delete.php',
+                    array('id' => $matrix->id)
                 );
                 $matrix->viewurl = new moodle_url(
-                        $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/view.php',
-                        array('id' => $matrix->id)
+                    $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/view.php',
+                    array('id' => $matrix->id)
                 );
                 $matrix->assignurl = new moodle_url(
-                        $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/assigncohort.php',
-                        array('id' => $matrix->id)
+                    $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/assigncohort.php',
+                    array('id' => $matrix->id)
                 );
 
                 $context->matrix[] = $matrix;
             }
         }
-        $context->addactionurl = $CFG->wwwroot.'/local/competvetsuivi/admin/matrix/add.php';
+        $context->addactionurl = $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/add.php';
         return $context;
     }
 }

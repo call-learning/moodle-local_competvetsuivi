@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -41,7 +40,7 @@ $user = \core_user::get_user($userid);
 
 // Override pagetype to show blocks properly.
 $header = get_string('matrix:viewdata',
-        'local_competvetsuivi');
+    'local_competvetsuivi');
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title($header);
@@ -54,7 +53,7 @@ $matrix->load_data();
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('matrixviewdatatitle', 'local_competvetsuivi',
-        array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
+    array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
 $table = new html_table();
 $table->attributes['class'] = 'generaltable boxaligncenter flexible-wrap';
 
@@ -63,10 +62,10 @@ $uenames = array_map(function($ue) {
     return $ue->fullname;
 }, $matrixues);
 $uenamexues =
-        array_combine($uenames, $matrixues); // We have now an array with UE names => ue, it is now easier to get info from each ue
+    array_combine($uenames, $matrixues); // We have now an array with UE names => ue, it is now easier to get info from each ue.
 
 $arrayheader = array(get_string('competencies', 'local_competvetsuivi'),
-        get_string('competencyfullname', 'local_competvetsuivi'));
+    get_string('competencyfullname', 'local_competvetsuivi'));
 foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypname) {
     $arrayheader[] = get_string('matrixcomptype:' . $comptypname, 'local_competvetsuivi');
 }
@@ -75,7 +74,7 @@ $table->head = $arrayheader;
 $competencies = $matrix->get_matrix_competencies();
 
 foreach ($competencies as $comp) {
-    // For each competency regroup all finished ues and values
+    // For each competency regroup all finished ues and values.
     $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $comp, $userdata);
     $cells = array(new html_table_cell($comp->shortname), new html_table_cell($comp->fullname));
     foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypeid => $comptypname) {

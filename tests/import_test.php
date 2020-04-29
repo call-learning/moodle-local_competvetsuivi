@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
 // https://docs.moodle.org/dev/Writing_PHPUnit_tests
 //
 // The official PHPUnit homepage is at:
-// https://phpunit.de
+// https://phpunit.de .
 
 /**
  * The import_test test class.
@@ -53,17 +53,17 @@ class import_test extends advanced_testcase {
         $content = file_get_contents($filename);
         $hash = sha1($content);
         list($matrixobject, $logmessage) = matrix::import_from_file(
-                $filename,
-                $hash,
-                'TestMatrix',
-                'TESTMATRIX');
+            $filename,
+            $hash,
+            'TestMatrix',
+            'TESTMATRIX');
 
         $matrix = new matrix($matrixobject->id);
         $matrix->load_data();
         $comps = array_values($matrix->get_matrix_competencies());
         $mastercomp = $comps[0]; // COPREV
         $childcomp = $comps[1]; // COPREV.1
-        $leafcomp = $comps[4]; // COPREV.1.2
+        $leafcomp = $comps[4]; // COPREV.1.2.
         $this->assertEquals('COPREV', $mastercomp->shortname);
         $this->assertEquals("/{$mastercomp->id}", $mastercomp->path);
         $this->assertEquals('COPREV.1', $childcomp->shortname);
@@ -77,7 +77,7 @@ class import_test extends advanced_testcase {
     public function test_import_users() {
         global $DB;
         $this->resetAfterTest();
-        // With UE
+        // With UE.
         $filename = dirname(__FILE__) . '/fixtures/userdata_sample.csv';
         $status = userdata::import_user_data_from_file($filename);
         $user = $DB->get_record('cvs_userdata', array('useremail' => 'Etudiant-143@ecole.fr'));
@@ -85,7 +85,7 @@ class import_test extends advanced_testcase {
         $this->assertEquals(1, $userdata->UC53);
         $this->assertEquals(0, $userdata->UC52);
         $this->assertEquals($user->lastseenunit, 'UC55');
-        // Now with UC
+        // Now with UC.
         $filename = dirname(__FILE__) . '/fixtures/userdata_sample_uc.csv';
         $status = userdata::import_user_data_from_file($filename);
         $user = $DB->get_record('cvs_userdata', array('useremail' => 'Etudiant-143@ecole.fr'));

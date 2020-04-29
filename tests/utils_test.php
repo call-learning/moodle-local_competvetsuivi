@@ -33,10 +33,11 @@ defined('MOODLE_INTERNAL') || die();
 // https://docs.moodle.org/dev/Writing_PHPUnit_tests
 //
 // The official PHPUnit homepage is at:
-// https://phpunit.de
+// https://phpunit.de .
 
 require_once(__DIR__ . '/lib.php');
 
+use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\ueutils;
 use local_competvetsuivi\utils;
 
@@ -51,7 +52,7 @@ class utils_test extends competvetsuivi_tests {
     public function test_get_matrixid_for_user() {
         global $DB;
         $this->resetAfterTest();
-        $matrixid = \local_competvetsuivi\utils::get_matrixid_for_user($this->user->id);
+        $matrixid = utils::get_matrixid_for_user($this->user->id);
         $this->assertFalse($matrixid);
 
         cohort_add_member($this->cohort1->id, $this->user->id);
@@ -68,7 +69,7 @@ class utils_test extends competvetsuivi_tests {
         $cohortid = $DB->get_field('cohort', 'id', array('idnumber' => 'COHORT1'));
         utils::assign_matrix_cohort($matrix1id, $cohortid);
         $this->assertCount(1, $DB->get_records('cvs_matrix_cohorts',
-                array('matrixid' => $matrix1id, 'cohortid' => $cohortid)));
+            array('matrixid' => $matrix1id, 'cohortid' => $cohortid)));
     }
 
     public function test_get_possible_vs_actual_values() {
@@ -90,19 +91,19 @@ class utils_test extends competvetsuivi_tests {
         $this->assertNotEmpty($uc55vals);
         foreach ($uc55vals as $type => $val) {
             switch ($type) {
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY:
+                case matrix::MATRIX_COMP_TYPE_ABILITY:
                     $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES:
+                case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(1, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
-                case \local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION:
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
                     $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
@@ -129,11 +130,12 @@ class utils_test extends competvetsuivi_tests {
         }
 
         $this->assertNotEmpty($sumvalues);
-        $this->assertEquals(4.5, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
-        $this->assertEquals(3, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_ABILITY]);
-        $this->assertEquals(4, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_OBJECTIVES]);
-        $this->assertEquals(2.5, $sumvalues[\local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_EVALUATION]);
+        $this->assertEquals(4.5, $sumvalues[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
+        $this->assertEquals(3, $sumvalues[matrix::MATRIX_COMP_TYPE_ABILITY]);
+        $this->assertEquals(4, $sumvalues[matrix::MATRIX_COMP_TYPE_OBJECTIVES]);
+        $this->assertEquals(2.5, $sumvalues[matrix::MATRIX_COMP_TYPE_EVALUATION]);
     }
+
     public function test_get_default_question_bank_category_name() {
         global $DB;
         $this->resetAfterTest();

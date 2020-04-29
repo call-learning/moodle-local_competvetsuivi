@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,40 +22,40 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\matrix\matrix_list_renderable;
 
 require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/weblib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/weblib.php');
 
 admin_externalpage_setup('managematrix');
 require_login();
 $id = required_param('id', PARAM_INT);
-$confirm = optional_param('confirm',false, PARAM_BOOL);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
 
 // Override pagetype to show blocks properly.
-$header = get_string('matrix:add','local_competvetsuivi');
+$header = get_string('matrix:add', 'local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
-$pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/delete.php');
-// Navbar
-$listpageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+$pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/delete.php');
+// Navbar.
+$listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 $PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
 $PAGE->navbar->add($header, null);
-
 
 $PAGE->set_url($pageurl);
 
 echo $OUTPUT->header();
 if (!$confirm) {
-    $confirmurl = new moodle_url($pageurl,array('confirm'=>true, 'id'=>$id, 'sesskey'=>sesskey()));
-    $cancelurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
-    echo $OUTPUT->confirm(get_string('matrix:delete','local_competvetsuivi'),$confirmurl, $listpageurl);
+    $confirmurl = new moodle_url($pageurl, array('confirm' => true, 'id' => $id, 'sesskey' => sesskey()));
+    $cancelurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
+    echo $OUTPUT->confirm(get_string('matrix:delete', 'local_competvetsuivi'), $confirmurl, $listpageurl);
 } else {
     require_sesskey();
-    $matrix = new \local_competvetsuivi\matrix\matrix($id);
+    $matrix = new matrix($id);
     $matrix->delete(true);
     echo $OUTPUT->notification(get_string('matrixdeleted', 'local_competvetsuivi'), 'notifysuccess');
     echo $OUTPUT->single_button($listpageurl, get_string('continue'));

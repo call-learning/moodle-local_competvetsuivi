@@ -25,12 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-        'local/competvetsuivi:managesettings' => array(
-                'captype' => 'write',
-                'contextlevel' => CONTEXT_SYSTEM,
-                'archetypes' => array(
-                        'manager' => CAP_ALLOW,
-                )
-        ),
-
+    'local/competvetsuivi:managesettings' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
 );

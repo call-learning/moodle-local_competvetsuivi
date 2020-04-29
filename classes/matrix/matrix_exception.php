@@ -24,19 +24,10 @@
 
 namespace local_competvetsuivi\matrix;
 defined('MOODLE_INTERNAL') || die();
-global $CFG;
 
 /**
  * Class to represent a matrix
  *
  */
 class matrix_exception extends \moodle_exception {
-
-    /**
-     * Constructor.
-     *
-     */
-    public function __construct($errorcode, $module = '', $link = '', $a = null, $debuginfo = null) {
-        parent::__construct($errorcode, $module, $link, $a, $debuginfo);
-    }
 }

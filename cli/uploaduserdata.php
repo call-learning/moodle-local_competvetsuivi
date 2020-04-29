@@ -29,10 +29,10 @@ require_once($CFG->libdir . '/clilib.php');
 
 // Get the cli options.
 list($options, $unrecognised) = cli_get_params([
-        'help' => false,
-        'filename' => null,
+    'help' => false,
+    'filename' => null,
 ], [
-        'h' => 'help'
+    'h' => 'help'
 ]);
 
 $usage = "Upload user data manually. Same process as the scheduled task

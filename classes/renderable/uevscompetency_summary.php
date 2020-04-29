@@ -24,6 +24,7 @@
  */
 
 namespace local_competvetsuivi\renderable;
+defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\ueutils;
@@ -32,7 +33,7 @@ use stdClass;
 use templatable;
 
 class uevscompetency_summary extends graph_overview_base implements \renderable, templatable {
-    const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait)
+    const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait).
 
     protected $ue = null;
     protected $chartdata = null;

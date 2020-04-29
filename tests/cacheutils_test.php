@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 // https://docs.moodle.org/dev/Writing_PHPUnit_tests
 //
 // The official PHPUnit homepage is at:
-// https://phpunit.de
+// https://phpunit.de .
 
 require_once(__DIR__ . '/lib.php');
 
@@ -58,13 +58,13 @@ class cacheutils_test extends competvetsuivi_tests {
         $rootcomp2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
         $hash = cacheutils::get_ue_vs_competencie_hash($this->matrix, $currentue, $rootcomp->id, true);
         $hashsame = cacheutils::get_ue_vs_competencie_hash($this->matrix, $currentue, $rootcomp->id, true);
-        $this->assertEquals($hash, $hashsame); // Assert hash is the same twice
+        $this->assertEquals($hash, $hashsame); // Assert hash is the same twice.
         $hashdiff = cacheutils::get_ue_vs_competencie_hash($this->matrix, $currentue2, $rootcomp2->id, true);
-        $this->assertNotEquals($hash, $hashdiff); // competency and ue change
+        $this->assertNotEquals($hash, $hashdiff); // Competency and ue change.
         $hashdiff = cacheutils::get_ue_vs_competencie_hash($this->matrix, $currentue, $rootcomp->id, false);
-        $this->assertNotEquals($hash, $hashdiff); // same semester change
+        $this->assertNotEquals($hash, $hashdiff); // Same semester change.
         $hashdiff = cacheutils::get_ue_vs_competencie_hash($this->matrix, $currentue, $rootcomp2->id, true);
-        $this->assertNotEquals($hash, $hashdiff); // current ue change
+        $this->assertNotEquals($hash, $hashdiff); // Current ue change.
     }
 
     public function test_get_ue_vs_competencies_percent_hash() {
@@ -76,14 +76,14 @@ class cacheutils_test extends competvetsuivi_tests {
         $strandids = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
         $hash = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, $strandids, $rootcomp->id);
         $hashsame = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, $strandids, $rootcomp->id);
-        $this->assertEquals($hash, $hashsame); // Assert hash is the same twice
+        $this->assertEquals($hash, $hashsame); // Assert hash is the same twice.
         $hashdiff = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, [matrix::MATRIX_COMP_TYPE_ABILITY],
-                $rootcomp->id);
-        $this->assertNotEquals($hash, $hashdiff); // not same strand
+            $rootcomp->id);
+        $this->assertNotEquals($hash, $hashdiff); // Not same strand.
         $hashdiff = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue2, $strandids, $rootcomp->id);
-        $this->assertNotEquals($hash, $hashdiff); // not same ue
+        $this->assertNotEquals($hash, $hashdiff); // Not same ue.
         $hashdiff = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, $strandids, $rootcomp2->id);
-        $this->assertNotEquals($hash, $hashdiff); // not same comp
+        $this->assertNotEquals($hash, $hashdiff); // Not same comp.
 
     }
 
@@ -99,14 +99,14 @@ class cacheutils_test extends competvetsuivi_tests {
         $ueselection = ueutils::get_ues_for_semester(1, $this->matrix);
         $hash = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp, $userdata, $strands, $ueselection);
         $hashsame = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp, $userdata, $strands, $ueselection);
-        $this->assertEquals($hash, $hashsame); // Assert hash is the same twice
+        $this->assertEquals($hash, $hashsame); // Assert hash is the same twice.
         $hashdiff = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp, $userdata);
-        $this->assertNotEquals($hash, $hashdiff); // missing ueselection and strands
+        $this->assertNotEquals($hash, $hashdiff); // Missing ueselection and strands.
         $hashdiff = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp, $userdata, $strands);
-        $this->assertNotEquals($hash, $hashdiff); // missing ueselection and strands
+        $this->assertNotEquals($hash, $hashdiff); // Missing ueselection and strands.
         $hashdiff = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp, $userdata, $strands);
-        $this->assertNotEquals($hash, $hashdiff); // missing ueselection
+        $this->assertNotEquals($hash, $hashdiff); // Missing ueselection.
         $hashdiff = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp2, $userdata, $strands, $ueselection);
-        $this->assertNotEquals($hash, $hashdiff); // different selection
+        $this->assertNotEquals($hash, $hashdiff); // Different selection.
     }
 }

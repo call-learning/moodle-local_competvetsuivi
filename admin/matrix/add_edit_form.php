@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,9 +21,6 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(__DIR__ . '/../../../../config.php');
-
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 global $CFG;
@@ -59,11 +55,12 @@ class add_edit_form extends moodleform {
         $mform->setType('shortname', PARAM_TEXT);
         $mform->addRule('shortname', get_string('required'), 'required');
         $mform->addElement(
-                'filepicker',
-                'matrixfile',
-                get_string('matrixfileadd', 'local_competvetsuivi'),
-                null,
-                array('accepted_types' => array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))); // See lib/classes/filetypes.php
+            'filepicker',
+            'matrixfile',
+            get_string('matrixfileadd', 'local_competvetsuivi'),
+            null,
+            array('accepted_types' => array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')));
+        // See lib/classes/filetypes.php.
         $mform->addHelpButton('matrixfile', 'matrixfileadd', 'local_competvetsuivi');
         $mform->setType('matrixfile', PARAM_FILE);
 

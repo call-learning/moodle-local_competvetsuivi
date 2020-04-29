@@ -34,10 +34,10 @@ $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Gestion de l\'importation des données Utilisateur';
 $string['competvetgeneralsettings'] = 'Paramètres Généraux';
 $string['currentprogress'] = 'Avancement';
-$string['contribution:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et des compétences au 
-<strong>sein de l\'ensemble du cursus</strong>';
-$string['contributionsamesemester:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et des compétences au 
-<strong>sein du semestre correspondant</strong>';
+$string['contribution:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et des compétences au
+ <strong>sein de l\'ensemble du cursus</strong>';
+$string['contributionsamesemester:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et
+ des compétences au <strong>sein du semestre correspondant</strong>';
 $string['directorydoesnotexist'] = 'Directory does not exist';
 $string['doghnutchartheight'] = 'Hauteur du graphe en Doghnut';
 $string['doghnutchartheight_desc'] = 'Cela affecte tous les graphes UC vs UE';
@@ -60,22 +60,22 @@ $string['legend'] = 'Légende';
 $string['managematrix'] = 'Gérer les matrices de compétences';
 $string['matrix:add'] = 'Ajouter une matrice';
 $string['matrix:assigncohorts'] = 'Affecter une cohorte';
-$string['matrixaddedlog'] = 'Nombre de compétences chargées {$a->compcount}, Nombre de macrocompétences {$a->macrocompcount}, 
-Nombre d\'UE/UC {$a->uecount}.';
+$string['matrixaddedlog'] = 'Nombre de compétences chargées {$a->compcount}, Nombre de macrocompétences {$a->macrocompcount},
+ Nombre d\'UE/UC {$a->uecount}.';
 $string['matrixadded'] = 'Matrice ajoutée';
 $string['matrixcomptype:knowledge'] = 'Connaissances sous-jacentes';
 $string['matrixcomptype:ability'] = 'Compétences';
 $string['matrixcomptype:objective'] = 'Objectifs';
 $string['matrixcomptype:evaluation'] = 'Evaluations';
-$string['matrix:delete']= "Effacer la matrice";
+$string['matrix:delete'] = "Effacer la matrice";
 $string['matrixdeleted'] = 'Matrice effacée';
-$string['matrix:edit']= "Editer la matrice";
+$string['matrix:edit'] = "Editer la matrice";
 $string['matrixfileadd'] = 'Fichier de matrice';
 $string['matrixfileadd_help'] = 'Uploader un fichier de matrice. Ce doit-être un fichier Excel avec une structure spécifique.';
 $string['matrix:list'] = 'Toutes les matrices';
 $string['matrix'] = 'Matrice';
 $string['matrixname'] = 'Nom complet';
-$string['matrixassignedcohorts'] =  'Cohorts';
+$string['matrixassignedcohorts'] = 'Cohorts';
 $string['matrixcohortsassignment'] = 'Affectation d\'une matrice a une cohorte';
 $string['matrixcohortsassignment_help'] = 'Permet d\'ajouter un ou plusieurs utilisateurs à une matrice via les cohortes';
 $string['matrixshortname'] = 'Nom court';
@@ -97,13 +97,13 @@ $string['progresschartheight'] = 'Hauteur du graphe de progression';
 $string['progresschartheight_desc'] = 'Cela affecte tous les graphes de progression';
 $string['questionbankcategoryname'] = 'Nom de la catégorie de la banque de question';
 $string['questionbankcategoryname_desc'] = 'Nom de la catégorie de la banque de question desquelles sont tirées les questions';
-$string['cvsquestionbankdefaultcategoryname_help'] = 'Il faut que toutes les question concernant l\'autoevaluation soient dans la même banque 
-de questions. Et cette banque de question doit être catégorisée. Normalement le nom court de la matrice doit correspondre au nom de la
-banque de question. Si aucune banque de question ne correspond, on regarde la valeur de ce paramètre et on essaie de trouver une banque
-de question avec cette catégorie. 
-(voir: https://docs.moodle.org/38/en/Question_categories#Category_Set_Up_and_Management).
-Autre prérequis: l\'idnumber ou le numéro identification unique doit être exactement le nom court de la compétences (par exemple
-COPREV ou COPREV.1).
+$string['cvsquestionbankdefaultcategoryname_help'] = 'Il faut que toutes les question concernant l\'autoevaluation soient dans la même banque
+ de questions. Et cette banque de question doit être catégorisée. Normalement le nom court de la matrice doit correspondre au nom de la
+ banque de question. Si aucune banque de question ne correspond, on regarde la valeur de ce paramètre et on essaie de trouver une banque
+ de question avec cette catégorie.
+ (voir: https://docs.moodle.org/38/en/Question_categories#Category_Set_Up_and_Management).
+ Autre prérequis: l\'idnumber ou le numéro identification unique doit être exactement le nom court de la compétences (par exemple
+ COPREV ou COPREV.1).
 ';
 $string['readmore'] = 'plus';
 $string['readless'] = 'moins';

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -50,7 +49,7 @@ $message = "";
 if ($mform->is_cancelled()) {
     redirect($pageurl);
 } else if ($data = $mform->get_data()) {
-    // Set the right value for userdatafilepath or/and upload the file
+    // Set the right value for userdatafilepath or/and upload the file.
     if (file_exists($data->userdatafilepath)) {
         set_config('userdatafilepath', $data->userdatafilepath, 'local_competvetsuivi');
         $defaultdt['userdatafilepath'] = $data->userdatafilepath;
@@ -60,7 +59,7 @@ if ($mform->is_cancelled()) {
         $delimiter = $data->delimiter_name;
         $status = local_competvetsuivi\userdata::import_user_data_from_file($tempfile, $delimiter);
         if ($status === true) {
-            /** @var $OUTPUT core_renderer */
+            /* @var $OUTPUT core_renderer Core renderer */
             $message = $OUTPUT->notification(get_string('userdataimported', 'local_competvetsuivi'), 'notifysuccess');
         } else {
             $errormsg = "";
@@ -69,12 +68,12 @@ if ($mform->is_cancelled()) {
             }
 
             $message = $OUTPUT->notification(get_string('importerror',
-                    'local_competvetsuivi',
-                    $errormsg),
-                    'notifyfailure'
+                'local_competvetsuivi',
+                $errormsg),
+                'notifyfailure'
             );
         }
-        unlink($tempfile); // Remove temp file
+        unlink($tempfile); // Remove temp file.
     }
 }
 

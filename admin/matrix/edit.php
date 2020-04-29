@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_competvetsuivi\event\matrix_updated;
+use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\matrix\matrix_list_renderable;
 
 require_once(__DIR__ . '/../../../../config.php');
@@ -41,12 +42,12 @@ $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php');
 $PAGE->set_url($pageurl);
-// Navbar
+// Navbar.
 $listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 $PAGE->navbar->add(get_string('matrix:list', 'local_competvetsuivi'), new moodle_url($listpageurl));
 $PAGE->navbar->add($header, null);
 
-$matrix = new \local_competvetsuivi\matrix\matrix($id);
+$matrix = new matrix($id);
 
 $matrixdata = array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id);
 $mform = new add_edit_form(null, array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id));
@@ -64,23 +65,27 @@ if ($data = $mform->get_data()) {
 
     $matrix->shortname = $data->shortname;
     $matrix->fullname = $data->fullname;
-    $action  = get_string('matrixinfoupdated', 'local_competvetsuivi');
-    // Save the file and reload the matrix
+    $action = get_string('matrixinfoupdated', 'local_competvetsuivi');
+    // Save the file and reload the matrix.
     if ($filename) {
         $matrix->reset_matrix();
         $filename = $mform->get_new_filename('matrixfile');
         $tempfile = $mform->save_temp_file('matrixfile');
         $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
         list($matrixobject, $logmessage) =
-                \local_competvetsuivi\matrix\matrix::import_from_file($tempfile, $hash, $data->fullname, $data->shortname, $matrix);
+            matrix::import_from_file($tempfile,
+                $hash,
+                $data->fullname,
+                $data->shortname,
+                $matrix);
 
         $action = get_string('matrixupdated', 'local_competvetsuivi', $logmessage);
     }
-    $matrix->save(); // Save shortname, fullname but also hash
+    $matrix->save(); // Save shortname, fullname but also hash.
     $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => array(
         'actions' => $action
     ));
-    $event = \local_competvetsuivi\event\matrix_updated::create($eventparams);
+    $event = matrix_updated::create($eventparams);
     $event->trigger();
 
     echo $OUTPUT->notification($action, 'notifysuccess');

@@ -32,6 +32,10 @@ require_once(__DIR__ . '/upgradelib.php');
  *
  * @param int $oldversion
  * @return bool
+ * @throws ddl_exception
+ * @throws ddl_table_missing_exception
+ * @throws downgrade_exception
+ * @throws upgrade_exception
  */
 function xmldb_local_competvetsuivi_upgrade($oldversion) {
     global $DB;
@@ -43,7 +47,7 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
     //
     // You will also have to create the db/install.xml file by using the XMLDB Editor.
     // Documentation for the XMLDB Editor can be found at:
-    // https://docs.moodle.org/dev/XMLDB_editor
+    // https://docs.moodle.org/dev/XMLDB_editor.
 
     if ($oldversion < 2019080109) {
 
@@ -73,13 +77,13 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
     if ($oldversion < 2019080110) {
         $table = new xmldb_table('cvs_userdata');
         $field = new xmldb_field('lastseenunit',
-                XMLDB_TYPE_TEXT,
-                '255',
-                null,
-                null,
-                null,
-                null,
-                'userdata');
+            XMLDB_TYPE_TEXT,
+            '255',
+            null,
+            null,
+            null,
+            null,
+            'userdata');
 
         // Conditionally launch add field currentueid.
         if (!$dbman->field_exists($table, $field)) {
@@ -89,7 +93,7 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019080214) {
-        set_config('cvsquestionbankdefaultcategoryname','Auto-evaluation_competences','local_competvetsuivi');
+        set_config('cvsquestionbankdefaultcategoryname', 'Auto-evaluation_competences', 'local_competvetsuivi');
         upgrade_plugin_savepoint(true, 2019080214, 'local', 'competvetsuivi');
     }
     return true;

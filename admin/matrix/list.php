@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,16 +25,16 @@
 require_once(__DIR__ . '/../../../../config.php');
 
 global $CFG;
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('managematrix');
 require_login();
 
 // Override pagetype to show blocks properly.
-$header = get_string('matrix:list','local_competvetsuivi');
+$header = get_string('matrix:list', 'local_competvetsuivi');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
-$pageurl = new moodle_url($CFG->wwwroot.'/local/competvetsuivi/admin/matrix/list.php');
+$pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 
 $PAGE->set_url($pageurl);
 
@@ -43,6 +42,6 @@ $renderer = $PAGE->get_renderer('core');
 $renderable = new local_competvetsuivi\matrix\matrix_list_renderable();
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('managematrix','local_competvetsuivi'),3);
+echo $OUTPUT->heading(get_string('managematrix', 'local_competvetsuivi'), 3);
 echo $renderer->render_from_template('local_competvetsuivi/matrix_list', $renderable->export_for_template($renderer));
 echo $OUTPUT->footer();

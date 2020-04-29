@@ -25,12 +25,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 $tasks = array(
-        array(
-                'classname' => 'local_competvetsuivi\\task\\userdata_csv_upload',
-                'blocking' => 0,
-                'minute' => '5', // Might be changed if the volume of data becomes huge
-                'hour' => '*',
-                'day' => '*',
-                'month' => '*',
-        )
+    array(
+        'classname' => 'local_competvetsuivi\\task\\userdata_csv_upload',
+        'blocking' => 0,
+        'minute' => '5', // Might be changed if the volume of data becomes huge.
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+    )
 );

@@ -25,6 +25,8 @@
 
 namespace local_competvetsuivi;
 
+defined('MOODLE_INTERNAL') || die();
+
 use local_competvetsuivi\matrix\matrix;
 
 class utils {

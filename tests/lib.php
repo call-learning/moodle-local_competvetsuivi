@@ -40,10 +40,10 @@ function load_data_from_json_fixtures($fixturepath) {
             $generatorfn = "create_$tablename";
             $records = json_decode(file_get_contents($filename), true);
             if ($tablename == 'matrix_comp_ue') {
-                $generator->create_matrix_comp_ue_bulk($records); // Create the entities in bulk mode
+                $generator->create_matrix_comp_ue_bulk($records); // Create the entities in bulk mode.
             } else {
                 foreach ($records as $r) {
-                    $generator->$generatorfn($r); // Create the entity
+                    $generator->$generatorfn($r); // Create the entity.
                 }
             }
         }
@@ -79,7 +79,7 @@ class competvetsuivi_tests extends advanced_testcase {
         $this->presetup_data();
         load_data_from_json_fixtures($CFG->dirroot . $this->fixturepath);
 
-        // Setup Matrix as it is used often in tests
+        // Setup Matrix as it is used often in tests.
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
         $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
 

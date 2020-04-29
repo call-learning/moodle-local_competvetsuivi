@@ -25,6 +25,8 @@
 
 namespace local_competvetsuivi;
 
+defined('MOODLE_INTERNAL') || die();
+
 use cache;
 use local_competvetsuivi\matrix\matrix;
 
@@ -32,27 +34,27 @@ class cacheutils {
 
     public static function get_ue_vs_competencie_hash($matrix, $currentue, $rootcompid, $samesemesteronly) {
         return hash('sha256', strval($matrix->id) . strval($matrix->timemodified) .
-                $currentue->shortname . strval($rootcompid) . strval($samesemesteronly));
+            $currentue->shortname . strval($rootcompid) . strval($samesemesteronly));
     }
 
     public static function get_ue_vs_competencies_percent_hash($matrix, $currentue, $strandids, $rootcompid) {
         $strandstrings = join('', $strandids);
         return hash('sha256', strval($matrix->id) . strval($matrix->timemodified) .
-                $currentue->shortname . $strandstrings . strval($rootcompid));
+            $currentue->shortname . $strandstrings . strval($rootcompid));
     }
 
     public static function get_comp_progress_hash($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
-        /** @var $matrix matrix */
+        /* @var $matrix matrix The related matrix */
         $userdatastring = json_encode($userdata);
         $strandstrings = join('', $strands);
         $uestring = $ueselection ?
-                array_reduce($ueselection, function($acc, $item) {
-                    return $acc . $item->shortname;
-                }, "") : "";
+            array_reduce($ueselection, function($acc, $item) {
+                return $acc . $item->shortname;
+            }, "") : "";
 
         return hash('sha256',
-                strval($matrix->id) . strval($matrix->timemodified) . $currentcomp->shortname . $userdatastring . $strandstrings .
-                $uestring);
+            strval($matrix->id) . strval($matrix->timemodified) . $currentcomp->shortname . $userdatastring . $strandstrings .
+            $uestring);
     }
 
     public static function get($hashkey, $cachetype) {

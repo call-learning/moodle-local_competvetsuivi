@@ -25,11 +25,7 @@ Dans tous les cas cela peut être changé dans les paramètres de la tâche.
 
 Alternativement on peut synchroniser la liste des utilisateurs par le script suivant:
 
-``
-
-    php local/competvetsuivi/cli/uploaduserdata.php --file=<csv file>
-    
-``
+    php local/competvetsuivi/cli/uploaduserdata.php --file=<csv file>  
 
 # Gestion des matrices de compétences
 

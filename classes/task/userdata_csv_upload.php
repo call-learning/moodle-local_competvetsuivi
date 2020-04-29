@@ -25,6 +25,8 @@
 
 namespace local_competvetsuivi\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 use context_system;
 use local_competvetsuivi\userdata;
 use moodle_url;
@@ -50,7 +52,7 @@ class userdata_csv_upload extends \core\task\scheduled_task {
     public function execute() {
         global $CFG;
         if ($CFG->enablecompetvetsuivi) {
-            // TODO: send a message to admin when uploading completed
+            // TODO: send a message to admin when uploading completed.
             static::process_userdata_csv();
         }
     }
@@ -64,7 +66,7 @@ class userdata_csv_upload extends \core\task\scheduled_task {
                     $filetoprocess = $filename;
                     $status = userdata::import_user_data_from_file($filename);
 
-                    // delete the file if imported successfully
+                    // Delete the file if imported successfully.
                     if ($status === true) {
                         unlink($filename);
                     }

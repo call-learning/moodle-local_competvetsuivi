@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -35,14 +34,14 @@ global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_login();
 
-$userid = optional_param('userid', 0,PARAM_INT);
-$matrixid = optional_param('matrixid', 0,PARAM_INT);
+$userid = optional_param('userid', 0, PARAM_INT);
+$matrixid = optional_param('matrixid', 0, PARAM_INT);
 $compidparamname = local_competvetsuivi\renderable\competency_progress_overview::PARAM_COMPID;
 $currentcompid = optional_param($compidparamname, false, PARAM_INT);
 $userid = $userid ? $userid : $USER->id;
 $user = \core_user::get_user($userid);
 
-if(!$matrixid) {
+if (!$matrixid) {
     $matrixid = utils::get_matrixid_for_user($user->id);
     if ($matrixid) {
         print_error('nocohortforuser');
@@ -52,7 +51,7 @@ $matrix = new \local_competvetsuivi\matrix\matrix($matrixid);
 
 // Override pagetype to show blocks properly.
 $header = get_string('matrix:viewdata',
-        'local_competvetsuivi');
+    'local_competvetsuivi');
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title($header);
@@ -65,7 +64,7 @@ $matrix->load_data();
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('matrixviewdatatitle', 'local_competvetsuivi',
-        array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
+    array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
 
 $strandlist = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY);
 $lastseenue = local_competvetsuivi\userdata::get_user_last_ue_name($user->email);
@@ -76,15 +75,15 @@ if ($currentcompid) {
     $currentcomp = $matrix->get_matrix_comp_by_criteria('id', $currentcompid);
 }
 
-$progress_overview = new \local_competvetsuivi\renderable\competency_progress_overview(
-        $currentcomp,
-        $matrix,
-        $strandlist,
-        $userdata,
-        $currentsemester,
-        $userid
+$progressoverview = new \local_competvetsuivi\renderable\competency_progress_overview(
+    $currentcomp,
+    $matrix,
+    $strandlist,
+    $userdata,
+    $currentsemester,
+    $userid
 );
 
 $renderer = $PAGE->get_renderer('local_competvetsuivi');
-echo $renderer->render($progress_overview);
+echo $renderer->render($progressoverview);
 echo $OUTPUT->footer();

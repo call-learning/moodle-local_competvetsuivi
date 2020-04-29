@@ -25,6 +25,8 @@
 
 namespace local_competvetsuivi;
 
+defined('MOODLE_INTERNAL') || die();
+
 use local_competvetsuivi\matrix\matrix;
 
 class ueutils {
@@ -44,7 +46,7 @@ class ueutils {
      */
     public static function get_semester_for_ue($ue, $matrix) {
         $semester = 1;
-        $firstue = ueutils::get_first_ue($matrix);
+        $firstue = self::get_first_ue($matrix);
         $firstueval = intval(substr($firstue->shortname, 2));
         if ($ue) {
             return floor(((intval(substr($ue->shortname, 2)) - $firstueval) / 10) + 1);
@@ -62,8 +64,8 @@ class ueutils {
     public static function get_ues_for_semester($semester, $matrix) {
         $uelist = $matrix->ues;
         return array_filter($uelist, function($ue) use ($semester, $matrix) {
-            // For now it is a guess work but it should be coming from the database as a group of UEs
-            return ueutils::get_semester_for_ue($ue, $matrix) == $semester;
+            // For now it is a guess work but it should be coming from the database as a group of UEs.
+            return self::get_semester_for_ue($ue, $matrix) == $semester;
         });
     }
 
@@ -75,12 +77,12 @@ class ueutils {
     public static function get_semester_count($matrix) {
         $uelist = $matrix->ues;
         $mapsemester = array_map(function($ue) use ($matrix) {
-            return ueutils::get_semester_for_ue($ue, $matrix);
+            return self::get_semester_for_ue($ue, $matrix);
         }, $uelist);
         return count(array_unique($mapsemester));
     }
 
-    const YEAR_START_MONTH = 9; // September
+    const YEAR_START_MONTH = 9; // September.
 
     /**
      * Get current semester from the name (shortname) of the last seen UC/UE
@@ -93,7 +95,7 @@ class ueutils {
         $matrixues = $matrix->get_matrix_ues();
         $semester = 1;
         if ($lastseenuesn) {
-            // Make sure this UE belongs to the matrix
+            // Make sure this UE belongs to the matrix.
             $foundue = null;
             foreach ($matrixues as $ue) {
                 if ($lastseenuesn == $ue->shortname) {
@@ -102,7 +104,7 @@ class ueutils {
                 }
             }
             if ($foundue) {
-                $semester = ueutils::get_semester_for_ue($ue, $matrix);
+                $semester = self::get_semester_for_ue($ue, $matrix);
             }
 
         }
@@ -121,31 +123,30 @@ class ueutils {
      * @return array
      */
     public static function get_ue_vs_competencies($matrix, $currentue, $rootcompid = 0, $samesemesteronly = false) {
-        // Deal with cache
+        // Deal with cache.
         $hash = cacheutils::get_ue_vs_competencie_hash($matrix, $currentue, $rootcompid, $samesemesteronly);
         $cachedvalue = cacheutils::get($hash, 'ue_vs_comp');
         if ($cachedvalue) {
             return $cachedvalue;
         }
-        // Deal with cache
-        /** @var $matrix matrix */
+        // Deal with cache.
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
-        // Case it is a leaf competency
+        // Case it is a leaf competency.
         if ($rootcompid && !$allcomps) {
             $allcomps = [ $matrix->get_matrix_competencies()[$rootcompid] ];
         }
 
         $compuestrandvalues = [];
 
-        // Restrict UE to semester or not
+        // Restrict UE to semester or not.
         if ($samesemesteronly) {
             $semester = self::get_semester_for_ue($currentue, $matrix);
             $allues = self::get_ues_for_semester($semester, $matrix);
         } else {
             $allues = $matrix->get_matrix_ues();
         }
-        // Go through all competencies and find out about the contribution of each UE to this competency
+        // Go through all competencies and find out about the contribution of each UE to this competency.
         foreach ($allcomps as $comp) {
             if (!key_exists($comp->id, $compuestrandvalues)) {
                 $compuestrandvalues[$comp->id] = [];
@@ -164,20 +165,20 @@ class ueutils {
                 }
             }
         }
-        // Now calculate the results for each comp
+        // Now calculate the results for each comp.
         $results = [];
         foreach ($allcomps as $comp) {
             // Now we have the max value for each ue and each strand, we calculate the range (0, max)
-            // First initialize the array
+            // First initialize the array.
             $maxuevalues = array_fill_keys(array_keys(matrix::MATRIX_COMP_TYPE_NAMES), 0);
-            // Then for each UE add its contribution to the semester/cursus so we have the max contributed
+            // Then for each UE add its contribution to the semester/cursus so we have the max contributed.
             $maxuevalues = array_reduce($compuestrandvalues[$comp->id], function($carry, $item) {
                 foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
                     $carry[$strandid] += $item[$strandid];
                 }
                 return $carry;
             }, $maxuevalues);
-            // Now for the current UE, just calculate its contribution
+            // Now for the current UE, just calculate its contribution.
             foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
                 $results[$comp->id][$strandid] =
                         $maxuevalues[$strandid] ?
@@ -185,9 +186,9 @@ class ueutils {
             }
         }
 
-        // Deal with cache
+        // Deal with cache.
         $isset = cacheutils::set('ue_vs_comp', $hash, $results);
-        // Deal with cache
+        // Deal with cache.
         return $results;
     }
 
@@ -197,28 +198,31 @@ class ueutils {
      * We calculate for each strand the total contribution and we highlight the highest value
      * The other strands will be respresented as a percentage of this value
      * TODO : Implements Caching
+     *
      * @param $matrix
      * @param $currentue
      * @param $strandids
      * @param int $rootcompid
      * @return \stdClass
+     * @throws \dml_exception
+     * @throws matrix\matrix_exception
      */
     public static function get_ue_vs_competencies_percent($matrix, $currentue, $strandids, $rootcompid = 0) {
 
-        // Deal with cache
+        // Deal with cache.
         $hash = cacheutils::get_ue_vs_competencies_percent_hash($matrix, $currentue, $strandids, $rootcompid);
         $cachedvalue = cacheutils::get($hash, 'ue_vs_comp_pc');
         if ($cachedvalue) {
             return $cachedvalue;
         }
-        // Deal with cache
+        // Deal with cache.
 
-        /** @var $matrix matrix */
+        /* @var $matrix matrix The matrix to be checked*/
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
         $compuevalues = [];
 
-        // Go through all competencies and strands and find out about the contribution of the UE to this competency
+        // Go through all competencies and strands and find out about the contribution of the UE to this competency.
         $maxval = 0;
 
         foreach ($allcomps as $comp) {
@@ -251,11 +255,11 @@ class ueutils {
             return $results; // Nothing if no max val attained.
         }
         foreach ($compuevalues as $compid => $strandvalues) {
-            // Get the max value across all strands
+            // Get the max value across all strands.
             $totalforcomp = array_sum($strandvalues);
             $compvalue = new \stdClass();
             $compvalue->val = $totalforcomp / $maxval;
-            if ($compvalue->val > 0) { // Remove 0 values
+            if ($compvalue->val > 0) { // Remove 0 values.
                 $compvalue->strandvals = [];
                 foreach ($strandvalues as $strandid => $strandtotal) {
                     $compvalue->strandvals[$strandid] = new \stdClass();
@@ -263,7 +267,7 @@ class ueutils {
                     $compvalue->strandvals[$strandid]->type = $strandid;
                     $compvalue->strandvals[$strandid]->patternindex = $strandid;
                 }
-                $compvalue->colorindex = $index; // Index for color => this works because get_child_competencies orders by id
+                $compvalue->colorindex = $index; // Index for color => this works because get_child_competencies orders by id.
                 $compvalue->fullname = $allcomps[$compid]->fullname;
                 $compvalue->shortname = $allcomps[$compid]->shortname;
                 $results->compsvalues[$compid] = $compvalue;
@@ -271,9 +275,9 @@ class ueutils {
             $index++;
         }
 
-        // Deal with cache
+        // Deal with cache.
         $isset = cacheutils::set('ue_vs_comp_pc', $hash, $results);
-        // Deal with cache
+        // Deal with cache.
         return $results;
     }
 }

@@ -31,7 +31,7 @@ if ($hassiteconfig) {
             get_string('competvetmanagement', 'local_competvetsuivi')
     );
 
-    // General settings
+    // General settings.
     $pagedesc = get_string('competvetgeneralsettings', 'local_competvetsuivi');
     $generalsettingspage = new admin_settingpage('competvetgeneral',
             $pagedesc,
@@ -50,7 +50,7 @@ if ($hassiteconfig) {
     );
     $generalsettingspage->add($questionbankcategoryname);
 
-    // Progress & Doghnut chart height
+    // Progress & Doghnut chart height.
     $settingname = get_string('progresschartheight', 'local_competvetsuivi');
     $settingdescription = get_string('progresschartheight_desc', 'local_competvetsuivi');
     $settingdefault = 108;
@@ -80,7 +80,7 @@ if ($hassiteconfig) {
 
     $compvetmanagement->add('competvetmanagement', $generalsettingspage);
 
-    // Data management page
+    // Data management page.
     $pagedesc = get_string('competvetuserdatamgmt', 'local_competvetsuivi');
     $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/userdata.php');
     $compvetmanagement->add('competvetmanagement',
@@ -93,7 +93,7 @@ if ($hassiteconfig) {
             )
     );
 
-    // Matrix Management page
+    // Matrix Management page.
     $pagedesc = get_string('managematrix', 'local_competvetsuivi');
     $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
 
@@ -111,7 +111,7 @@ if ($hassiteconfig) {
         $ADMIN->add('root', $compvetmanagement);
     }
 
-    // Create a global Advanced Feature Toggle
+    // Create a global Advanced Feature Toggle.
     $optionalsubsystems = $ADMIN->locate('optionalsubsystems');
     $optionalsubsystems->add(new admin_setting_configcheckbox('enablecompetvetsuivi',
                     new lang_string('enablecompetvetsuivi', 'local_competvetsuivi'),

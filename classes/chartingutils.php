@@ -25,6 +25,8 @@
 
 namespace local_competvetsuivi;
 
+defined('MOODLE_INTERNAL') || die();
+
 use local_competvetsuivi\matrix\matrix;
 
 class chartingutils {
@@ -39,40 +41,40 @@ class chartingutils {
      */
     public static function get_comp_progress($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
 
-        // Deal with cache
+        // Deal with cache.
         $hash = cacheutils::get_comp_progress_hash($matrix, $currentcomp, $userdata, $strands, $ueselection);
         $cachedvalue = cacheutils::get($hash, 'comp_progress');
         if ($cachedvalue) {
             return $cachedvalue;
         }
-        // Deal with cache
+        // Deal with cache.
 
-        // For each competency regroup all finished ues and values
+        // For each competency regroup all finished ues and values.
         $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $currentcomp, $userdata, $ueselection, true);
         $progressperstrand = [];
         $maxperstrand = [];
         foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypeid => $comptypname) {
             if (key_exists($comptypeid, $possiblevsactual)
-                    && (in_array($comptypeid, $strands)
-                            || empty($strands))) {
+                && (in_array($comptypeid, $strands)
+                    || empty($strands))) {
                 $progressperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
-                        function($acc, $val) use ($comptypeid) {
-                            return $acc + $val->possibleval * $val->userval; // Previous value
-                        },
-                        0);
+                    function($acc, $val) use ($comptypeid) {
+                        return $acc + $val->possibleval * $val->userval; // Previous value.
+                    },
+                    0);
 
                 $maxperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
-                        function($acc, $val) use ($comptypeid) {
-                            return $acc + $val->possibleval; // Previous value
-                        },
-                        0);
+                    function($acc, $val) use ($comptypeid) {
+                        return $acc + $val->possibleval; // Previous value.
+                    },
+                    0);
 
             }
         }
         $returnvalue = array($progressperstrand, $maxperstrand);
-        // Deal with cache
-        $isset = cacheutils::set('comp_progress', $hash, $returnvalue);
-        // Deal with cache
+        // Deal with cache.
+        cacheutils::set('comp_progress', $hash, $returnvalue);
+        // Deal with cache.
         return $returnvalue;
     }
 
@@ -81,6 +83,7 @@ class chartingutils {
     /**
      * Get the progress in each UE/Semester and place markers accordingly
      * TODO : Implements Caching
+     *
      * @param $matrix
      * @param $comp
      * @param $strandlist
@@ -90,18 +93,19 @@ class chartingutils {
      * @return array
      */
     public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester,
-            $userselftestresults = null) {
+        $userselftestresults = null) {
         $alldata = [];
 
-        // Init array
+        // Init array.
         $userprogress = array_fill_keys($strandlist, []);
         $maxprogress = array_fill_keys($strandlist, []);;
         $semestercount = ueutils::get_semester_count($matrix);
-        // We get the cumulated progress for each semester (if they have any progress) with a marker for the maximum possible progress
+        // We get the cumulated progress for each semester
+        // (if they have any progress) with a marker for the maximum possible progress.
         for ($semester = 1; $semester <= $semestercount; $semester++) {
             $ueselection = ueutils::get_ues_for_semester($semester, $matrix);
             list($progressspertrand, $maxperstrand) =
-                    chartingutils::get_comp_progress($matrix, $comp, $userdata, $strandlist, $ueselection);
+                self::get_comp_progress($matrix, $comp, $userdata, $strandlist, $ueselection);
             foreach ($strandlist as $comptypeid) {
                 $userprogress[$comptypeid][$semester] = $progressspertrand[$comptypeid];
                 $maxprogress[$comptypeid][$semester] = $maxperstrand[$comptypeid];
@@ -111,7 +115,7 @@ class chartingutils {
         foreach ($strandlist as $comptypeid) {
             $data = new \stdClass();
             $data->markers = [];
-            // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated)
+            // Now we calculate the results per strand in percentage as well as the markers (semesters cumulated).
             $res = new \stdClass();
             $res->label = matrix::comptype_to_string($comptypeid);
             $res->type = $comptypeid;
@@ -124,7 +128,7 @@ class chartingutils {
             $data->result = $res;
 
             // Now the markers: we place them for each semester that have a max progress > 0 and it is cumulative
-            // Here we will place the markers. Calculation of their position is 100% of the accumulated semester
+            // Here we will place the markers. Calculation of their position is 100% of the accumulated semester.
             $data->markers = [];
             $accumulator = 0;
             $maximumprogress = array_sum($maxprogress[$comptypeid]);
@@ -139,10 +143,10 @@ class chartingutils {
                     $data->markers[] = $marker;
                 }
             }
-            // Add self test results
+            // Add self test results.
             if ($userselftestresults
-                    && key_exists($comptypeid, $userselftestresults)
-                    && key_exists($comp->id, $userselftestresults[$comptypeid])) {
+                && key_exists($comptypeid, $userselftestresults)
+                && key_exists($comp->id, $userselftestresults[$comptypeid])) {
                 $data->starmarkers = [$userselftestresults[$comptypeid][$comp->id]];
             }
             $alldata[] = $data;

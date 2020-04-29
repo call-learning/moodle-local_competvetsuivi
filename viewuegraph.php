@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,14 +30,13 @@ global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_login();
 
-
-$matrixid = optional_param('matrixid', 0,PARAM_INT);
+$matrixid = optional_param('matrixid', 0, PARAM_INT);
 $ueid = optional_param('ueid', 0, PARAM_INT);
 $compidparamname = local_competvetsuivi\renderable\uevscompetency_overview::PARAM_COMPID;
 $currentcompid = optional_param($compidparamname, false, PARAM_INT);
 
-if(!$matrixid || !$DB->record_exists(matrix::CLASS_TABLE, array('id'=>$matrixid))) {
-        print_error('nomatrixgiven');
+if (!$matrixid || !$DB->record_exists(matrix::CLASS_TABLE, array('id' => $matrixid))) {
+    print_error('nomatrixgiven');
 }
 if (!$ueid) {
     print_error('nouegiven');
@@ -47,7 +45,7 @@ $matrix = new matrix($matrixid);
 
 // Override pagetype to show blocks properly.
 $header = get_string('matrixuevscomp:viewgraphs',
-        'local_competvetsuivi');
+    'local_competvetsuivi');
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title($header);
@@ -58,35 +56,33 @@ $PAGE->set_url($pageurl);
 $matrix->load_data();
 $ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
 
-
 $strandlist = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('matrixuevscomptitle', 'local_competvetsuivi',
-        array('matrixname' => $matrix->shortname, 'uename' => $ue->fullname)), 3);
+    array('matrixname' => $matrix->shortname, 'uename' => $ue->fullname)), 3);
 
 $currentcomp = null;
 if ($currentcompid) {
     $currentcomp = $matrix->get_matrix_comp_by_criteria('id', $currentcompid);
 }
 
-$progress_percent =  new \local_competvetsuivi\renderable\uevscompetency_summary(
-        $matrix,
-        $ueid,
-        $currentcomp
+$progresspercent = new \local_competvetsuivi\renderable\uevscompetency_summary(
+    $matrix,
+    $ueid,
+    $currentcomp
 );
 
-$progress_overview = new \local_competvetsuivi\renderable\uevscompetency_overview(
-        $matrix,
-        $ueid,
-        $strandlist,
-        $currentcomp
+$progressoverview = new \local_competvetsuivi\renderable\uevscompetency_overview(
+    $matrix,
+    $ueid,
+    $strandlist,
+    $currentcomp
 );
 
 $renderer = $PAGE->get_renderer('local_competvetsuivi');
 
-echo $renderer->render($progress_percent);
-echo $renderer->render($progress_overview);
-
+echo $renderer->render($progresspercent);
+echo $renderer->render($progressoverview);
 
 echo $OUTPUT->footer();
