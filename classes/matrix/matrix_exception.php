@@ -17,7 +17,7 @@
 /**
  * Exception for matrix related operation
  *
- * @package     local_competvetsuivi
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,8 +26,11 @@ namespace local_competvetsuivi\matrix;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class to represent a matrix
+ * Class matrix_exception
  *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix_exception extends \moodle_exception {
 }

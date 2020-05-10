@@ -50,6 +50,11 @@ use local_competvetsuivi\ueutils;
  */
 class chartingutils_test extends competvetsuivi_tests {
 
+    /**
+     * Check competencies results
+     * @param array $computedresults
+     * @throws \local_competvetsuivi\matrix\matrix_exception
+     */
     protected function assert_competencies_results($computedresults) {
         foreach ($computedresults as $compname => $expectedresults) {
             $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
@@ -197,6 +202,12 @@ class chartingutils_test extends competvetsuivi_tests {
         $this->assert_competencies_results_marker($computedresults, $markers, $data);
     }
 
+    /**
+     * Assert that marker has the right position
+     * @param array $computedresults
+     * @param array $markers
+     * @param array $data
+     */
     protected function assert_competencies_results_marker($computedresults, $markers, $data) {
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_KNOWLEDGE], $data[0]->result->value);
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_ABILITY], $data[1]->result->value);

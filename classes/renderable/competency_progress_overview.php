@@ -17,8 +17,7 @@
 /**
  * Progress bar item
  *
- * @package     local_competvetsuivi
- * @category    chart item renderable
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,10 +33,36 @@ use templatable;
 use local_competvetsuivi\chartingutils;
 use local_competvetsuivi\matrix\matrix;
 
+/**
+ * Class competency_progress_overview
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class competency_progress_overview extends graph_overview_base implements \renderable, templatable {
-    const PARAM_COMPID = 'competencypid'; // Used to build URL (see graph_overview_base methods).
+    /**
+     *  Used to build URL (see graph_overview_base methods).
+     */
+    const PARAM_COMPID = 'competencypid';
+
+    /**
+     * @var array current results
+     */
     protected $studentautoevalresults;
 
+    /**
+     * competency_progress_overview constructor.
+     *
+     * @param stdClass $rootcomp
+     * @param matrix $matrix
+     * @param array $strandlist
+     * @param stdClass $userdata
+     * @param int $currentsemester
+     * @param int $userid
+     * @param null $linkbuildercallback
+     * @throws \dml_exception
+     */
     public function __construct(
         $rootcomp,
         $matrix,

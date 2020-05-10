@@ -1,4 +1,4 @@
-@local_competvetsuivi @javascript @_file_upload
+@local @local_competvetsuivi @javascript @_file_upload
 Feature: As an admin I can upload a new matrix and refresh its data
 
   Background:

@@ -28,7 +28,9 @@ global $CFG;
 /**
  * Add Form
  *
- * @package local_competvetsuivi
+ * @package     local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_edit_form extends moodleform {
 

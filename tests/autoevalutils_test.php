@@ -50,12 +50,26 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class autoevalutils_test extends competvetsuivi_tests {
+    /**
+     * @var array $courses sample courses
+     */
     protected $courses = [];
+    /**
+     * @var array $courses sample quiz
+     */
     protected $quizzes = [];
+    /**
+     * @var array $courses sample questions
+     */
     protected $questions = [];
 
+    /**
+     * Number of question per quiz
+     */
     const COURSE_QUIZ_NB = 2;
-    // Responses to the questions quiz.
+    /**
+     * Responses to the questions quiz.
+     */
     const QBANK_QUESTION_COMP = ['COPREV' => 'One',
         'COPREV.1.1' => 'Two',
         'COPREV.1.2' => 'Four',
@@ -65,8 +79,17 @@ class autoevalutils_test extends competvetsuivi_tests {
         'COPREV.3.1' => 'Two',
         'COPREV.3.4' => 'Four',
     ];
+    /**
+     * Possible answers
+     */
     const QUESTION_POSSIBLE_ANSWERS = array('One' => '1', 'Two' => '0.75', 'Three' => '0.5', 'Four' => '0.25', 'Five' => '0');
 
+    /**
+     * Get sample question data
+     *
+     * @param \stdClass $competency
+     * @return stdClass
+     */
     protected static function get_mc_question_data($competency) {
         global $USER;
         $qdata = new stdClass();
@@ -153,6 +176,13 @@ class autoevalutils_test extends competvetsuivi_tests {
     }
 
     /**
+     * Create question
+     *
+     * @param \stdClass $questiongenerator
+     * @param \stdClass $competency
+     * @param int $categoryid
+     * @return object
+     * @throws coding_exception
      */
     protected function create_question($questiongenerator, $competency, $categoryid) {
         $fromform = $this->get_mc_question_data($competency);
@@ -171,6 +201,12 @@ class autoevalutils_test extends competvetsuivi_tests {
         return $question;
     }
 
+    /**
+     * Setup the test
+     * @throws \local_competvetsuivi\matrix\matrix_exception
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     public function setUp() {
         global $DB;
         global $CFG;

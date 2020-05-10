@@ -17,8 +17,7 @@
 /**
  * Progress bar item : UC during whole year
  *
- * @package     local_competvetsuivi
- * @category    chart item renderable
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,12 +31,36 @@ use renderer_base;
 use stdClass;
 use templatable;
 
+/**
+ * Class uevscompetency_summary
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class uevscompetency_summary extends graph_overview_base implements \renderable, templatable {
-    const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait).
+    /**
+     * Used to build URL (see graph_overview_trait).
+     */
+    const PARAM_COMPID = 'competencyvsueid';
 
+    /**
+     * @var \stdClass $ue current ue
+     */
     protected $ue = null;
+    /**
+     * @var stdClass|null
+     */
     protected $chartdata = null;
 
+    /**
+     * uevscompetency_summary constructor.
+     *
+     * @param matrix $matrix
+     * @param int $ueid
+     * @param null $rootcomp
+     * @throws \dml_exception
+     */
     public function __construct(
             $matrix,
             $ueid,

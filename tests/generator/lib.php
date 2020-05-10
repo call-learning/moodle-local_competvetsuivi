@@ -18,7 +18,7 @@
  * Data generator for the competvetsuivi elements
  *
  * @package     local_competvetsuivi
- * @category    generator
+ * @category    test
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,12 +28,22 @@ defined('MOODLE_INTERNAL') || die();
  * Compet vet suivi generator
  *
  * @package     local_competvetsuivi
- * @category    generator
+ * @category    test
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_competvetsuivi_generator extends testing_module_generator {
 
+    /**
+     * Create and insert default data
+     *
+     * @param \stdClass $record
+     * @param array $defaultvalue
+     * @param string $tablename
+     * @return bool|int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     protected function create_and_insert_data($record, $defaultvalue, $tablename) {
         global $DB;
         $record = (array) $record;
@@ -72,6 +82,14 @@ class local_competvetsuivi_generator extends testing_module_generator {
         return $returnedid;
     }
 
+    /**
+     * Create a matrix
+     * @param null $record
+     * @param array|null $options
+     * @return bool|int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function create_matrix($record = null, array $options = null) {
         $defaultsettings = array(
             'fullname' => "",
@@ -82,6 +100,14 @@ class local_competvetsuivi_generator extends testing_module_generator {
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix');
     }
 
+    /**
+     * Creates a matrix UE
+     * @param null $record
+     * @param array|null $options
+     * @return bool|int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function create_matrix_ue($record = null, array $options = null) {
         $defaultsettings = array(
             'fullname' => "",
@@ -91,6 +117,14 @@ class local_competvetsuivi_generator extends testing_module_generator {
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix_ue');
     }
 
+    /**
+     * Create a matrix competency
+     * @param null $record
+     * @param array|null $options
+     * @return bool|int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function create_matrix_comp($record = null, array $options = null) {
         $defaultsettings = array(
             'fullname' => "",
@@ -103,6 +137,14 @@ class local_competvetsuivi_generator extends testing_module_generator {
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix_comp');
     }
 
+    /**
+     * Create a link between comp and ue
+     * @param null $record
+     * @param array|null $options
+     * @return bool|int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function create_matrix_comp_ue($record = null, array $options = null) {
         global $DB;
         $defaultsettings = array(
@@ -119,6 +161,13 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * We use bulk insert here whilst keeping on modifying the data appropriately
      */
 
+    /**
+     * Bulk create comp and ue
+     * @param null $records
+     * @param array|null $options
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function create_matrix_comp_ue_bulk($records = null, array $options = null) {
         global $DB;
         $defaultsettings = array(
@@ -168,6 +217,14 @@ class local_competvetsuivi_generator extends testing_module_generator {
         $DB->insert_records('cvs_matrix_comp_ue', $records, true, true);
     }
 
+    /**
+     * Create userdata
+     * @param null $record
+     * @param array|null $options
+     * @return bool|int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function create_userdata($record = null, array $options = null) {
         global $DB;
         $defaultsettings = array(
@@ -178,6 +235,14 @@ class local_competvetsuivi_generator extends testing_module_generator {
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_userdata');
     }
 
+    /**
+     * Create link between cohort and matrix
+     * @param null $record
+     * @param array|null $options
+     * @return bool|int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function create_matrix_cohorts($record = null, array $options = null) {
         $defaultsettings = array(
             'matrixid' => 0,

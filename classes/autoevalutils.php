@@ -18,7 +18,6 @@
  * Auto evaluation utils
  *
  * @package     local_competvetsuivi
- * @category    Autoeval utils
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,13 +29,20 @@ defined('MOODLE_INTERNAL') || die();
 use local_competvetsuivi\matrix\matrix;
 use mod_quiz\question\qubaids_for_users_attempts;
 
+/**
+ * Class autoevalutils
+ *
+ * @package     local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class autoevalutils {
 
     /**
      * Get all question from a specific category shortname. The shortname is trimmed and put to upper
      * case letter before comparison
      *
-     * @param $matrix
+     * @param matrix $matrix
      * @return array
      * @throws \dml_exception
      */
@@ -59,8 +65,8 @@ class autoevalutils {
     /**
      * Return an associative array which can be used to match competency shortname with their respective IDs
      *
-     * @param $matrix
-     * @param $rootcomp
+     * @param matrix $matrix
+     * @param \stdClass $rootcomp
      * @return array
      * @throws matrix\matrix_exception
      */
@@ -80,6 +86,12 @@ class autoevalutils {
         return $compassociation;
     }
 
+    /**
+     * Get mark for question
+     *
+     * @param \stdClass $qa
+     * @return float|int
+     */
     public static function get_question_mark($qa) {
         $markfract = $qa->get_fraction(); // Question fraction is the percentage for this question
         $coef = $qa->get_max_mark(); // This is really the question weight, not the max, the max mark is
@@ -95,8 +107,8 @@ class autoevalutils {
      * children competencies. If the question is asked twice we take the best result.
      * TODO : Implements Caching
      *
-     * @param $userid
-     * @param $matrix
+     * @param int $userid
+     * @param matrix $matrix
      * @param null $rootcomp
      * @return array An array indexed by competency id and the numerical result
      * @throws \dml_exception
@@ -155,9 +167,9 @@ class autoevalutils {
     /**
      * Compute the results recursively. If a result already exists, we keep it as is.
      *
-     * @param $currentresultarray
-     * @param $matrix
-     * @param $currentcomp
+     * @param array $currentresultarray
+     * @param matrix $matrix
+     * @param \stdClass $currentcomp
      * @return float|int|mixed
      * @throws \dml_exception
      */

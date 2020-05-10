@@ -51,7 +51,6 @@ require_once(__DIR__ . '/lib.php');
 class matrix_test extends competvetsuivi_tests {
 
     public function test_get_real_value_from_strand() {
-        global $DB;
         $this->resetAfterTest();
         $strandvalues = array(
             array(

@@ -17,7 +17,7 @@
 /**
  * Renderable for list of matrix
  *
- * @package     local_competvetsuivi
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,8 +30,11 @@ use renderer_base;
 use templatable;
 
 /**
- * Class to list all available matrix
+ * Class userdata_log
  *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userdata_log implements renderable, templatable {
 

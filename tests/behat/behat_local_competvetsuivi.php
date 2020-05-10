@@ -18,7 +18,6 @@
  * Additional tests features for competvetsuivis
  *
  * @package     local_competvetsuivi
- * @category    string
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +30,10 @@ require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 /**
  * Steps definitions fo different testing action in the compet vet suivi
+ *
+ * @package     local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class behat_local_competvetsuivi extends behat_base {
 }

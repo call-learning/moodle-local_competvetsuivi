@@ -18,7 +18,6 @@
  * Generic tools
  *
  * @package     local_competvetsuivi
- * @category    generic tools
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +28,25 @@ defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
 
+/**
+ * Class utils
+ *
+ * @package     local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class utils {
+    /**
+     * Get possible vs actual value
+     *
+     * @param matrix $matrix
+     * @param \stdClass $comp
+     * @param \stdClass $userdata
+     * @param null $ueselection
+     * @param bool $recursive
+     * @return array
+     * @throws matrix\matrix_exception
+     */
     public static function get_possible_vs_actual_values(matrix $matrix, $comp, $userdata, $ueselection = null,
             $recursive = false) {
         if (!$ueselection) {
@@ -64,7 +81,7 @@ class utils {
      * We take the first one in the list but really we should throw an error or a warning
      * TODO: Alert admin when user are assigned to several cohorts
      *
-     * @param $userid
+     * @param int $userid
      * @return matrix id of the first matching matrix or false if not found
      * @throws \coding_exception
      * @throws \dml_exception
@@ -95,8 +112,8 @@ class utils {
     /**
      * Assign a cohort to a matrix if it is not already assigned to
      *
-     * @param $matrixid
-     * @param $cohortid
+     * @param int $matrixid
+     * @param int $cohortid
      * @throws \dml_exception
      */
     public static function assign_matrix_cohort($matrixid, $cohortid) {
@@ -109,8 +126,17 @@ class utils {
         }
     }
 
+    /**
+     * Default shortname for question bank
+     */
     const DEFAULT_QUESTION_BANK_CATEGORY_SN = 'COMPETVETSUIVI';
 
+    /**
+     * Get question bank category name
+     *
+     * @return bool|mixed|object|string
+     * @throws \dml_exception
+     */
     public static function get_default_question_bank_category_name() {
         global $CFG;
         $globalcfg = get_config('local_competvetsuivi', 'cvsquestionbankdefaultcategoryname');

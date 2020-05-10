@@ -17,7 +17,7 @@
 /**
  * Matrix Class
  *
- * @package     local_competvetsuivi
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,17 +29,44 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class to represent a matrix
  *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix {
+    /**
+     * Possible UC prefix
+     */
     const UC_PREFIX = ['UC', 'UE'];
-    const UC_REAL_PREFIX = 'UC'; // We use this prefix.
+    /**
+     * We convert the UC name to this prefix
+     */
+    const UC_REAL_PREFIX = 'UC';
+    /**
+     * Prefix of the matrice sheet (should be starting with...)
+     */
     const MATRIX_SHEET_PREFIX = 'matrice';
 
+    /**
+     * Type knowledge
+     */
     const MATRIX_COMP_TYPE_KNOWLEDGE = 1;
+    /**
+     * Type ability
+     */
     const MATRIX_COMP_TYPE_ABILITY = 2;
+    /**
+     * Type objective
+     */
     const MATRIX_COMP_TYPE_OBJECTIVES = 3;
+    /**
+     * Type evaluation
+     */
     const MATRIX_COMP_TYPE_EVALUATION = 4;
 
+    /**
+     * Array of all the name associated with shortname
+     */
     const MATRIX_COMP_TYPE_NAMES = array(
         self::MATRIX_COMP_TYPE_KNOWLEDGE => 'knowledge',
         self::MATRIX_COMP_TYPE_ABILITY => 'ability',
@@ -47,8 +74,11 @@ class matrix {
         self::MATRIX_COMP_TYPE_EVALUATION => 'evaluation',
     );
 
-    // Warning: max values are not the one we think: they are from max to min
-    // (so 1 is max, 2, is middle and 3 is min, 0 is min too!!).
+    /**
+     * Array of possible strands and associated values
+     * Warning: max values are not the one we think: they are from max to min (so 1 is max, 2, is
+     * middle and 3 is min, 0 is min too!!).
+     */
     const MAX_VALUE_PER_STRAND = [
         self::MATRIX_COMP_TYPE_KNOWLEDGE => 3, // This is the maximum value possible.
         self::MATRIX_COMP_TYPE_ABILITY => 30,
@@ -56,6 +86,9 @@ class matrix {
         self::MATRIX_COMP_TYPE_EVALUATION => 3000
     ];
 
+    /**
+     * Table name
+     */
     const CLASS_TABLE = 'cvs_matrix';
 
     /** @var integer */
@@ -86,13 +119,23 @@ class matrix {
      */
     public $compuevalues;
 
+    /**
+     * Is data loaded
+     * @var bool
+     */
     protected $dataloaded = false;
 
-    protected $compdirectchildarray = []; // To optimise the retrieval of direct children competencies.
+    /**
+     * The cached child array to optimise the retrieval of direct children competencies.
+     * @var array
+     */
+    protected $compdirectchildarray = [];
 
     /**
      * Constructor.
      *
+     * @param int $matrixid
+     * @throws \dml_exception
      */
     public function __construct($matrixid) {
         global $DB;
@@ -104,6 +147,13 @@ class matrix {
         $this->timemodified = $matrix->timemodified;
     }
 
+    /**
+     * Delete all entities associated with this matrix
+     *
+     * @param bool $withdependencies
+     * @throws \dml_exception
+     * @throws \dml_transaction_exception
+     */
     public function delete($withdependencies = false) {
         global $DB;
         // Start a delegated transation here so it is all or nothing.
@@ -128,6 +178,10 @@ class matrix {
         $DB->commit_delegated_transaction($delegatedtransaction);
     }
 
+    /**
+     * Delete dependencies associated with this matrix
+     * @throws \dml_exception
+     */
     protected function delete_matrix_dependencies() {
         global $DB;
         $DB->delete_records_select('cvs_matrix_comp_ue',
@@ -143,6 +197,9 @@ class matrix {
         $DB->delete_records('cvs_matrix_cohorts', array('matrixid' => $this->id));
     }
 
+    /**
+     * Update DB record
+     */
     public function save() {
         global $DB;
         $this->timemodified = time();
@@ -204,7 +261,7 @@ class matrix {
     /**
      * Make sure we always have the same name for the UC (UC as prefix for now)
      *
-     * @param $ucname
+     * @param string $ucname
      * @return string
      */
     public static function normalize_uc_name($ucname) {
@@ -218,8 +275,8 @@ class matrix {
      * Get matching UE per search criteria.
      * We take care of the special case for shortname where we can either have UC or UE
      *
-     * @param $propertyname
-     * @param $propertyvalue
+     * @param string $propertyname
+     * @param any $propertyvalue
      * @return mixed
      * @throws matrix_exception
      */
@@ -264,8 +321,8 @@ class matrix {
     /**
      * Get matching competency per search criteria.
      *
-     * @param $propertyname
-     * @param $propertyvalue
+     * @param string $propertyname
+     * @param any $propertyvalue
      * @return mixed
      * @throws matrix_exception
      */
@@ -285,6 +342,12 @@ class matrix {
         return reset($matchingcomp);
     }
 
+    /**
+     * Get the associative array from UE
+     * @param int $ueid
+     * @param int $compid
+     * @return array
+     */
     protected function get_associative_array_value_for_ue($ueid, $compid) {
         $currentvalue = [];
         // Because isset && isnull faster than key_exists.
@@ -314,8 +377,8 @@ class matrix {
      * Having a mean or average does not have sense in this. So either a competency has no, some
      * contribution, or full contribution
      *
-     * @param $ueid
-     * @param $compid
+     * @param int $ueid
+     * @param int $compid
      * @param bool $recursive
      * @return mixed
      * @throws matrix_exception
@@ -353,8 +416,8 @@ class matrix {
      *  - Some contribution (value = 2) - 0.5
      *  - Full contribution (value = 1) - 1
      *
-     * @param $ueid
-     * @param $compid
+     * @param int $ueid
+     * @param int $compid
      * @param bool $recursive
      * @return mixed
      * @throws matrix_exception
@@ -399,9 +462,9 @@ class matrix {
     /**
      * Return a numeric value corresponding to the threshold and the strand
      *
-     * @param $matrixvalue
+     * @param int $comptypeid
+     * @param int $currentval
      * @return float|int : 3 or 0 => 0, 2 => 0.5, 1 => 1
-     *
      */
     public static function get_real_value_from_strand($comptypeid, $currentval) {
         $value = 0;
@@ -450,9 +513,10 @@ class matrix {
     /**
      * Get all direct child competencies or direct child competencies
      *
-     * @param $compid
+     * @param int $compid
+     * @param bool $directchildonly
      * @return array
-     * @throws \dml_exception
+     * @throws \dml_exception|matrix_exception
      */
     public function get_child_competencies($compid = 0, $directchildonly = false) {
 
@@ -488,7 +552,7 @@ class matrix {
     /**
      * Get all direct child competencies or direct child competencies
      *
-     * @param $compid
+     * @param int $comp
      * @return bool
      * @throws \dml_exception
      */
@@ -519,20 +583,30 @@ class matrix {
         return $rootcompetency;
     }
 
+    /**
+     * Competency type to fullname string
+     *
+     * @param int $comptypeid
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     static public function comptype_to_string($comptypeid) {
         return get_string('matrixcomptype:' . self::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');
     }
 
+    /**
+     * Maximum in the fullname (rest will go in description)
+     */
     const MAX_FULLNAME_SIZE = 255;
 
     /**
      * Import a matrix from a file and fills the relevant tables
      *
-     * @param $filepath
-     * @param $hash
-     * @param $fullname
-     * @param $shortname
-     * @param $matrixobject existing matrix object as a generic stdClass
+     * @param string $filepath
+     * @param string $hash
+     * @param string $fullname
+     * @param string $shortname
+     * @param \stdClass $matrixobject existing matrix object as a generic stdClass
      * @return array  a tuple (matrix, errors)
      * @throws \PHPExcel_Reader_Exception
      * @throws \dml_exception
@@ -662,8 +736,10 @@ class matrix {
     /**
      * Build up UE information and return the first column where an UE is found
      *
-     * @param $firstrow
-     * @param $matrixobject
+     * @param \stdClass $firstrow (PHPExcel_Worksheet_RowIterator)
+     * @param \stdclass $matrixobject
+     * @param array $columnsvsue
+     * @return array
      * @throws \dml_exception
      */
     protected static function get_matrix_layout_from_file($firstrow, &$matrixobject, &$columnsvsue) {
@@ -722,6 +798,12 @@ class matrix {
         return array($firstuecolumn, $lastuecolumn, $uecount);
     }
 
+    /**
+     * Get all possible competency types names
+     *
+     * @return array
+     * @throws \coding_exception
+     */
     public static function get_all_competency_types_names() {
         $competenciestypesnames = [];
         foreach (self::MATRIX_COMP_TYPE_NAMES as $comptypname) {
@@ -730,6 +812,13 @@ class matrix {
         return $competenciestypesnames;
     }
 
+    /**
+     * Get a competency type name
+     *
+     * @param int $competencytypeid
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public static function get_competency_type_name($competencytypeid) {
         $comptypename = "";
         if (key_exists($competencytypeid, self::MATRIX_COMP_TYPE_NAMES)) {

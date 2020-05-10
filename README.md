@@ -1,5 +1,7 @@
 # Compet Vet Suivi Local Plugin
 
+[![Build Status](https://travis-ci.org/call-learning/moodle-local_competvetsuivi.svg?branch=master)](https://travis-ci.org/call-learning/moodle-local_competvetsuivi)
+
 Ce plugin permet de calculer les compétences acquises pour un utilisateur en fonction des UE complététees et d'une matrice de compétences.
 
 Les données concernant les utilisateurs (completion des UEs) peuvent être synchronées en pointant sur un répertoire dans

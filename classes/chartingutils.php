@@ -18,7 +18,6 @@
  * Generic tools
  *
  * @package     local_competvetsuivi
- * @category    charting tools
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,16 +27,26 @@ namespace local_competvetsuivi;
 defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
+use stdClass;
 
+/**
+ * Class chartingutils
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class chartingutils {
     /**
      * Get  progress vs possible value per strand for the selection of UEs
      *
-     * @param $matrix
-     * @param $currentcomp
-     * @param $userdata
+     * @param matrix $matrix
+     * @param \stdClass $currentcomp
+     * @param \stdClass $userdata
      * @param array $strands : array of comptype id
+     * @param array $ueselection
      * @return array
+     * @throws \coding_exception
      */
     public static function get_comp_progress($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
 
@@ -78,17 +87,20 @@ class chartingutils {
         return $returnvalue;
     }
 
+    /**
+     * Initial semester (Year 3)
+     */
     const INITIAL_SEMESTER = 5;
 
     /**
      * Get the progress in each UE/Semester and place markers accordingly
      * TODO : Implements Caching
      *
-     * @param $matrix
-     * @param $comp
-     * @param $strandlist
-     * @param $userdata
-     * @param $currentsemester
+     * @param matrix $matrix
+     * @param stdClass $comp
+     * @param array $strandlist
+     * @param stdClass $userdata
+     * @param int $currentsemester
      * @param null $userselftestresults
      * @return array
      */

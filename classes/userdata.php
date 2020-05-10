@@ -18,7 +18,6 @@
  * User data class
  *
  * @package     local_competvetsuivi
- * @category    User data tools
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,15 +28,28 @@ defined('MOODLE_INTERNAL') || die();
 use csv_import_reader;
 use local_competvetsuivi\matrix\matrix;
 
+/**
+ * Class userdata
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class userdata {
 
+    /**
+     * The name of the email column in the csv
+     */
     const MAIL_COLUMN_NAME = 'Mail'; // TODO add this as a plugin parameter.
+    /**
+     * The name of the column if present in CSV
+     */
     const LAST_UNIT_SEEN = 'LastUnitSeen'; // TODO This will be the new column if we need to check for last seen unit.
 
     /**
      * Do a couple of checks on the file at hand to see if it contains the right data
      *
-     * @param $filename
+     * @param string $filename
      * @return bool
      */
     public static function check_file_valid($filename) {
@@ -51,7 +63,7 @@ class userdata {
      *
      * If errors are not fatal, then just stack them up in an array of messages and parameter for storage or later display
      *
-     * @param $filename
+     * @param string $filename
      * @param string $separator
      * @return true or a list of error (langstrings + eventual parameters) as an array
      * @throws \coding_exception
@@ -143,6 +155,12 @@ class userdata {
         return $returnvalue;
     }
 
+    /**
+     * Check that we have every needed columns
+     *
+     * @param array $columnsheaders
+     * @return bool|string
+     */
     public static function check_columns($columnsheaders) {
         if (!in_array(self::MAIL_COLUMN_NAME, $columnsheaders)) {
             return self::MAIL_COLUMN_NAME;
@@ -150,6 +168,12 @@ class userdata {
         return true;
     }
 
+    /**
+     * Retrieve user data from his/her email (the key)
+     * @param string $useremail
+     * @return bool|mixed
+     * @throws \dml_exception
+     */
     public static function get_user_data($useremail) {
         global $DB;
         $data = $DB->get_record('cvs_userdata', array('useremail' => $useremail));
@@ -159,6 +183,13 @@ class userdata {
         return false;
     }
 
+    /**
+     * Get last viewed UE name
+     *
+     * @param string $useremail
+     * @return string
+     * @throws \dml_exception
+     */
     public static function get_user_last_ue_name($useremail) {
         global $DB;
         $data = $DB->get_record('cvs_userdata', array('useremail' => $useremail));
@@ -169,6 +200,12 @@ class userdata {
         return "";
     }
 
+    /**
+     * Remove possible spaces in header
+     *
+     * @param array $columnheaders
+     * @throws \coding_exception
+     */
     protected static function trim_headers(&$columnheaders) {
         foreach ($columnheaders as $i => $h) {
             $h = trim($h); // Remove whitespace.

@@ -17,8 +17,7 @@
 /**
  * Progress bar item
  *
- * @package     local_competvetsuivi
- * @category    chart item renderable
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,17 +28,55 @@ defined('MOODLE_INTERNAL') || die();
 use local_competvetsuivi\matrix\matrix;
 use renderer_base;
 
+/**
+ * Class graph_overview_base
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class graph_overview_base {
+    /**
+     * Used to build URL (see graph_overview_trait). This is to be overriden
+     */
     const PARAM_COMPID = 'TOBEDEFINED'; // Used to build URL (see graph_overview_trait).
+    /**
+     * Max Fullname length
+     */
     const MAX_FULLNAME_LN = 100;
-
+    /**
+     * @var callable callback function to build links
+     */
     protected $linkbuilder = null;
+    /**
+     * @var \stdClass $rootcomp Root competency
+     */
     public $rootcomp = null;
+    /**
+     * @var array Children competences
+     */
     public $childrencomps = array();
+    /**
+     * @var array all strnads
+     */
     protected $strandlist = null;
+    /**
+     * @var matrix the matrix
+     */
     protected $matrix = null;
+    /**
+     * @var array array of charts
+     */
     public $charts = array();
 
+    /**
+     * Init the bar chart from values
+     *
+     * @param matrix $matrix
+     * @param array $strandlist
+     * @param null $rootcomp
+     * @param null $linkbuildercallback
+     */
     public function init_bar_chart(
         $matrix,
         $strandlist,
@@ -58,12 +95,25 @@ abstract class graph_overview_base {
         $this->childrencomps = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0, true);
     }
 
+    /**
+     * Export the strand list for renderer
+     *
+     * @param \stdClass $exportablecontext
+     */
     protected function export_strand_list(&$exportablecontext) {
         $exportablecontext->comp_types = array_map(function($comptypeid) {
             return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
         }, $this->strandlist);
     }
 
+    /**
+     * Get exportable content for renderer
+     *
+     * @param renderer_base $output
+     * @return \stdClass
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     protected function get_bar_chart_exportable_context(renderer_base $output) {
         global $FULLME;
         // TODO : fix this, we should have a way to override.

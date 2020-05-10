@@ -18,7 +18,7 @@
  * User upload data task
  *
  * @package     local_competvetsuivi
- * @category    user upload data task
+ * @category    task
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,6 +34,9 @@ use core_user;
 
 /**
  * Check if we need to send meeting reminders to users as a notification
+ * @package     local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userdata_csv_upload extends \core\task\scheduled_task {
 
@@ -41,6 +44,7 @@ class userdata_csv_upload extends \core\task\scheduled_task {
      * Return the task's name as shown in admin screens.
      *
      * @return string
+     * @throws \coding_exception
      */
     public function get_name() {
         return get_string('userdatacsvuploadtask', 'local_competvetsuivi');
@@ -57,6 +61,12 @@ class userdata_csv_upload extends \core\task\scheduled_task {
         }
     }
 
+    /**
+     * Process user data from csv
+     *
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public static function process_userdata_csv() {
         $userdatafilepath = get_config('local_competvetsuivi', 'userdatafilepath');
         if (is_dir($userdatafilepath)) {

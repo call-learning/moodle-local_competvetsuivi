@@ -17,8 +17,7 @@
 /**
  * Progress bar item
  *
- * @package     local_competvetsuivi
- * @category    chart item renderable
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,18 +31,34 @@ use renderer_base;
 use stdClass;
 use templatable;
 
+/**
+ * Class uevscompetency_overview
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class uevscompetency_overview extends graph_overview_base implements \renderable, templatable {
-    const PARAM_COMPID = 'competencyvsueid'; // Used to build URL (see graph_overview_trait).
+    /**
+     * Used to build URL (see graph_overview_trait).
+     */
+    const PARAM_COMPID = 'competencyvsueid';
 
+    /**
+     * @var \stdClass $ue the current ue
+     */
     protected $ue = null;
+    /**
+     * @var bool $samesemesteronly looking at current ue or full semester?
+     */
     protected $samesemesteronly = false;
 
     /**
      * uevscompetency_overview constructor.
      *
-     * @param $matrix
-     * @param $ueid
-     * @param $strandlist
+     * @param matrix $matrix
+     * @param int $ueid
+     * @param array $strandlist
      * @param null $rootcomp
      * @param bool $samesemesteronly
      * @param null $linkbuildercallback

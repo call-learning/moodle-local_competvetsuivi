@@ -17,8 +17,7 @@
 /**
  * Chart Item
  *
- * @package     local_competvetsuivi
- * @category    chart item renderable
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,11 +29,34 @@ use renderer_base;
 use stdClass;
 use templatable;
 
+/**
+ * Class chart_item
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class chart_item implements \renderable, templatable {
+    /**
+     * @var string
+     */
     public $type;
+    /**
+     * @var \stdClass
+     */
     public $data;
+    /**
+     * @var array
+     */
     public $options;
 
+    /**
+     * chart_item constructor.
+     *
+     * @param \stdClass $data
+     * @param string $charttype
+     * @param array $options
+     */
     public function __construct(
         $data,
         $charttype = 'progress',

@@ -18,7 +18,7 @@
  * Task (scheduled) for this module
  *
  * @package     local_competvetsuivi
- * @category    tasks
+ * @category    task
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

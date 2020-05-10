@@ -18,7 +18,6 @@
  * Generic tools
  *
  * @package     local_competvetsuivi
- * @category    generic tools
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,8 +28,20 @@ defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
 
+/**
+ * Class ueutils
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class ueutils {
 
+    /**
+     * Get the first UE
+     * @param matrix $matrix
+     * @return mixed|null
+     */
     public static function get_first_ue($matrix) {
         if (empty($matrix->ues)) {
             return null;
@@ -41,7 +52,8 @@ class ueutils {
     /**
      * Calculate the semester number for the given UE/UC
      *
-     * @param $ue
+     * @param \stdClass $ue
+     * @param matrix $matrix
      * @return float|int
      */
     public static function get_semester_for_ue($ue, $matrix) {
@@ -57,8 +69,8 @@ class ueutils {
     /**
      * Get all UEs/UCs contained in a semester
      *
-     * @param $semester
-     * @param $matrix
+     * @param int $semester
+     * @param matrix $matrix
      * @return array
      */
     public static function get_ues_for_semester($semester, $matrix) {
@@ -72,6 +84,7 @@ class ueutils {
     /**
      * Get the number of semester. This will probably be overrident when using groups
      *
+     * @param matrix $matrix
      * @return int
      */
     public static function get_semester_count($matrix) {
@@ -82,14 +95,18 @@ class ueutils {
         return count(array_unique($mapsemester));
     }
 
+    /**
+     * Starting month (september always)
+     */
     const YEAR_START_MONTH = 9; // September.
 
     /**
      * Get current semester from the name (shortname) of the last seen UC/UE
      *
-     * @param $lastseenuesn: last seen ue shortname
-     * @param $matrix
+     * @param string $lastseenuesn : last seen ue shortname
+     * @param matrix $matrix
      * @return float|int
+     * @throws matrix\matrix_exception
      */
     public static function get_current_semester_index($lastseenuesn, $matrix) {
         $matrixues = $matrix->get_matrix_ues();
@@ -115,12 +132,15 @@ class ueutils {
      * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
      * Results are for each competency and then each strands covered by the UE.
      * We calculate the max value for each ue over the set of subcompetencies
-     * TODO : Implements Caching
-     * @param $matrix : ue
-     * @param $ue : given ue
+     *
+     * @param matrix $matrix : ue
+     * @param \stdClass $currentue
      * @param int $rootcompid root competency id to start with. If null we take the macro competencies
      * @param bool $samesemesteronly only in the same semester
      * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws matrix\matrix_exception
      */
     public static function get_ue_vs_competencies($matrix, $currentue, $rootcompid = 0, $samesemesteronly = false) {
         // Deal with cache.
@@ -197,11 +217,10 @@ class ueutils {
      * Results are for each competency for a given set of strands.
      * We calculate for each strand the total contribution and we highlight the highest value
      * The other strands will be respresented as a percentage of this value
-     * TODO : Implements Caching
      *
-     * @param $matrix
-     * @param $currentue
-     * @param $strandids
+     * @param matrix $matrix
+     * @param \stdClass $currentue
+     * @param array $strandids
      * @param int $rootcompid
      * @return \stdClass
      * @throws \dml_exception

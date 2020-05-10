@@ -17,8 +17,7 @@
 /**
  * Compet vet suivi
  *
- * @package     local_competvetsuivi
- * @category    Compet vet suivi renderer
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,5 +25,12 @@ namespace local_competvetsuivi\output;
 
 defined('MOODLE_INTERNAL') || die;
 
+/**
+ * Class renderer
+ *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class renderer extends \plugin_renderer_base {
 }

@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Load data from a series of JSON representing the table data
  *
- * @param $fixturepath
+ * @param string $fixturepath
  * @throws coding_exception
  */
 function load_data_from_json_fixtures($fixturepath) {
@@ -58,10 +58,30 @@ function load_data_from_json_fixtures($fixturepath) {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class competvetsuivi_tests extends advanced_testcase {
-    protected $user, $cohort1, $cohort2;
+    /**
+     * @var \stdClass $user user to be created
+     */
+    protected $user;
+    /**
+     * @var \stdClass $cohort1 cohort to be created
+     */
+    protected $cohort1;
+    /**
+     * @var \stdClass $cohort1 cohort to be created
+     */
+    protected $cohort2;
+    /**
+     * @var string path of the fixture
+     */
     protected $fixturepath = '/local/competvetsuivi/tests/fixtures/basic';
+    /**
+     * @var \local_competvetsuivi\matrix\matrix Sample matrix
+     */
     public $matrix;
 
+    /**
+     * Setup the data
+     */
     public function presetup_data() {
         $this->user = static::getDataGenerator()->create_user();
         $this->cohort1 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT1'));

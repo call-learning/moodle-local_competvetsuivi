@@ -17,7 +17,7 @@
 /**
  * Renderable for list of matrix
  *
- * @package     local_competvetsuivi
+ * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,8 +33,11 @@ use templatable;
 use moodle_url;
 
 /**
- * Class to list all available matrix
+ * Class matrix_list_renderable
  *
+ * @package local_competvetsuivi
+ * @copyright   2019 CALL Learning <laurent@call-learning.fr>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix_list_renderable implements renderable, templatable {
 
