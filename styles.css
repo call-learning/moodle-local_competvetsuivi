@@ -83,4 +83,24 @@
     font-weight: bold;
 }
 
+/* Emulates a flex block for legend for Lambda theme */
+.lambda-col {
+    width: auto;
+    display: inline-block;
+    vertical-align: top;
+    margin: 1em;
+}
 
+.small-doghnut-legend {
+    font-size: xx-small;
+}
+.doghnut-text-percent {
+    fill: black;
+    stroke: gray;
+    font-size: xx-small;
+    stroke-width: 0.5;
+}
+
+.arc-bg-underlayer {
+    fill: lightgray;
+}

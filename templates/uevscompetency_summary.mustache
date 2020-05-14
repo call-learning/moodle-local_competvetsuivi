@@ -50,48 +50,38 @@
         </div>
     </div>
     <div class="cvs-summary-chart">
-        <div class="row mb-1 mt-1 row-fluid">
-            <div class="col-8 span8">
+        <div class="row mb-1 mt-1 row-fluid align-items-center">
+            <div class="col-5 span5">
                 {{#chartdata}}
                     {{> local_competvetsuivi/chart_item }}
                 {{/chartdata}}
             </div>
-            <div class="col-4 span4">
-                <!-- Now the graph legend -->
-                {{< local_competvetsuivi/graph_footer}}
-                    {{$has_no_milestone}}{{/has_no_milestone}}
-                    {{$has_no_legend_title}}{{/has_no_legend_title}}
-                {{/ local_competvetsuivi/graph_footer}}
+            <div class="col-7 span7 small-doghnut-legend">
+                <div class="container-fluid">
+                    <!-- Now the graph legend -->
+                    {{#comps_legend}}
+                        <div class="row mb-1 mt-1 row-fluid">
+                            <div class="col-3 span3">
+                                <div class="d-flex flex-row">
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <svg width="2em" height="2em">
+                                            <g class="macrocomp-{{colorindex}} arc-bg">
+                                                <g class="marker">
+                                                    <circle cx="1em" cy="1em" r="1em"/>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-9 span9  competency-desc">
+                                {{ fullname }}
+                            </div>
+                        </div>
+                    {{/comps_legend}}
+                </div>
+
             </div>
         </div>
-        {{#comps_legend}}
-            <div class="row mb-1 mt-1 row-fluid">
-                <div class="col-2 span2">
-                    <div class="d-flex flex-row">
-                    {{#strandvals}}
-                        <div class="d-flex flex-column justify-content-center">
-                            <svg width="1.5em" height="1.5em">
-                                <g class="macrocomp-{{colorindex}} arc-bg">
-                                    <g class="marker">
-                                        <circle cx="0.75em" cy="0.75em" r="0.5em"/>
-                                        {{#isoverlaystrand}}
-                                            <circle cx="0.75em" cy="0.75em" r="0.5em" fill="url(#whitecarbon)" fill-opacity="60%"/>
-                                        {{/isoverlaystrand}}
-                                    </g>
-                                </g>
-                            </svg>
-                            <div class="m-1">{{percentval}}%</div>
-                        </div>
-                    {{/strandvals}}
-                    </div>
-                </div>
-                <div class="col-2 span2">
-                    {{ shortname }}
-                </div>
-                <div class="col-8 span8  competency-desc">
-                    {{ fullname }}
-                </div>
-            </div>
-        {{/comps_legend}}
     </div>
 </div>

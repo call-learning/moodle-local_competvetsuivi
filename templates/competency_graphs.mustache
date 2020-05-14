@@ -48,7 +48,7 @@
     <div class="row mb-1 mt-1 row-fluid">
         <div class="col-sm-4 span4">
             <div class="flex-column">
-                <div class="competency-sn-link btn btn-secondary">
+                <div class="competency-sn-link btn btn-secondary {{^competency_link}} disabled{{/competency_link}}">
                     {{#competency_link}}
                     <a href="{{competency_link}}">
                     {{/competency_link}}
@@ -57,8 +57,8 @@
                     </a>
                     {{/competency_link}}
                 </div>
-                <div class="d-block competency-desc text-truncate"
-                     data-toggle="tooltip" data-placement="top" title="{{competency_desc}}">
+                <div class="d-inline" data-toggle="tooltip" data-placement="top" title="{{competency_desc}}">{{#pix}}help, core, {{linktext}}{{/pix}}</div>
+                <div class="d-block competency-desc text-truncate" data-toggle="tooltip" data-placement="top" title="{{competency_desc}}">
                     {{competency_desc}}
                 </div>
             </div>
@@ -73,7 +73,5 @@
     </div>
 {{/compitems}}
 {{#js}}
-    $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-    });
+    require(['jquery','theme_boost/tooltip'], function($){$('[data-tooltip="tooltip"]').tooltip()});
 {{/js}}

@@ -65,7 +65,7 @@ if ($hassiteconfig) {
 
     $settingname = get_string('doghnutchartheight', 'local_competvetsuivi');
     $settingdescription = get_string('doghnutchartheight_desc', 'local_competvetsuivi');
-    $settingdefault = 400;
+    $settingdefault = 200;
 
     $doghnutchartheight = new admin_setting_configtext(
             'local_competvetsuivi/doghnutchartheight',

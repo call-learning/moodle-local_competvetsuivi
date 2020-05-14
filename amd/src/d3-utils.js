@@ -57,7 +57,7 @@ define(['jquery', 'core/config'],
         return {
             default_padding: {top: 10, right: 5, bottom: 1, left: 5},
             default_progress_chart_height: 125,
-            default_doghnut_chart_height: 400,
+            default_doghnut_chart_height: 300,
 
             /**
              *
@@ -77,11 +77,11 @@ define(['jquery', 'core/config'],
                         if (paddingandsize) {
                             if (paddingandsize.size !== undefined) {
                                 if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
-                                    // If set to 0 then autosize it
+                                    // If set to 0 then autosize it.
                                     height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
                                 }
                                 if (paddingandsize.size.width !== undefined && paddingandsize.size.height != 0) {
-                                    // If set to 0 then autosize it
+                                    // If set to 0 then autosize it.
                                     width = paddingandsize.size.width ? paddingandsize.size.width : width;
                                 }
 
@@ -124,11 +124,11 @@ define(['jquery', 'core/config'],
                         if (paddingandsize) {
                             if (paddingandsize.size !== undefined) {
                                 if (paddingandsize.size.height !== undefined && paddingandsize.size.height != 0) {
-                                    // If set to 0 then autosize it
+                                    // If set to 0 then autosize it.
                                     height = paddingandsize.size.height ? paddingandsize.size.height : svgelement.height();
                                 }
                                 if (paddingandsize.size.width !== undefined && paddingandsize.size.width != 0) {
-                                    // If set to 0 then autosize it
+                                    // If set to 0 then autosize it.
                                     width = paddingandsize.size.width ? paddingandsize.size.width : width;
                                 }
                             }
@@ -141,24 +141,24 @@ define(['jquery', 'core/config'],
                             }
 
                         }
-                        var radius = Math.min(width, height) / 2;
-
+                        var radius = Math.min(width - padding.left*2, height- padding.top*2) / 2;
+                        var underLayerThickness = 2;
                         var arc = d3.arc()
-                            .outerRadius(radius - 10)
-                            .innerRadius(radius / 1.3);
-                        // Create the basic drawing / container
+                            .outerRadius(radius - underLayerThickness)
+                            .innerRadius(radius / 1.8);
+                        // Create the basic drawing / container.
                         var svg = d3.select(svgselector).attr("width", width)
                             .attr("height", height)
                             .append("g")
                             .attr("transform", "translate(" + (width / 2 + padding.left)
                                 + "," + (height / 2 + padding.top) + ")");
 
-                        // Pie chart return just the value
+                        // Pie chart return just the value.
                         var pie = d3.pie().value(function (d) {
                             return d.val;
                         }).sort(null);
                         // Rearrange data so we get big + small values interleaved, this is to make sure labels
-                        // are not to close to each other
+                        // are not to close to each other.
                         var d3piedata = pie(Object.values(data.compsvalues));
 
                         var g = svg.selectAll(".arc")
@@ -167,42 +167,34 @@ define(['jquery', 'core/config'],
                             .append("g")
                             .attr("class", "arc");
 
-                        // Draw, Style and color the arc
+                        // Draw the underlayer arc (make an effect).
+                        var underLayerArc = d3.arc()
+                            .outerRadius(radius)
+                            .innerRadius(radius / 1.8 - underLayerThickness);
+
+                        g.append("path")
+                            .attr("d", underLayerArc)
+                            .attr("class", function () {
+                                return 'arc-bg-underlayer';
+                            });
+                        // Draw, Style and color the arc.
                         g.append("path")
                             .attr("d", arc)
                             .attr("class", function (d) {
                                 return 'macrocomp-' + d.data.colorindex + ' arc-bg';
                             });
-                        var calulateOverlayArc = function (d) {
-                            var anglediff = d.endAngle - d.startAngle;
-                            var modifieddata = Object.assign({}, d); // Assuming copy on write (at first level of nesting)
-                            var overlaystrandval = d.data.strandvals[data.overlaystrandid] !== 'undefined' ?
-                                d.data.strandvals[data.overlaystrandid].val : 0;
-                            modifieddata.endAngle = d.startAngle + overlaystrandval * anglediff;
-                            return arc(modifieddata);
-                        };
-                        g.append("path")
-                            .attr("d", function (d) {
-                                return calulateOverlayArc(d);
-                            })
-                            .attr("fill", function () {
-                                return 'url(#doghnut-p' + data.overlaystrandid + ')';
-                            })
-                            .attr("fill-opacity", '60%');
-                        // Add the percent on the label
+
+                        // Add the percent on the label for the total value.
                         g.append("text")
                             .attr("class", "doghnut-text-percent")
                             .attr("transform", function (d) {
                                 var d = arc.centroid(d);
-                                d[0] *= 0.6;
-                                d[1] *= 0.6;
                                 return "translate(" + d + ")";
                             })
-                            .attr("dy", ".50em")
                             .style("text-anchor", "middle")
                             .text(function (d) {
                                 var rval = Math.round(d.value * 100);
-                                if (rval < 10) {
+                                if (rval < 5) {
                                     return '';
                                 }
                                 return rval + '%';
@@ -230,7 +222,7 @@ define(['jquery', 'core/config'],
                 var availablepatterns = [
                     {
                         pattername: 'doghnut-p1',
-                        // eslint-disable-next-line max-len
+                        // eslint-disable-next-line max-len.
                         imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR0aD0nNicgaGVpZ2h0PSc2Jz4KICA8cmVjdCB3aWR0aD0nNicgaGVpZ2h0PSc2JyBmaWxsPScjZWVlZWVlJy8+CiAgPGcgaWQ9J2MnPgogICAgPHJlY3Qgd2lkdGg9JzMnIGhlaWdodD0nMycgZmlsbD0nI2U2ZTZlNicvPgogICAgPHJlY3QgeT0nMScgd2lkdGg9JzMnIGhlaWdodD0nMicgZmlsbD0nI2Q4ZDhkOCcvPgogIDwvZz4KICA8dXNlIHhsaW5rOmhyZWY9JyNjJyB4PSczJyB5PSczJy8+Cjwvc3ZnPg=='
                     },
                 ];

@@ -107,7 +107,7 @@ $string['cvsquestionbankdefaultcategoryname_help'] = 'Il faut que toutes les que
 ';
 $string['readmore'] = 'plus';
 $string['readless'] = 'moins';
-$string['repartition:title'] = 'Répartition des connaissances sous-jacentes et compétences au sein de l\'{$a}';
+$string['repartition:title'] = 'Compétences visées par l\'{$a}';
 $string['semester'] = 'Semestre';
 $string['semester:x'] = 'Semestre {$a}';
 $string['selfassessment'] = 'Auto-évaluation';

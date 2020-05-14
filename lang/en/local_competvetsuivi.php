@@ -103,7 +103,7 @@ we check the value of this parameter to match a question bank to it.
 Another prerequisite: the question idnumber must be the exact short name of the competency (for example
 COPREV ou COPREV.1).
 ';
-$string['repartition:title'] = 'Percentage of competences and knowledge in {$a}';
+$string['repartition:title'] = 'Competencies targetted by {$a}';
 $string['readmore'] = 'more';
 $string['readless'] = 'less';
 $string['semester'] = 'Semester';
