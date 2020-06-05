@@ -96,9 +96,13 @@
 }
 .doghnut-text-percent {
     fill: black;
-    stroke: gray;
     font-size: xx-small;
-    stroke-width: 0.5;
+}
+.doghnut-text-percent-bg {
+    fill: white;
+    stroke: #eee;
+    opacity: 0.8;
+    stroke-width: 1px;
 }
 
 .arc-bg-underlayer {

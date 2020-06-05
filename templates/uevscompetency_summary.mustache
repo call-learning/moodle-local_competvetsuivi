@@ -18,7 +18,7 @@
   @local_competvetsuivi
 
   CompetVetSuivi page template for a single UE showing what the UE contributes
-  to the global competency
+  to the global competency. Doghnut chart.
 
   Classes required for JS: all the boostrap classes for display
 
@@ -60,14 +60,14 @@
                 <div class="container-fluid">
                     <!-- Now the graph legend -->
                     {{#comps_legend}}
-                        <div class="row mb-1 mt-1 row-fluid">
+                        <div class="row row-fluid">
                             <div class="col-3 span3">
                                 <div class="d-flex flex-row">
                                     <div class="d-flex flex-column justify-content-center">
-                                        <svg width="2em" height="2em">
+                                        <svg width="1.5em" height="1.5em">
                                             <g class="macrocomp-{{colorindex}} arc-bg">
                                                 <g class="marker">
-                                                    <circle cx="1em" cy="1em" r="1em"/>
+                                                    <circle cx="0.75em" cy="0.75em" r="0.75em"/>
                                                 </g>
                                             </g>
                                         </svg>

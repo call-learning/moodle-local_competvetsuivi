@@ -35,6 +35,7 @@ use local_competvetsuivi\matrix\matrix;
 
 /**
  * Class competency_progress_overview
+ * Display the full set of competencies
  *
  * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
@@ -61,6 +62,7 @@ class competency_progress_overview extends graph_overview_base implements \rende
      * @param int $currentsemester
      * @param int $userid
      * @param null $linkbuildercallback
+     * @param bool $issubset build only a subset of the competency list (by default)
      * @throws \dml_exception
      */
     public function __construct(
@@ -70,9 +72,11 @@ class competency_progress_overview extends graph_overview_base implements \rende
         $userdata,
         $currentsemester,
         $userid,
-        $linkbuildercallback = null) {
+        $linkbuildercallback = null,
+        $issubset=true
+    ) {
         global $CFG;
-        $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback);
+        $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback, $issubset);
         $autoevalresults = autoevalutils::get_student_results($userid, $matrix, $rootcomp);
         // Autoeval only valid for competences.
         $this->studentautoevalresults = [matrix::MATRIX_COMP_TYPE_ABILITY => $autoevalresults,

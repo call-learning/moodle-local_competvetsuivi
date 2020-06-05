@@ -32,13 +32,13 @@ use stdClass;
 use templatable;
 
 /**
- * Class uevscompetency_overview
+ * Class uevscompetency_details
  *
  * @package local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class uevscompetency_overview extends graph_overview_base implements \renderable, templatable {
+class uevscompetency_details extends graph_overview_base implements \renderable, templatable {
     /**
      * Used to build URL (see graph_overview_trait).
      */
@@ -54,7 +54,7 @@ class uevscompetency_overview extends graph_overview_base implements \renderable
     protected $samesemesteronly = false;
 
     /**
-     * uevscompetency_overview constructor.
+     * uevscompetency_details constructor.
      *
      * @param matrix $matrix
      * @param int $ueid

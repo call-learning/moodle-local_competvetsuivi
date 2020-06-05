@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Data view Page
+ * View UC Details
  *
  * @package     local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
@@ -24,65 +24,67 @@
 
 use local_competvetsuivi\matrix\matrix;
 
-require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_login();
 
-$matrixid = optional_param('matrixid', 0, PARAM_INT);
-$ueid = optional_param('ueid', 0, PARAM_INT);
-$compidparamname = local_competvetsuivi\renderable\uevscompetency_overview::PARAM_COMPID;
+$returnurl = optional_param('returnurl', null, PARAM_URL);
+$matrixid = required_param('matrixid', PARAM_INT);
+$ueid = required_param('ueid', PARAM_INT);
+$compidparamname = local_competvetsuivi\renderable\uevscompetency_details::PARAM_COMPID;
 $currentcompid = optional_param($compidparamname, false, PARAM_INT);
 
-if (!$matrixid || !$DB->record_exists(matrix::CLASS_TABLE, array('id' => $matrixid))) {
-    print_error('nomatrixgiven');
-}
-if (!$ueid) {
-    print_error('nouegiven');
-}
 $matrix = new matrix($matrixid);
+if (!$matrix) {
+    print_error('invalidmatrix');
+}
+$matrix->load_data();
+$ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
 
 // Override pagetype to show blocks properly.
-$header = get_string('matrixuevscomp:viewgraphs',
-    'local_competvetsuivi');
+$header = get_string('matrixuevscomptitle', 'local_competvetsuivi',
+    array('matrixname' => $matrix->shortname, 'uename' => $ue->fullname));
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title($header);
-$PAGE->set_heading($header);
-$pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/viewuegraph.php');
-$PAGE->set_url($pageurl);
+if ($returnurl) {
+    $PAGE->set_button($OUTPUT->single_button(
+        new moodle_url($returnurl), get_string('back'), 'ucdetails-backbtn')
+    );
+}
 
-$matrix->load_data();
-$ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
+$pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/pages/ucdetails.php');
+$PAGE->set_url($pageurl);
 
 $strandlist = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('matrixuevscomptitle', 'local_competvetsuivi',
-    array('matrixname' => $matrix->shortname, 'uename' => $ue->fullname)), 3);
 
 $currentcomp = null;
 if ($currentcompid) {
     $currentcomp = $matrix->get_matrix_comp_by_criteria('id', $currentcompid);
 }
-
 $progresspercent = new \local_competvetsuivi\renderable\uevscompetency_summary(
     $matrix,
     $ueid,
     $currentcomp
 );
 
-$progressoverview = new \local_competvetsuivi\renderable\uevscompetency_overview(
+$progressdetails = new \local_competvetsuivi\renderable\uevscompetency_details(
     $matrix,
     $ueid,
     $strandlist,
-    $currentcomp
+    $currentcomp,
+    false
 );
 
 $renderer = $PAGE->get_renderer('local_competvetsuivi');
 
-echo $renderer->render($progresspercent);
-echo $renderer->render($progressoverview);
+if (!$currentcompid) {
+    echo $renderer->render($progresspercent);
+}
+echo $renderer->render($progressdetails);
 
 echo $OUTPUT->footer();

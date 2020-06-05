@@ -76,12 +76,15 @@ abstract class graph_overview_base {
      * @param array $strandlist
      * @param null $rootcomp
      * @param null $linkbuildercallback
+     * @param bool $issubset build only a subset of the competency list (by default)
      */
     public function init_bar_chart(
         $matrix,
         $strandlist,
         $rootcomp = null,
-        $linkbuildercallback = null) {
+        $linkbuildercallback = null,
+        $issubset = true
+    ) {
         $this->rootcomp = $rootcomp;
         $this->strandlist = $strandlist;
         $this->matrix = $matrix;
@@ -92,7 +95,7 @@ abstract class graph_overview_base {
             return new \moodle_url($FULLME, array($urlparam => $competency->id));
         };
         $this->linkbuilder = $linkbuildercallback ? $linkbuildercallback : $defaultlinkbuilder;
-        $this->childrencomps = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0, true);
+        $this->childrencomps = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0, $issubset);
     }
 
     /**

@@ -24,12 +24,13 @@
 
 use local_competvetsuivi\utils;
 
-require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_login();
 
+$returnurl = optional_param('returnurl', null, PARAM_URL);
 $userid = optional_param('userid', 0, PARAM_INT);
 $matrixid = optional_param('matrixid', 0, PARAM_INT);
 $compidparamname = local_competvetsuivi\renderable\competency_progress_overview::PARAM_COMPID;
@@ -54,6 +55,12 @@ $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/viewtestresults.php');
 $PAGE->set_url($pageurl);
+if ($returnurl) {
+    $PAGE->set_button($OUTPUT->single_button(
+        new moodle_url($returnurl), get_string('back'), 'ucdetails-backbtn')
+    );
+}
+
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('usertestresults', 'local_competvetsuivi',

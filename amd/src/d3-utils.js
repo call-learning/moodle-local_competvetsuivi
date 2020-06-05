@@ -21,7 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/config'],
-    function($, cfg) {
+    function ($, cfg) {
         var requirejsd3 = require.config({
             paths: {
                 "d3-progress": cfg.wwwroot
@@ -65,9 +65,9 @@ define(['jquery', 'core/config'],
              * @param data : an array of data
              * @param paddingandsize: optional padding and size parameter
              */
-            progress_charts: function(svgid, data, paddingandsize) {
+            progress_charts: function (svgid, data, paddingandsize) {
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
-                requirejsd3(['d3', 'd3-progress'], function(d3,d3progress) {
+                requirejsd3(['d3', 'd3-progress'], function (d3, d3progress) {
                     var svgselector = '#' + svgid;
                     var svgelement = $(svgselector).first();
                     var thisutils = this;
@@ -108,10 +108,10 @@ define(['jquery', 'core/config'],
              * @param data : an array of data
              * @param paddingandsize: optional padding and size parameter
              */
-            ring_charts: function(svgid, data, paddingandsize) {
+            ring_charts: function (svgid, data, paddingandsize) {
                 var thisutils = this;
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
-                requirejsd3(['d3'], function(d3) {
+                requirejsd3(['d3'], function (d3) {
                     thisutils.add_doghnut_patterns_definitions(d3);
                     var svgselector = '#' + svgid;
                     var svgelement = $(svgselector).first();
@@ -141,7 +141,7 @@ define(['jquery', 'core/config'],
                             }
 
                         }
-                        var radius = Math.min(width - padding.left*2, height- padding.top*2) / 2;
+                        var radius = Math.min(width - padding.left * 2, height - padding.top * 2) / 2;
                         var underLayerThickness = 2;
                         var arc = d3.arc()
                             .outerRadius(radius - underLayerThickness)
@@ -187,9 +187,11 @@ define(['jquery', 'core/config'],
                         // Add the percent on the label for the total value.
                         g.append("text")
                             .attr("class", "doghnut-text-percent")
-                            .attr("transform", function (d) {
-                                var d = arc.centroid(d);
-                                return "translate(" + d + ")";
+                            .attr("x", function (d) {
+                                return arc.centroid(d)[0];
+                            })
+                            .attr("y", function (d) {
+                                return arc.centroid(d)[1];
                             })
                             .style("text-anchor", "middle")
                             .text(function (d) {
@@ -199,6 +201,32 @@ define(['jquery', 'core/config'],
                                 }
                                 return rval + '%';
                             });
+                        // Add background labels.
+                        // Margin of few px.
+                        var markersbb = [];
+                        var marginW = 0.05;
+                        var marginH = 0.1;
+                        g.selectAll('text.doghnut-text-percent').each(function (d) {
+                            markersbb[d.index] = this.getBBox();
+                            // Get bounding box of text field and store it in texts array.
+                            markersbb[d.index].position = d.position;
+                        });
+                        g.data(markersbb)
+                            .append('rect')
+                            .attr('class', 'doghnut-text-percent-bg')
+                            .attr('x', function (d) {
+                                return d.x - d.width * marginW / 2;
+                            })
+                            .attr('y', function (d) {
+                                return d.y - d.height * marginH / 2;
+                            })
+                            .attr('width', function (d) {
+                                return d.width * (1 + marginW / 2);
+                            })
+                            .attr('height', function (d) {
+                                return d.height * (1 + marginH / 2);
+                            });
+                        g.selectAll('text.doghnut-text-percent').raise();
                     };
                     $(document).ready(display_chart);
                     $(window).bind('resize', function () {
@@ -217,13 +245,16 @@ define(['jquery', 'core/config'],
                     document.getElementsByTagName("head")[0].appendChild(link);
                 }
             },
-            add_doghnut_patterns_definitions: function(d3) {
+            add_doghnut_patterns_definitions: function (d3) {
                 // See https://iros.github.io/patternfills/sample_d3.html
                 var availablepatterns = [
                     {
                         pattername: 'doghnut-p1',
                         // eslint-disable-next-line max-len.
-                        imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR0aD0nNicgaGVpZ2h0PSc2Jz4KICA8cmVjdCB3aWR0aD0nNicgaGVpZ2h0PSc2JyBmaWxsPScjZWVlZWVlJy8+CiAgPGcgaWQ9J2MnPgogICAgPHJlY3Qgd2lkdGg9JzMnIGhlaWdodD0nMycgZmlsbD0nI2U2ZTZlNicvPgogICAgPHJlY3QgeT0nMScgd2lkdGg9JzMnIGhlaWdodD0nMicgZmlsbD0nI2Q4ZDhkOCcvPgogIDwvZz4KICA8dXNlIHhsaW5rOmhyZWY9JyNjJyB4PSczJyB5PSczJy8+Cjwvc3ZnPg=='
+                        imagedef: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR' +
+                            '0aD0nNicgaGVpZ2h0PSc2Jz4KICA8cmVjdCB3aWR0aD0nNicgaGVpZ2h0PSc2JyBmaWxsPScjZWVlZWVlJy8+CiAgPGcgaWQ9J2MnPgogICAgPHJlY3Qgd2lkdGg9JzMnIGhlaWdodD0nMycg' +
+                            'ZmlsbD0nI2U2ZTZlNicvPgogICAgPHJlY3QgeT0nMScgd2lkdGg9JzMnIGhlaWdodD0nMicgZmlsbD0nI2Q4ZDhkOCcvPgogIDwvZz4KICA8dXNlIHhsaW5rOmhyZWY9JyNjJyB4PSczJyB' +
+                            '5PSczJy8+Cjwvc3ZnPg=='
                     },
                 ];
 
@@ -237,14 +268,14 @@ define(['jquery', 'core/config'],
                         .data(availablepatterns)
                         .enter()
                         .append('pattern')
-                        .attr('id', function(d) {
+                        .attr('id', function (d) {
                             return d.pattername;
                         })
                         .attr('patternUnits', 'userSpaceOnUse')
                         .attr('width', 10)
                         .attr('height', 10)
                         .append('image')
-                        .attr('xlink:href', function(d) {
+                        .attr('xlink:href', function (d) {
                             return d.imagedef;
                         })
                         .attr('x', 0)
