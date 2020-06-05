@@ -39,7 +39,7 @@ class cohort_assign_form extends moodleform {
      * The form definition.
      */
     public function definition() {
-        global $CFG, $DB;
+        global $DB;
         $mform = $this->_form;
 
         $id = empty($this->_customdata['id']) ? '' : $this->_customdata['id'];
@@ -68,7 +68,6 @@ class cohort_assign_form extends moodleform {
      * @return array An array of errors.
      */
     public function validation($data, $files) {
-        global $DB;
         $errors = parent::validation($data, $files);
         return $errors;
     }

@@ -49,14 +49,12 @@ require_once(__DIR__ . '/lib.php');
  */
 class ueutils_test extends competvetsuivi_tests {
     public function test_get_first_ue() {
-        global $DB;
         $this->resetAfterTest();
         $firstue = ueutils::get_first_ue($this->matrix);
         $this->assertEquals('UC51', $firstue->shortname);
     }
 
     public function test_get_semester_for_ue() {
-        global $DB;
         $this->resetAfterTest();
         $ue51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $ue102 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC102');
@@ -65,7 +63,6 @@ class ueutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_ues_for_semester() {
-        global $DB;
         $this->resetAfterTest();
         $uelists1 = ueutils::get_ues_for_semester(1, $this->matrix);
         $uelists6 = ueutils::get_ues_for_semester(6, $this->matrix);
@@ -81,14 +78,12 @@ class ueutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_semester_count() {
-        global $DB;
         $this->resetAfterTest();
         $semestercount = ueutils::get_semester_count($this->matrix);
         $this->assertEquals(8, $semestercount);
     }
 
     public function test_get_current_semester_index() {
-        global $DB;
         $this->resetAfterTest();
         $this->assertEquals(1, ueutils::get_current_semester_index('UC51', $this->matrix));
         $this->assertEquals(2, ueutils::get_current_semester_index('UC61', $this->matrix));
@@ -96,7 +91,6 @@ class ueutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_ue_vs_competencies_whole_year() {
-        global $DB;
         $this->resetAfterTest();
         $coprev11 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $ue54 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC54');
@@ -116,7 +110,6 @@ class ueutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_ue_vs_competencies_current_semester() {
-        global $DB;
         $this->resetAfterTest();
         $coprev11 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $ue54 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC54');
@@ -133,7 +126,6 @@ class ueutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_ue_vs_competencies_current_semester_aggregated() {
-        global $DB;
         $this->resetAfterTest();
         $ue54 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC54');
         $coprev = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');

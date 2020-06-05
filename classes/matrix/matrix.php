@@ -557,7 +557,6 @@ class matrix {
      * @throws \dml_exception
      */
     public function has_children($comp) {
-        global $DB;
         $children = $this->get_child_competencies($comp->id, true);
         return !empty($children);
     }
@@ -649,7 +648,6 @@ class matrix {
         }
         $matrixobject->hash = $hash;
         $columnsvsue = [];
-        $competencies = [];
         $rowiterator = $matrixsheet->getRowIterator();
 
         // Start a delegated transation here so it is all or nothing.

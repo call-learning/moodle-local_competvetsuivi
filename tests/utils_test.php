@@ -91,20 +91,14 @@ class utils_test extends competvetsuivi_tests {
         $this->assertNotEmpty($uc55vals);
         foreach ($uc55vals as $type => $val) {
             switch ($type) {
-                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
-                    $this->assertEquals(0.5, $val->possibleval);
-                    $this->assertEquals(1, $val->userval);
-                    break;
                 case matrix::MATRIX_COMP_TYPE_ABILITY:
+                case matrix::MATRIX_COMP_TYPE_EVALUATION:
+                case matrix::MATRIX_COMP_TYPE_KNOWLEDGE:
                     $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
                 case matrix::MATRIX_COMP_TYPE_OBJECTIVES:
                     $this->assertEquals(1, $val->possibleval);
-                    $this->assertEquals(1, $val->userval);
-                    break;
-                case matrix::MATRIX_COMP_TYPE_EVALUATION:
-                    $this->assertEquals(0.5, $val->possibleval);
                     $this->assertEquals(1, $val->userval);
                     break;
             }
@@ -137,10 +131,8 @@ class utils_test extends competvetsuivi_tests {
     }
 
     public function test_get_default_question_bank_category_name() {
-        global $DB;
         $this->resetAfterTest();
 
-        $currentconfig = get_config('local_competvetsuivi', 'cvsquestionbankdefaultcategoryname');
         $categoryname = utils::get_default_question_bank_category_name();
         $this->assertEquals(utils::DEFAULT_QUESTION_BANK_CATEGORY_SN, $categoryname);
 

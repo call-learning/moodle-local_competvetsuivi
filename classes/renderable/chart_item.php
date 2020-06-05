@@ -86,7 +86,7 @@ class chart_item implements \renderable, templatable {
         switch ($this->type) {
             case 'progress':
                 $sizeparams = [
-                    "size" => ["height" => $height =
+                    "size" => ["height" =>
                         get_config('local_competvetsuivi', 'progresschartheight')]
                 ];
                 break;

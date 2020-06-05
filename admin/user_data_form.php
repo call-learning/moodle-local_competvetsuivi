@@ -44,7 +44,6 @@ class user_data_form extends moodleform {
      * The form definition.
      */
     public function definition() {
-        global $CFG, $DB;
         $mform = $this->_form;
 
         $mform->addElement('text',
@@ -88,7 +87,6 @@ class user_data_form extends moodleform {
      * @throws coding_exception
      */
     public function validation($data, $files) {
-        global $DB;
         $errors = parent::validation($data, $files);
         if ($data['userdatafilepath'] && !file_exists($data['userdatafilepath'])) {
             $error['userdatafilepath'] = get_string('directorydoesnotexist', 'local_competvetsuivi');

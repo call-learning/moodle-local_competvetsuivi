@@ -77,7 +77,6 @@ class chartingutils {
                         return $acc + $val->possibleval; // Previous value.
                     },
                     0);
-
             }
         }
         $returnvalue = array($progressperstrand, $maxperstrand);
@@ -103,6 +102,7 @@ class chartingutils {
      * @param int $currentsemester
      * @param null $userselftestresults
      * @return array
+     * @throws \coding_exception
      */
     public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester,
         $userselftestresults = null) {

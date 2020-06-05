@@ -45,7 +45,6 @@ class userdata_log implements renderable, templatable {
      * @return \stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $DB, $CFG;
         $context = new \stdClass();
         $context->userdatalog = [];
         $logmanager = get_log_manager();
@@ -53,7 +52,7 @@ class userdata_log implements renderable, templatable {
         $store = $readers['logstore_standard'];
         $allevents = $store->get_events_select('eventname = :eventname',
             array('eventname' => '\\local_competvetsuivi\\event\\userdata_imported'), 'timecreated DESC',
-            $limitfrom = 0, $limitnum = 0);
+            0, 0);
 
         foreach ($allevents as $evt) {
             $data = $evt->get_data();

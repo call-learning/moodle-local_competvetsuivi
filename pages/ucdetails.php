@@ -25,9 +25,10 @@
 use local_competvetsuivi\matrix\matrix;
 
 require_once(__DIR__ . '/../../../config.php');
+require_once('lib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 global $CFG;
-require_once($CFG->libdir . '/adminlib.php');
 require_login();
 
 $returnurl = optional_param('returnurl', null, PARAM_URL);
@@ -36,27 +37,16 @@ $ueid = required_param('ueid', PARAM_INT);
 $compidparamname = local_competvetsuivi\renderable\uevscompetency_details::PARAM_COMPID;
 $currentcompid = optional_param($compidparamname, false, PARAM_INT);
 
-$matrix = new matrix($matrixid);
-if (!$matrix) {
-    print_error('invalidmatrix');
-}
-$matrix->load_data();
+$matrix = get_matrix($matrixid, $USER);
+
 $ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
 
 // Override pagetype to show blocks properly.
 $header = get_string('matrixuevscomptitle', 'local_competvetsuivi',
     array('matrixname' => $matrix->shortname, 'uename' => $ue->fullname));
-
-$PAGE->set_context(context_system::instance());
-$PAGE->set_title($header);
-if ($returnurl) {
-    $PAGE->set_button($OUTPUT->single_button(
-        new moodle_url($returnurl), get_string('back'), 'ucdetails-backbtn')
-    );
-}
-
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/pages/ucdetails.php');
-$PAGE->set_url($pageurl);
+
+setup_page($header, $pageurl, $returnurl);
 
 $strandlist = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY);
 

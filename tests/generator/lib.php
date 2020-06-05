@@ -146,7 +146,6 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws dml_exception
      */
     public function create_matrix_comp_ue($record = null, array $options = null) {
-        global $DB;
         $defaultsettings = array(
             'ueid' => 0,
             'compid' => 0,
@@ -170,15 +169,6 @@ class local_competvetsuivi_generator extends testing_module_generator {
      */
     public function create_matrix_comp_ue_bulk($records = null, array $options = null) {
         global $DB;
-        $defaultsettings = array(
-            'ueid' => 0,
-            'compid' => 0,
-            'type' => local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE,
-            'value' => 0,
-        );
-
-        $uematcher = [];
-        $compmatcher = [];
 
         $ueidnames = array_map(
             function($r) {
@@ -226,7 +216,6 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws dml_exception
      */
     public function create_userdata($record = null, array $options = null) {
-        global $DB;
         $defaultsettings = array(
             'useremail' => "",
             'userdata' => "",

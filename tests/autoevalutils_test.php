@@ -91,7 +91,6 @@ class autoevalutils_test extends competvetsuivi_tests {
      * @return stdClass
      */
     protected static function get_mc_question_data($competency) {
-        global $USER;
         $qdata = new stdClass();
 
         $qdata->name = $competency->shortname;
@@ -208,8 +207,6 @@ class autoevalutils_test extends competvetsuivi_tests {
      * @throws moodle_exception
      */
     public function setUp() {
-        global $DB;
-        global $CFG;
         parent::setUp();
 
         $generator = $this->getDataGenerator();

@@ -129,7 +129,7 @@ class utils {
     /**
      * Default shortname for question bank
      */
-    const DEFAULT_QUESTION_BANK_CATEGORY_SN = 'COMPETVETSUIVI';
+    const DEFAULT_QUESTION_BANK_CATEGORY_SN = 'Auto-evaluation_competences';
 
     /**
      * Get question bank category name

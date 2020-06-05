@@ -207,7 +207,7 @@ class ueutils {
         }
 
         // Deal with cache.
-        $isset = cacheutils::set('ue_vs_comp', $hash, $results);
+        cacheutils::set('ue_vs_comp', $hash, $results);
         // Deal with cache.
         return $results;
     }

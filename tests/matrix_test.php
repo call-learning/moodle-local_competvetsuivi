@@ -118,7 +118,6 @@ class matrix_test extends competvetsuivi_tests {
     }
 
     public function test_get_matrix_comp_by_criteria() {
-        global $DB;
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
         $this->assertEquals($comp->shortname, 'COPREV.2');
@@ -127,11 +126,10 @@ class matrix_test extends competvetsuivi_tests {
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $this->assertEquals($comp->shortname, 'COPREV.1.1');
         $this->expectException(matrix_exception::class);
-        $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2ZDQSD');
+        $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2ZDQSD');
     }
 
     public function test_get_values_for_ue_and_competency() {
-        global $DB;
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $uc51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
@@ -178,7 +176,6 @@ class matrix_test extends competvetsuivi_tests {
     }
 
     public function test_get_values_for_ue_and_competency_aggregated() {
-        global $DB;
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
         $uc55 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC55');
@@ -229,7 +226,6 @@ class matrix_test extends competvetsuivi_tests {
     }
 
     public function test_get_total_values_for_ue_and_competency() {
-        global $DB;
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $uc51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
@@ -276,10 +272,8 @@ class matrix_test extends competvetsuivi_tests {
     }
 
     public function test_get_total_values_for_ue_and_competency_aggregated() {
-        global $DB;
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
-        $matrixues = $this->matrix->get_matrix_ues();
         $uc55 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC55');
         $values = $this->matrix->get_total_values_for_ue_and_competency($uc55->id, $comp->id, true);
 
@@ -303,7 +297,6 @@ class matrix_test extends competvetsuivi_tests {
     }
 
     public function test_has_children() {
-        global $DB;
         $this->resetAfterTest();
         $coprev2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
         $coprev23 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2.3');
@@ -312,7 +305,6 @@ class matrix_test extends competvetsuivi_tests {
     }
 
     public function test_get_matrix_ue_by_criteria() {
-        global $DB;
         $this->resetAfterTest();
         $uc51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $this->assertEquals('UC51', $uc51->shortname);
@@ -328,7 +320,6 @@ class matrix_test extends competvetsuivi_tests {
     }
 
     public function test_get_root_competency() {
-        global $DB;
         $this->resetAfterTest();
         $rootcomp = $this->matrix->get_root_competency();
         $this->assertEquals('COPREV', $rootcomp->shortname);

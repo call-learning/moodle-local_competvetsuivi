@@ -38,7 +38,6 @@ class add_edit_form extends moodleform {
      * The form definition.
      */
     public function definition() {
-        global $CFG, $DB;
         $mform = $this->_form;
 
         $fullname = empty($this->_customdata['fullname']) ? '' : $this->_customdata['fullname'];
@@ -77,7 +76,6 @@ class add_edit_form extends moodleform {
      * @return array An array of errors.
      */
     public function validation($data, $files) {
-        global $DB;
         $errors = parent::validation($data, $files);
         return $errors;
     }

@@ -114,7 +114,6 @@ class userdata {
                         $userdata = new \stdClass();
                         $userdata->useremail = $useremail;
 
-                        $finaldatarow = array();
                         $userdata->lastseenunit = $useddataheaders[0];
                         // Convert heading and content to a more useable one (like boolean).
                         foreach ($userdatarow as $k => $row) {

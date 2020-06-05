@@ -76,7 +76,6 @@ class chartingutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_comp_progress() {
-        global $DB;
         $this->resetAfterTest();
 
         $computedresults = array(
@@ -112,7 +111,6 @@ class chartingutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_comp_progress_aggregated() {
-        global $DB;
         $this->resetAfterTest();
 
         $computedresults = array(
@@ -126,7 +124,6 @@ class chartingutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_data_for_progressbar() {
-        global $DB;
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $useremail = "Etudiant-145@ecole.fr";
@@ -164,7 +161,6 @@ class chartingutils_test extends competvetsuivi_tests {
     }
 
     public function test_get_data_for_progressbar_aggregated() {
-        global $DB;
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
         $useremail = "Etudiant-145@ecole.fr";

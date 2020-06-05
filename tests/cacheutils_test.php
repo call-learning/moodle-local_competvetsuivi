@@ -89,9 +89,7 @@ class cacheutils_test extends competvetsuivi_tests {
 
     public function test_get_comp_progress_hash() {
         $this->resetAfterTest();
-        $currentue = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $rootcomp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
-        $currentue2 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC53');
         $rootcomp2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
         $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
         $useremail = "Etudiant-145@ecole.fr";

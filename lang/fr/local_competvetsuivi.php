@@ -34,10 +34,10 @@ $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Gestion de l\'importation des données Utilisateur';
 $string['competvetgeneralsettings'] = 'Paramètres Généraux';
 $string['currentprogress'] = 'Avancement';
-$string['contribution:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et des compétences au
- <strong>sein de l\'ensemble du cursus</strong>';
-$string['contributionsamesemester:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et
- des compétences au <strong>sein du semestre correspondant</strong>';
+$string['contribution:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et des compétences au' .
+    ' <strong>sein de l\'ensemble du cursus</strong>';
+$string['contributionsamesemester:title'] = 'Contribution de l\'{$a} à l\'acquisition des connaissances sous-jacentes et' .
+    ' des compétences au <strong>sein du semestre correspondant</strong>';
 $string['directorydoesnotexist'] = 'Directory does not exist';
 $string['doghnutchartheight'] = 'Hauteur du graphe en Doghnut';
 $string['doghnutchartheight_desc'] = 'Cela affecte tous les graphes UC vs UE';

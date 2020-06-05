@@ -114,7 +114,7 @@ class autoevalutils {
      * @throws \dml_exception
      */
     public static function get_student_results($userid, $matrix, $rootcomp = null) {
-        global $CFG, $DB;
+        global $CFG;
         include_once($CFG->dirroot . '/question/engine/lib.php');
         include_once($CFG->dirroot . '/mod/quiz/locallib.php'); // Yeah, if not quiz_attempt not defined.
 

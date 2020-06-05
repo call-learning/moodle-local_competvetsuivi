@@ -29,6 +29,7 @@ use local_competvetsuivi\ueutils;
 use local_competvetsuivi\utils;
 
 require_once(__DIR__ . '/../../../config.php');
+require_once('lib.php');
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
@@ -42,31 +43,15 @@ $currentcompid = optional_param($compidparamname, false, PARAM_INT);
 $userid = $userid ? $userid : $USER->id;
 $user = \core_user::get_user($userid);
 
-if (!$matrixid) {
-    $matrixid = utils::get_matrixid_for_user($user->id);
-    if ($matrixid) {
-        print_error('nocohortforuser');
-    }
-}
-$matrix = new \local_competvetsuivi\matrix\matrix($matrixid);
+$matrix = get_matrix($matrixid, $user);
 
 // Override pagetype to show blocks properly.
-$header = get_string('matrix:viewdata',
-    'local_competvetsuivi');
-
-$PAGE->set_context(context_system::instance());
-$PAGE->set_title($header);
-$PAGE->set_heading($header);
+$header = get_string('matrix:viewdata', 'local_competvetsuivi') . ':' . fullname($user);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/viewuserdata.php');
-$PAGE->set_url($pageurl);
-if ($returnurl) {
-    $PAGE->set_button($OUTPUT->single_button(
-        new moodle_url($returnurl), get_string('back'), 'ucdetails-backbtn')
-    );
-}
+$PAGE->requires->css('/local/competvetsuivi/pages/print.css');
+setup_page($header, $pageurl, $returnurl);
 
 $userdata = local_competvetsuivi\userdata::get_user_data($user->email);
-$matrix->load_data();
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('matrixviewdatatitle', 'local_competvetsuivi',
