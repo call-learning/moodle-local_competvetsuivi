@@ -65,9 +65,7 @@ $progresspercent = new \local_competvetsuivi\renderable\uevscompetency_summary(
 $progressdetails = new \local_competvetsuivi\renderable\uevscompetency_details(
     $matrix,
     $ueid,
-    $strandlist,
-    $currentcomp,
-    false
+    $currentcomp
 );
 
 $renderer = $PAGE->get_renderer('local_competvetsuivi');

@@ -92,66 +92,23 @@ class ueutils_test extends competvetsuivi_tests {
 
     public function test_get_ue_vs_competencies_whole_year() {
         $this->resetAfterTest();
-        $coprev11 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
-        $ue54 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC54');
-
-        $ueresults = ueutils::get_ue_vs_competencies($this->matrix, $ue54, $coprev11->id);
+        $coprev = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
+        $coprev1 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
+        $coprev2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
+        $coprev3 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3');
+        $ue51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
+        $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
+        $ueresults = ueutils::get_ue_vs_competencies($this->matrix, $ue51, $strands, $coprev->id);
         /*
          * Here we expect: For the semester => (Knowledge=>6.5, Capability => 4, ...)
          *  UC54 contributes (Knowledge=>1, Capability => 0...)
          */
 
-        $compresult = $ueresults[$coprev11->id];
         $this->assertNotEmpty($ueresults);
-        $this->assertEquals(1 / 6.5, $compresult[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
-        $this->assertEquals(0 / 3, $compresult[matrix::MATRIX_COMP_TYPE_ABILITY]);
-        $this->assertEquals(0 / 4, $compresult[matrix::MATRIX_COMP_TYPE_OBJECTIVES]);
-        $this->assertEquals(0.5 / 3, $compresult[matrix::MATRIX_COMP_TYPE_EVALUATION]);
-    }
-
-    public function test_get_ue_vs_competencies_current_semester() {
-        $this->resetAfterTest();
-        $coprev11 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
-        $ue54 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC54');
-
-        $ueresults = ueutils::get_ue_vs_competencies($this->matrix, $ue54, $coprev11->id, true);
-        /*
-         * Here we expect: For the semester => (Knowledge=>1.5, Capability => 0.5, ...)
-         *  UC54 contributes (Knowledge=>1, Capability => 0...)
-         */
-        $compresult = $ueresults[$coprev11->id];
-        $this->assertNotEmpty($ueresults);
-        $this->assertEquals(1 / 1.5, $compresult[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
-        $this->assertEquals(0.5 / 1, $compresult[matrix::MATRIX_COMP_TYPE_EVALUATION]);
-    }
-
-    public function test_get_ue_vs_competencies_current_semester_aggregated() {
-        $this->resetAfterTest();
-        $ue54 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC54');
-        $coprev = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
-        $coprev1 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
-        $coprev2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
-        $coprev3 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3');
-        $ueresults = ueutils::get_ue_vs_competencies($this->matrix, $ue54, $coprev->id, true);
-        /*
-         * Here we expect that the contribution to the semester will be the max contribution overall for this UE in this
-         * semester and the set of competencies, divided by the maximum possible contribution for this semester across the
-         * competencies
-         */
-        $this->assertNotEmpty($ueresults);
-        $coprev1results = $ueresults[$coprev1->id];
-        $coprev2results = $ueresults[$coprev2->id];
-        $coprev3results = $ueresults[$coprev3->id];
-
-        // 4.5 = addition of all values in column.
-        $this->assertEquals(3 / 4.5, $coprev1results[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
-        $this->assertEquals(1 / 3, $coprev1results[matrix::MATRIX_COMP_TYPE_ABILITY]);
-
-        $this->assertEquals(4 / 8.5, $coprev2results[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
-        $this->assertEquals(3.5 / 7, $coprev2results[matrix::MATRIX_COMP_TYPE_ABILITY]);
-
-        $this->assertEquals(1 / 2, $coprev3results[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
-        $this->assertEquals(1 / 1, $coprev3results[matrix::MATRIX_COMP_TYPE_ABILITY]);
+        $this->assertArrayNotHasKey($coprev1->id , $ueresults); // Null value so not displayed.
+        $compresult = $ueresults[$coprev2->id];
+        $this->assertEquals(1, $compresult[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
+        $this->assertEquals(0, $compresult[matrix::MATRIX_COMP_TYPE_ABILITY]);
     }
 
     public function test_get_ue_vs_competencies_percent() {

@@ -39,6 +39,7 @@ class ueutils {
 
     /**
      * Get the first UE
+     *
      * @param matrix $matrix
      * @return mixed|null
      */
@@ -130,93 +131,38 @@ class ueutils {
 
     /**
      * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
-     * Results are for each competency and then each strands covered by the UE.
-     * We calculate the max value for each ue over the set of subcompetencies
+     * Results are for each competency for a given set of strands.
+     * We calculate for each strand the total contribution and we highlight the highest value
+     * The other strands will be respresented as a percentage of this value
      *
      * @param matrix $matrix : ue
      * @param \stdClass $currentue
+     * @param array $strandids
      * @param int $rootcompid root competency id to start with. If null we take the macro competencies
-     * @param bool $samesemesteronly only in the same semester
      * @return array
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws matrix\matrix_exception
      */
-    public static function get_ue_vs_competencies($matrix, $currentue, $rootcompid = 0, $samesemesteronly = false) {
-        // Deal with cache.
-        $hash = cacheutils::get_ue_vs_competencie_hash($matrix, $currentue, $rootcompid, $samesemesteronly);
-        $cachedvalue = cacheutils::get($hash, 'ue_vs_comp');
-        if ($cachedvalue) {
-            return $cachedvalue;
-        }
-        // Deal with cache.
-        $allcomps = $matrix->get_child_competencies($rootcompid, true);
-
-        // Case it is a leaf competency.
-        if ($rootcompid && !$allcomps) {
-            $allcomps = [ $matrix->get_matrix_competencies()[$rootcompid] ];
-        }
-
-        $compuestrandvalues = [];
-
-        // Restrict UE to semester or not.
-        if ($samesemesteronly) {
-            $semester = self::get_semester_for_ue($currentue, $matrix);
-            $allues = self::get_ues_for_semester($semester, $matrix);
-        } else {
-            $allues = $matrix->get_matrix_ues();
-        }
-        // Go through all competencies and find out about the contribution of each UE to this competency.
-        foreach ($allcomps as $comp) {
-            if (!key_exists($comp->id, $compuestrandvalues)) {
-                $compuestrandvalues[$comp->id] = [];
+    public static function get_ue_vs_competencies($matrix, $currentue, $strandids, $rootcompid = 0) {
+        $resultsdoghtnut = static::get_ue_vs_competencies_percent($matrix, $currentue, $strandids, $rootcompid);
+        $resultsmarkers = [];
+        foreach ($resultsdoghtnut->compsvalues as $compid => $res) {
+            $strands = [];
+            foreach ($res->strandvals as $strandid => $st) {
+                $strands [$strandid] = $st->val;
             }
-            foreach ($allues as $ue) {
-                $currentuevals = $matrix->get_total_values_for_ue_and_competency($ue->id, $comp->id, true);
-                foreach ($currentuevals as $strandval) {
-                    $strandid = $strandval->type;
-                    if (!key_exists($ue->id, $compuestrandvalues[$comp->id])) {
-                        $compuestrandvalues[$comp->id][$ue->id] = [];
-                    }
-                    if (!isset($compuestrandvalues[$comp->id][$ue->id][$strandid])) {
-                        $compuestrandvalues[$comp->id][$ue->id][$strandid] = 0;
-                    }
-                    $compuestrandvalues[$comp->id][$ue->id][$strandid] += $strandval->totalvalue;
-                }
-            }
+            $resultsmarkers[$compid] = $strands;
         }
-        // Now calculate the results for each comp.
-        $results = [];
-        foreach ($allcomps as $comp) {
-            // Now we have the max value for each ue and each strand, we calculate the range (0, max)
-            // First initialize the array.
-            $maxuevalues = array_fill_keys(array_keys(matrix::MATRIX_COMP_TYPE_NAMES), 0);
-            // Then for each UE add its contribution to the semester/cursus so we have the max contributed.
-            $maxuevalues = array_reduce($compuestrandvalues[$comp->id], function($carry, $item) {
-                foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
-                    $carry[$strandid] += $item[$strandid];
-                }
-                return $carry;
-            }, $maxuevalues);
-            // Now for the current UE, just calculate its contribution.
-            foreach (array_keys(matrix::MATRIX_COMP_TYPE_NAMES) as $strandid) {
-                $results[$comp->id][$strandid] =
-                        $maxuevalues[$strandid] ?
-                                $compuestrandvalues[$comp->id][$currentue->id][$strandid] / $maxuevalues[$strandid] : 0;
-            }
-        }
-
-        // Deal with cache.
-        cacheutils::set('ue_vs_comp', $hash, $results);
-        // Deal with cache.
-        return $results;
+        return $resultsmarkers;
     }
 
     /**
      * Return the contribution of given UE to the immediate child competencies rooted by rootcompid.
      * Results are for each competency for a given set of strands.
-     * We calculate for each strand the total contribution and we highlight the highest value
-     * The other strands will be respresented as a percentage of this value
+     * We calculate for each strand the total contribution and we calculate the total possible value (
+     * the addition of all strands together) that will be the reference. Basically all strands added
+     * will always be 100%.
      *
      * @param matrix $matrix
      * @param \stdClass $currentue
@@ -236,7 +182,7 @@ class ueutils {
         }
         // Deal with cache.
 
-        /* @var $matrix matrix The matrix to be checked*/
+        /* @var $matrix matrix The matrix to be checked */
         $allcomps = $matrix->get_child_competencies($rootcompid, true);
 
         $compuevalues = [];
