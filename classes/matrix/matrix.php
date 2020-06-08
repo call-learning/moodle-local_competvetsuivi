@@ -216,8 +216,8 @@ class matrix {
      */
     public function load_data() {
         global $DB;
-        $this->ues = $DB->get_records('cvs_matrix_ue', array('matrixid' => $this->id));
-        $this->comp = $DB->get_records('cvs_matrix_comp', array('matrixid' => $this->id));
+        $this->ues = $DB->get_records('cvs_matrix_ue', array('matrixid' => $this->id), 'id ASC');
+        $this->comp = $DB->get_records('cvs_matrix_comp', array('matrixid' => $this->id), 'path ASC');
         $compuesql = "SELECT compue.id AS id, compue.ueid AS ueid, compue.compid AS compid, compue.type AS type, compue.value
         AS value
         FROM {cvs_matrix_comp_ue} compue

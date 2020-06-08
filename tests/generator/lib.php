@@ -72,7 +72,8 @@ class local_competvetsuivi_generator extends testing_module_generator {
             }
             list($sqlwherein, $paramsin) = $DB->get_in_or_equal($allpathitem);
             $martrixmatches =
-                $DB->get_records_sql_menu('SELECT id, shortname FROM {cvs_matrix_comp} WHERE shortname ' . $sqlwherein,
+                $DB->get_records_sql_menu('SELECT id, shortname FROM {cvs_matrix_comp} WHERE shortname ' . $sqlwherein .
+                    ' ORDER BY path ASC',
                     $paramsin);
             $matchedcompids = array_combine($allpathitem, array_flip($martrixmatches));
             $record['path'] = '/' . join('/', $matchedcompids);
