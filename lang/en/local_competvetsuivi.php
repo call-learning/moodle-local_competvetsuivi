@@ -34,7 +34,7 @@ $string['competvetmanagement'] = 'Compet Vetsuivi';
 $string['competvetuserdatamgmt'] = 'Manage user data importation';
 $string['competvetgeneralsettings'] = 'General Settings';
 $string['contribution:title'] =
-    'Percentage the {$a} contributes to competencies and knowledge for the <strong>whole cursus</strong>';
+    'Contribution details to competencies and knowledge for the {$a}';
 $string['currentprogress'] = 'Current Progress';
 $string['directorydoesnotexist'] = 'Directory does not exist';
 $string['doghnutchartheight'] = 'Doghnut graph height';

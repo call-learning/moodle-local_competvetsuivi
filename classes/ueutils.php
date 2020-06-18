@@ -150,7 +150,7 @@ class ueutils {
         foreach ($resultsdoghtnut->compsvalues as $compid => $res) {
             $strands = [];
             foreach ($res->strandvals as $strandid => $st) {
-                $strands [$strandid] = $st->val;
+                $strands [$strandid] = $st->val * $res->val;
             }
             $resultsmarkers[$compid] = $strands;
         }
