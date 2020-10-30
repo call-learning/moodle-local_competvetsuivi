@@ -37,6 +37,7 @@ function setup_page($header, $pageurl, $returnurl) {
     global $PAGE, $OUTPUT;
     $PAGE->set_context(context_system::instance());
     $PAGE->set_title($header);
+    $PAGE->set_pagelayout('standard');
     if ($returnurl) {
         $PAGE->set_button($OUTPUT->single_button(
             new moodle_url($returnurl), get_string('back'), 'cvspage-backbtn')
