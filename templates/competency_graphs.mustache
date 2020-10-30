@@ -48,9 +48,9 @@
     <div class="row mb-1 mt-1 row-fluid">
         <div class="col-sm-4 span4">
             <div class="flex-column">
-                <div class="competency-sn-link btn btn-secondary {{^competency_link}} disabled{{/competency_link}}">
+                <div class="competency-sn-link {{^competency_link}} disabled{{/competency_link}}">
                     {{#competency_link}}
-                    <a href="{{competency_link}}">
+                    <a class="btn btn-secondary" href="{{competency_link}}">
                     {{/competency_link}}
                     {{competency_sn}}
                     {{#competency_link}}
@@ -73,5 +73,5 @@
     </div>
 {{/compitems}}
 {{#js}}
-    require(['jquery','theme_boost/tooltip'], function($){$('[data-tooltip="tooltip"]').tooltip()});
+    require(['jquery','theme_boost/bootstrap/tooltip'], function($){$('[data-tooltip="tooltip"]').tooltip()});
 {{/js}}
