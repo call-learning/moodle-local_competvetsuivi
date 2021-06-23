@@ -228,6 +228,7 @@ class matrix {
         ";
         $companduesvals = $DB->get_records_sql($compuesql, array('matrixid_1' => $this->id, 'matrixid_2' => $this->id));
         $this->compuevalues = array();
+        raise_memory_limit(MEMORY_EXTRA);
         foreach ($companduesvals as $cuv) {
             if (empty($this->compuevalues[$cuv->ueid])) {
                 $this->compuevalues[$cuv->ueid] = array();
