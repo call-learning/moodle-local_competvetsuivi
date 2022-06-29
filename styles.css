@@ -6,12 +6,10 @@
 
 .competency-sn-link a, .competency-sn-link {
     font-weight: bolder;
-    color: #0a246a;
 }
 
 .competency-sn-link a:hover {
     text-decoration: none;
-    color: #0e0e0e;
 }
 
 .competency-sn {

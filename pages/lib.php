@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_competvetsuivi\utils;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -57,7 +59,7 @@ function setup_page($header, $pageurl, $returnurl) {
 function get_matrix($matrixid, $user) {
     if (!$matrixid) {
         $matrixid = utils::get_matrixid_for_user($user->id);
-        if ($matrixid) {
+        if (empty($matrixid)) {
             print_error('nocohortforuser');
         }
     }
