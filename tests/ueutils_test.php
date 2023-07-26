@@ -120,7 +120,8 @@ class ueutils_test extends competvetsuivi_tests {
         $coprev3 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.3');
         $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
         $ueresults = ueutils::get_ue_vs_competencies_percent($this->matrix, $ue51, $strands, $coprev->id);
-        $this->assertArraySubset(array($coprev2->id, $coprev3->id), array_keys($ueresults->compsvalues));
+        $this->assertArrayHasKey($coprev2->id, $ueresults->compsvalues);
+        $this->assertArrayHasKey($coprev3->id, $ueresults->compsvalues);
         $this->assertTrue(!key_exists($coprev1->id, $ueresults->compsvalues));
         $this->assertEquals(0.5, $ueresults->compsvalues[$coprev2->id]->val);
         $this->assertEquals(0.5, $ueresults->compsvalues[$coprev3->id]->val);

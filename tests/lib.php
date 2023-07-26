@@ -93,7 +93,7 @@ abstract class competvetsuivi_tests extends advanced_testcase {
      *
      * @throws coding_exception
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG, $DB;
         parent::setUp();
         $this->presetup_data();

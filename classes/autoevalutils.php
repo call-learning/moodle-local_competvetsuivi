@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
 use mod_quiz\question\qubaids_for_users_attempts;
+use qbank_usage\helper;
+use qbank_usage\tables\question_usage_table;
 
 /**
  * Class autoevalutils
@@ -52,14 +54,26 @@ class autoevalutils {
         $defaultcategoryname = trim(strtoupper(utils::get_default_question_bank_category_name()));
         // Get all relevant questions.
         $params = array('defaultbanksn' => $defaultcategoryname);
-        $sql = "SELECT "
-            . $DB->sql_concat_join("'-'", ["q.id", "qc.id", "qs.id"])
-            . " AS uniqueid, qs.quizid AS quizid, qs.questionid AS questionid FROM {question} q "
-            . "LEFT JOIN {question_categories} qc ON qc.id = q.category "
-            . "LEFT JOIN {quiz_slots} qs ON qs.questionid = q.id "
-            . "WHERE UPPER(qc.name)=:defaultbanksn";
-
-        return $DB->get_records_sql($sql, $params);
+        $categoryid = $DB->get_field_sql(
+            "SELECT id FROM {question_categories} WHERE UPPER(name)=:defaultbanksn", $params);
+        $categoryids = [$categoryid];
+        $questionsid = \question_bank::get_finder()->get_questions_from_categories($categoryids, '');
+        $questions = \question_bank::get_finder()->load_many_for_cache($questionsid);
+        // Get the question usage for this set of questions, i.e. quizid for each question.
+        $sql = helper::question_usage_sql();
+        foreach ($questions as $question) {
+            $params = [$question->id, $question->questionbankentryid, 'mod_quiz', 'slot'];
+            $questionsbyquiz = $DB->get_records_sql($sql, $params);
+            foreach ($questionsbyquiz as $questionbyquiz) {
+                $uniqueid = "{$question->id}-{$categoryid}-{$questionbyquiz->quizid}";
+                $quizquestions[$uniqueid] = (object) [
+                    'uniqueid' => $uniqueid,
+                    'questionid' => $question->id,
+                    'quizid' => $questionbyquiz->quizid,
+                ];
+            }
+        }
+        return $quizquestions;
     }
 
     /**

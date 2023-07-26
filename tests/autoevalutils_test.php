@@ -206,7 +206,7 @@ class autoevalutils_test extends competvetsuivi_tests {
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
 
         $generator = $this->getDataGenerator();
@@ -311,7 +311,8 @@ class autoevalutils_test extends competvetsuivi_tests {
             'COPREV.3.3',
             'COPREV.3.4'
         );
-        $this->assertArraySubset($compresult, array_keys($allcomps));
+        // Replace assertArraySubset by a loop.
+        $this->assertEqualsCanonicalizing($compresult, array_keys($allcomps));
 
         $comp2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.2');
         $allcomps = autoevalutils::get_all_competency_association($this->matrix, $comp2);
@@ -328,7 +329,7 @@ class autoevalutils_test extends competvetsuivi_tests {
             'COPREV.2.7BIS',
             'COPREV.2.8'
         );
-        $this->assertArraySubset($compresult, array_keys($allcomps));
+        $this->assertEqualsCanonicalizing($compresult, array_keys($allcomps));
     }
 
     public function test_get_question_mark() {

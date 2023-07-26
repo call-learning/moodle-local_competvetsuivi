@@ -364,7 +364,17 @@ class matrix_test extends competvetsuivi_tests {
         $this->assertCount(10, $compsv1);
         $compsv2 = $this->matrix->get_child_competencies($coprev2->id, true);
         $this->assertCount(10, $compsv2);
-        $this->assertArraySubset($compsv1, $compsv2);
+        // Check that $compsv1 is a subset of $compsv2.
+        foreach ($compsv1 as $compv1) {
+            $found = false;
+            foreach ($compsv2 as $compv2) {
+                if ($compv1->id == $compv2->id) {
+                    $found = true;
+                    break;
+                }
+            }
+            $this->assertTrue($found);
+        }
     }
 
     public function test_get_child_competencies_coprev1_directchild_cache() {

@@ -762,7 +762,7 @@ class matrix {
 
             if (!$firstuecolumn) {
                 $value = $cellheader->getValue();
-                if (in_array(substr($value, 0, 2), self::UC_PREFIX)) {
+                if (!empty($value) && in_array(substr($value, 0, 2), self::UC_PREFIX)) {
                     // Then we found the first UC.
                     $firstuecolumn = $cellheader->getColumn();
                 }

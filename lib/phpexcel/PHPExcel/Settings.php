@@ -382,6 +382,6 @@ class PHPExcel_Settings
         if (version_compare(PHP_VERSION, '5.2.11') >= 0) {
             @libxml_disable_entity_loader(self::$libXmlLoaderOptions == (LIBXML_DTDLOAD | LIBXML_DTDATTR));
         }
-        return self::$libXmlLoaderOptions;
+        return self::$libXmlLoaderOptions ?? 0;
     }
 }

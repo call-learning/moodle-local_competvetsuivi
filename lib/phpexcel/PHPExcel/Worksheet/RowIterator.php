@@ -127,7 +127,7 @@ class PHPExcel_Worksheet_RowIterator implements Iterator
     /**
      * Rewind the iterator to the starting row
      */
-    public function rewind()
+    #[ReturnTypeWillChange] public function rewind()
     {
         $this->position = $this->startRow;
     }
@@ -137,7 +137,7 @@ class PHPExcel_Worksheet_RowIterator implements Iterator
      *
      * @return PHPExcel_Worksheet_Row
      */
-    public function current()
+    #[ReturnTypeWillChange] public function current()
     {
         return new PHPExcel_Worksheet_Row($this->subject, $this->position);
     }
@@ -147,7 +147,7 @@ class PHPExcel_Worksheet_RowIterator implements Iterator
      *
      * @return int
      */
-    public function key()
+    #[ReturnTypeWillChange] public function key()
     {
         return $this->position;
     }
@@ -155,7 +155,7 @@ class PHPExcel_Worksheet_RowIterator implements Iterator
     /**
      * Set the iterator to its next value
      */
-    public function next()
+    #[ReturnTypeWillChange] public function next()
     {
         ++$this->position;
     }
@@ -177,7 +177,7 @@ class PHPExcel_Worksheet_RowIterator implements Iterator
      *
      * @return boolean
      */
-    public function valid()
+    #[ReturnTypeWillChange] public function valid()
     {
         return $this->position <= $this->endRow;
     }
