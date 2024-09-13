@@ -16,7 +16,6 @@
 /**
  * D3 Utils
  *
- * @package     local_competvetsuivi
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,10 +59,11 @@ define(['jquery', 'core/config'],
             default_doghnut_chart_height: 300,
 
             /**
+             * Progress chart
              *
-             * @param svgid SVG item to draw the graph into
-             * @param data : an array of data
-             * @param paddingandsize: optional padding and size parameter
+             * @param {String} svgid SVG item to draw the graph into
+             * @param {Array} data - an array of data
+             * @param {Object} paddingandsize - optional padding and size parameter
              */
             progress_charts: function (svgid, data, paddingandsize) {
                 this.load_css('/local/competvetsuivi/js/d3-libraries/progress/d3-progress.css');
@@ -103,10 +103,11 @@ define(['jquery', 'core/config'],
             },
 
             /**
+             * Ring chart
              *
-             * @param svgid SVG item to draw the graph into
-             * @param data : an array of data
-             * @param paddingandsize: optional padding and size parameter
+             * @param {String} svgid SVG item to draw the graph into
+             * @param {Array} data - an array of data
+             * @param {Object} paddingandsize - optional padding and size parameter
              */
             ring_charts: function (svgid, data, paddingandsize) {
                 var thisutils = this;
@@ -262,6 +263,8 @@ define(['jquery', 'core/config'],
                 var svgpattern = d3.select('body').select('svg#d3progresspatternsdef');
                 if (svgpattern.empty()) {
                     d3.select('body')
+                        .append('div')
+                        .attr('style', 'display:none;')
                         .append('svg')
                         .attr('id', 'd3utilspatternsdef')
                         .append('defs')
