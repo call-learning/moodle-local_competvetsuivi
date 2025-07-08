@@ -23,32 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Load data from a series of JSON representing the table data
- *
- * @param string $fixturepath
- * @throws coding_exception
- */
-function load_data_from_json_fixtures($fixturepath) {
-    $generator = testing_util::get_data_generator()->get_plugin_generator('local_competvetsuivi');
-    $tables = array('matrix', 'matrix_cohorts', 'matrix_ue', 'matrix_comp', 'matrix_comp_ue', 'userdata');
-    foreach ($tables as $tablename) {
-        $filename = $fixturepath . '/' . $tablename . '.json';
-        if (file_exists($filename)) {
-            $generatorfn = "create_$tablename";
-            $records = json_decode(file_get_contents($filename), true);
-            if ($tablename == 'matrix_comp_ue') {
-                $generator->create_matrix_comp_ue_bulk($records); // Create the entities in bulk mode.
-            } else {
-                foreach ($records as $r) {
-                    $generator->$generatorfn($r); // Create the entity.
-                }
-            }
-        }
-    }
-}
+namespace local_competvetsuivi\tests;
+use advanced_testcase;
 
 /**
  * The matrix_test test class.
@@ -97,15 +73,41 @@ abstract class competvetsuivi_tests extends advanced_testcase {
         global $CFG, $DB;
         parent::setUp();
         $this->presetup_data();
-        load_data_from_json_fixtures($CFG->dirroot . $this->fixturepath);
+        $this->load_data_from_json_fixtures($CFG->dirroot . $this->fixturepath);
 
         // Setup Matrix as it is used often in tests.
         $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
-        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+        $matrix = new \local_competvetsuivi\matrix\matrix($matrixid);
 
         $matrix->load_data();
         $this->matrix = $matrix;
     }
+
+    /**
+     * Load data from a series of JSON representing the table data
+     *
+     * @param string $fixturepath
+     * @throws coding_exception
+     */
+    private function load_data_from_json_fixtures($fixturepath) {
+        $generator = $this->getDataGenerator()->get_plugin_generator('local_competvetsuivi');
+        $tables = array('matrix', 'matrix_cohorts', 'matrix_ue', 'matrix_comp', 'matrix_comp_ue', 'userdata');
+        foreach ($tables as $tablename) {
+            $filename = $fixturepath . '/' . $tablename . '.json';
+            if (file_exists($filename)) {
+                $generatorfn = "create_$tablename";
+                $records = json_decode(file_get_contents($filename), true);
+                if ($tablename == 'matrix_comp_ue') {
+                    $generator->create_matrix_comp_ue_bulk($records); // Create the entities in bulk mode.
+                } else {
+                    foreach ($records as $r) {
+                        $generator->$generatorfn($r); // Create the entity.
+                    }
+                }
+            }
+        }
+    }
+
 }
 /*
  * Generate the comp_ue table:

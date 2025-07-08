@@ -22,24 +22,10 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-// For installation and usage of PHPUnit within Moodle please read:
-// https://docs.moodle.org/dev/PHPUnit
-//
-// Documentation for writing PHPUnit tests for Moodle can be found here:
-// https://docs.moodle.org/dev/PHPUnit_integration
-// https://docs.moodle.org/dev/Writing_PHPUnit_tests
-//
-// The official PHPUnit homepage is at:
-// https://phpunit.de .
-
-require_once(__DIR__ . '/lib.php');
+namespace local_competvetsuivi;
 
 use local_competvetsuivi\matrix\matrix;
-use local_competvetsuivi\chartingutils;
-use local_competvetsuivi\ueutils;
+use local_competvetsuivi\tests\competvetsuivi_tests;
 
 /**
  * The chartingutils_test test class.
@@ -58,7 +44,7 @@ class chartingutils_test extends competvetsuivi_tests {
     protected function assert_competencies_results($computedresults) {
         foreach ($computedresults as $compname => $expectedresults) {
             $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
-            $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
+            $userdata = \local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
             // User has been validated up to and including UC55.
             $strands = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
                 matrix::MATRIX_COMP_TYPE_EVALUATION);

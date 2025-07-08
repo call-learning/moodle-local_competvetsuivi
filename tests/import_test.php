@@ -22,21 +22,8 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace local_competvetsuivi;
 use local_competvetsuivi\matrix\matrix;
-use local_competvetsuivi\userdata;
-
-defined('MOODLE_INTERNAL') || die();
-
-// For installation and usage of PHPUnit within Moodle please read:
-// https://docs.moodle.org/dev/PHPUnit
-//
-// Documentation for writing PHPUnit tests for Moodle can be found here:
-// https://docs.moodle.org/dev/PHPUnit_integration
-// https://docs.moodle.org/dev/Writing_PHPUnit_tests
-//
-// The official PHPUnit homepage is at:
-// https://phpunit.de .
 
 /**
  * The import_test test class.

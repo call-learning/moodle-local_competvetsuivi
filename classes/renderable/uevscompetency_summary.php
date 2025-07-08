@@ -54,6 +54,11 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
     protected $chartdata = null;
 
     /**
+     * @var stdClass|null
+     */
+    protected $chart = null;
+
+    /**
      * uevscompetency_summary constructor.
      *
      * @param matrix $matrix
