@@ -15,10 +15,13 @@
    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  }}
 {{!
-  @local_competvetsuivi
+  @template local_competvetsuivi/uevscompetency_summary
 
   CompetVetSuivi page template for a single UE showing what the UE contributes
   to the global competency. Doghnut chart.
+
+  Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
+  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 
   Classes required for JS: all the boostrap classes for display
 
@@ -28,19 +31,13 @@
 
   Example context (json):
   {
-    "graph_title": the fullname of the current competency,
-    "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
-    "chartdata": graphdata per strand as an array
-                        [
-                        { } , ...
-                        ]
-
-    ],
-    "comps_legend": [ {'fullname': 'Conseiller et prévenir', 'shortname':COPREV, 'colorindex':0}, ...]
+    "graph_title": "Graph Title",
+    "comp_types": [{"comp_type_id": 1, "comp_type_name": "Knowledge"}],
+    "chartdata": [],
+    "comps_legend": [
+      {"fullname": "Conseiller et prevenir", "shortname": "COPREV", "colorindex": 0}
+    ]
   }
-
-  Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
-  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 
 }}
 <div class="container-fluid">

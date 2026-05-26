@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <libraries>
     <library>
-        <location>js/d3/d3.js</location>
+        <location>amd/src/d3-utils.js</location>
         <name>D3.js</name>
         <version>5.0</version>
         <license>BSD</license>

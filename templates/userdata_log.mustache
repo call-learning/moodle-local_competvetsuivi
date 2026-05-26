@@ -15,10 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_competvetsuivi/matrix_list
+    @template local_competvetsuivi/userdata_log
 
     This template will render previous uploads for user data from the log
 
+    Example context (json):
+    {
+      "userdatalog": [
+        {
+          "timecreated": 1609459200,
+          "inserted": 10,
+          "updated": 5
+        }
+      ]
+    }
 }}
 
 <div>

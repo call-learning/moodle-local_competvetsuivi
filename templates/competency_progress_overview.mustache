@@ -15,7 +15,7 @@
    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  }}
 {{!
-  @local_competvetsuivi
+  @template local_competvetsuivi/competency_progress_overview
 
   CompetVetSuivi page template for a single competency with just one level down
   A click on the competency name will go to the relevant page for this competency
@@ -28,22 +28,18 @@
 
   Example context (json):
   {
-    "graph_title": the graph title
-    "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
-    "breadcrumb": [ {'name': , 'link'}
-    "compitems" : [
-        {
-            "competency_fn": competency fullname,
-            "competency_sn": competency shortname,
-            "competency_link": competency link to the page,
-            "graphdata": graphdata per strand as an array
-                        [
-                        { } , ...
-                        ]
-
+    "graph_title": "Graph Title",
+    "comp_types": [{"comp_type_id": 1, "comp_type_name": "Knowledge"}],
+    "breadcrumbs": [{"name": "Home", "link": "http://example.com"}],
+    "compitems": [
+      {
+        "competency_fn": "Competency fullname",
+        "competency_sn": "COMP1",
+        "competency_link": "http://example.com",
+        "graphdata": []
+      }
     ]
   }
-
 
 }}
 <div class="container">

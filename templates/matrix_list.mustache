@@ -18,6 +18,23 @@
     @template local_competvetsuivi/matrix_list
 
     This template will render all competvet suivi matrix
+
+    Example context (json):
+    {
+      "addactionurl": "http://example.com/add",
+      "matrix": [
+        {
+          "fullname": "Matrix 1",
+          "shortname": "MAT1",
+          "cohortsnames": "Cohort A",
+          "lastmodified": 1609459200,
+          "viewurl": "http://example.com/view",
+          "editurl": "http://example.com/edit",
+          "deleteurl": "http://example.com/delete",
+          "assignurl": "http://example.com/assign"
+        }
+      ]
+    }
 }}
 
 <div>

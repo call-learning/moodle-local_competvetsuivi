@@ -15,7 +15,7 @@
    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  }}
 {{!
-  @local_competvetsuivi
+  @template local_competvetsuivi/uevscompetency_details
 
   CompetVetSuivi page template for a single UE showing what competency contributes the most
   to the UE. Bar charts.
@@ -26,23 +26,21 @@
 
   Context variables required for this template:
 
-    Example context (json):
-    {
-    "comp_fullname": the fullname of the current competency,
-    "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
-    "breadcrumb": [ {'name': , 'link'}
-    "compitems" : [
-        {
-            "competency_fn": competency fullname,
-            "competency_sn": competency shortname,
-            "competency_link": competency link to the page,
-            "compvsuegraphdata": graphdata per strand as an array
-                        [
-                        { } , ...
-                        ]
-
-        ]
-    }
+  Example context (json):
+  {
+    "comp_fullname": "Competency fullname",
+    "graph_title": "Graph Title",
+    "comp_types": [{"comp_type_id": 1, "comp_type_name": "Knowledge"}],
+    "breadcrumbs": [{"name": "Home", "link": "http://example.com"}],
+    "compitems": [
+      {
+        "competency_fn": "Competency fullname",
+        "competency_sn": "COMP1",
+        "competency_link": "http://example.com",
+        "graphdata": []
+      }
+    ]
+  }
 
 }}
 

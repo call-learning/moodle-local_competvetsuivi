@@ -15,7 +15,7 @@
    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  }}
 {{!
-  @local_competvetsuivi
+  @template local_competvetsuivi/graph_header
 
   Will render the graph header: title and breadcrumb
 
@@ -25,17 +25,20 @@
 
   Context variables required for this template:
 
-  Example context (json):
-  {
-    "graph_title": the graph title
-    "breadcrumb": [ {'name': , 'link'}
-    "competency_desc": Competency full description
-  }
-
-
   Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
   too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 
+  Example context (json):
+  {
+    "graph_title": "Graph Title",
+    "breadcrumbs": [
+        {
+            "name": "Home",
+            "link": "http://example.com"
+        }
+    ],
+    "competency_desc": "Competency description"
+  }
 }}
 
 <div class="row graph-header-title">

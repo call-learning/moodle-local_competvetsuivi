@@ -15,33 +15,32 @@
    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  }}
 {{!
-  @local_competvetsuivi
+  @template local_competvetsuivi/competency_graphs
 
   CompetVetSuivi utils that will just draw all graph in a given section
 
   Classes required for JS: all the boostrap classes for display
 
+  Note: we had to make this compatible with lambda theme, so we added span classes
+  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
+
   Data attributes required for JS:
 
   Context variables required for this template:
 
-    Example context (json):
-    {
-    "compitems" : [
-        {
-            "competency_fn": competency fullname,
-            "competency_sn": competency shortname,
-            "competency_link": competency link to the page,
-            "compvsuegraphdata": graphdata per strand as an array
-                        [
-                        { } , ...
-                        ]
+  Example context (json):
+  {
+    "compitems": [
+      {
+        "competency_fn": "Competency fullname",
+        "competency_sn": "COMP1",
+        "competency_link": "http://example.com",
+        "competency_desc": "Competency description",
+        "graphdata": []
+      }
+    ]
+  }
 
-        ]
-    }
-
-  Note: we had to make this compatible with lambda theme, so we added span classes
-  too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 }}
 
 {{#compitems}}

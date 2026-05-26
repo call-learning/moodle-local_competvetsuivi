@@ -15,7 +15,7 @@
    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  }}
 {{!
-  @local_competvetsuivi
+  @template local_competvetsuivi/graph_footer
 
   Will render the graph footer: legend
 
@@ -25,14 +25,13 @@
 
   Context variables required for this template:
 
-  Example context (json):
-  {
-    "comp_types" : [ 'comp_type_id': numid, 'comp_type_name': fullname ]
-  }
-
   Note: we had to make this compatible with lambda theme, so we added spanXX and row-fluid classes
   too (https://redpithemes.com/Documentation/assets/bs_grid.html)
 
+  Example context (json):
+  {
+    "comp_types": [{"comp_type_id": 1, "comp_type_name": "Knowledge"}]
+  }
 }}
 
 <div class="row pt-3 pb-3 row-fluid">
