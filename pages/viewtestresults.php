@@ -49,11 +49,15 @@ setup_page($header, $pageurl, $returnurl);
 
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('usertestresults', 'local_competvetsuivi',
-    array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
+echo $OUTPUT->heading(get_string(
+    'usertestresults',
+    'local_competvetsuivi',
+    ['matrixname' => $matrix->shortname, 'username' => fullname($user)]
+), 3);
 $questionresults = local_competvetsuivi\autoevalutils::get_student_results(
     $userid,
-    $matrix);
+    $matrix
+);
 
 var_dump($questionresults);
 echo $OUTPUT->footer();

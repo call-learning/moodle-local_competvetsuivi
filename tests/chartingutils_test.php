@@ -33,9 +33,9 @@ use local_competvetsuivi\tests\competvetsuivi_tests;
  * @package    local_competvetsuivi
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_competvetsuivi\chartingutils
  */
-class chartingutils_test extends competvetsuivi_tests {
-
+final class chartingutils_test extends competvetsuivi_tests {
     /**
      * Check competencies results
      * @param array $computedresults
@@ -46,94 +46,99 @@ class chartingutils_test extends competvetsuivi_tests {
             $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
             $userdata = \local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
             // User has been validated up to and including UC55.
-            $strands = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
-                matrix::MATRIX_COMP_TYPE_EVALUATION);
-            list($progressperstrand, $maxperstrand) =
+            $strands = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY,
+                matrix::MATRIX_COMP_TYPE_EVALUATION];
+            [$progressperstrand, $maxperstrand] =
                 chartingutils::get_comp_progress($this->matrix, $comp, $userdata, $strands);
             foreach ($strands as $strand) {
-                $this->assertEquals($expectedresults[$strand][1],
+                $this->assertEquals(
+                    $expectedresults[$strand][1],
                     $maxperstrand[$strand],
-                    "Max calculation issue - Strand($strand) : $compname");
-                $this->assertEquals($expectedresults[$strand][0],
+                    "Max calculation issue - Strand($strand) : $compname"
+                );
+                $this->assertEquals(
+                    $expectedresults[$strand][0],
                     $progressperstrand[$strand],
-                    "Progress calculation Issue - Strand($strand) : $compname");
+                    "Progress calculation Issue - Strand($strand) : $compname"
+                );
             }
         }
     }
 
-    public function test_get_comp_progress() {
+    public function test_get_comp_progress(): void {
         $this->resetAfterTest();
 
-        $computedresults = array(
-            "COPREV.1.1" => array(
+        $computedresults = [
+            "COPREV.1.1" => [
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [1.5, 6.5],
                 matrix::MATRIX_COMP_TYPE_ABILITY => [0.5, 4],
-                matrix::MATRIX_COMP_TYPE_EVALUATION => [1, 3]
-            ),
-            "COPREV.1.1BIS" => array(
+                matrix::MATRIX_COMP_TYPE_EVALUATION => [1, 3],
+            ],
+            "COPREV.1.1BIS" => [
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [1.5, 6.5],
                 matrix::MATRIX_COMP_TYPE_ABILITY => [1, 4],
-                matrix::MATRIX_COMP_TYPE_EVALUATION => [1, 2]
-            ),
-            "COPREV.1.2" => array(
+                matrix::MATRIX_COMP_TYPE_EVALUATION => [1, 2],
+            ],
+            "COPREV.1.2" => [
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [0, 3.5],
                 matrix::MATRIX_COMP_TYPE_ABILITY => [0, 1.5],
-                matrix::MATRIX_COMP_TYPE_EVALUATION => [0, 1]
-            ),
-            "COPREV.1.3" => array(
+                matrix::MATRIX_COMP_TYPE_EVALUATION => [0, 1],
+            ],
+            "COPREV.1.3" => [
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [1.5, 9.5],
                 matrix::MATRIX_COMP_TYPE_ABILITY => [1.5, 9],
-                matrix::MATRIX_COMP_TYPE_EVALUATION => [0.5, 5.5]
-            ),
-            "COPREV.1.4" => array(
+                matrix::MATRIX_COMP_TYPE_EVALUATION => [0.5, 5.5],
+            ],
+            "COPREV.1.4" => [
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [0, 2.5],
                 matrix::MATRIX_COMP_TYPE_ABILITY => [0, 1.5],
-                matrix::MATRIX_COMP_TYPE_EVALUATION => [0, 1]
-            ),
+                matrix::MATRIX_COMP_TYPE_EVALUATION => [0, 1],
+            ],
 
-        );
+        ];
         $this->assert_competencies_results($computedresults);
-
     }
 
-    public function test_get_comp_progress_aggregated() {
+    public function test_get_comp_progress_aggregated(): void {
         $this->resetAfterTest();
 
-        $computedresults = array(
-            "COPREV.1" => array(
+        $computedresults = [
+            "COPREV.1" => [
                 matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [4.5, 28.5],
                 matrix::MATRIX_COMP_TYPE_ABILITY => [3, 20],
                 matrix::MATRIX_COMP_TYPE_OBJECTIVES => [4, 16.5],
-                matrix::MATRIX_COMP_TYPE_EVALUATION => [2.5, 12.5]
-            ));
+                matrix::MATRIX_COMP_TYPE_EVALUATION => [2.5, 12.5],
+            ]];
         $this->assert_competencies_results($computedresults);
     }
 
-    public function test_get_data_for_progressbar() {
+    public function test_get_data_for_progressbar(): void {
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
         $useremail = "Etudiant-145@ecole.fr";
-        $userdata = local_competvetsuivi\userdata::get_user_data($useremail);
-        $lastseenue = local_competvetsuivi\userdata::get_user_last_ue_name($useremail);
+        $userdata = userdata::get_user_data($useremail);
+        $lastseenue = userdata::get_user_last_ue_name($useremail);
         $currentsemester = ueutils::get_current_semester_index($lastseenue, $this->matrix);
 
-        $data = chartingutils::get_data_for_progressbar($this->matrix,
+        $data = chartingutils::get_data_for_progressbar(
+            $this->matrix,
             $comp,
-            array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY),
+            [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY],
             $userdata,
-            $currentsemester);
+            $currentsemester
+        );
 
-        $computedresults = array(
+        $computedresults = [
             matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 1.5 / 6.5,
             matrix::MATRIX_COMP_TYPE_ABILITY => 0.5 / 4,
-        );
-        $markers = array( // Markers positions are cumulative and we only see markers who have a different percentage.
+        ];
+        $markers = [ // Markers positions are cumulative and we only see markers who have a different percentage.
             matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [
                 '5' => 1.5 / 6.5,
                 '8' => (1.5 + 1) / 6.5,
                 '10' => (1.5 + 1 + 1) / 6.5,
                 '11' => (1.5 + 1 + 1 + 1.5) / 6.5,
-                '12' => (1.5 + 1 + 1 + 1.5 + 1.5) / 6.5,  // 100%.
+                '12' => (1.5 + 1 + 1 + 1.5 + 1.5) / 6.5, // 100%.
             ],
             matrix::MATRIX_COMP_TYPE_ABILITY => [
                 '5' => 0.5 / 4,
@@ -141,29 +146,31 @@ class chartingutils_test extends competvetsuivi_tests {
                 '10' => (0.5 + 0.5 + 1) / 4,
                 '11' => (0.5 + 0.5 + 1 + 1.5) / 4,
                 '12' => (0.5 + 0.5 + 1 + 1.5 + 0.5) / 4, // 100%.
-            ]
-        );
+            ],
+        ];
         $this->assert_competencies_results_marker($computedresults, $markers, $data);
     }
 
-    public function test_get_data_for_progressbar_aggregated() {
+    public function test_get_data_for_progressbar_aggregated(): void {
         $this->resetAfterTest();
         $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
         $useremail = "Etudiant-145@ecole.fr";
-        $userdata = local_competvetsuivi\userdata::get_user_data($useremail);
-        $lastseenue = local_competvetsuivi\userdata::get_user_last_ue_name($useremail);
+        $userdata = userdata::get_user_data($useremail);
+        $lastseenue = userdata::get_user_last_ue_name($useremail);
         $currentsemester = ueutils::get_current_semester_index($lastseenue, $this->matrix);
-        $data = chartingutils::get_data_for_progressbar($this->matrix,
+        $data = chartingutils::get_data_for_progressbar(
+            $this->matrix,
             $comp,
-            array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY),
+            [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY],
             $userdata,
-            $currentsemester);
+            $currentsemester
+        );
 
-        $computedresults = array(
+        $computedresults = [
             matrix::MATRIX_COMP_TYPE_KNOWLEDGE => 4.5 / 28.5,
             matrix::MATRIX_COMP_TYPE_ABILITY => 3 / 20,
-        );
-        $markers = array( // Markers positions are cumulative and we only see markers who have a different percentage.
+        ];
+        $markers = [ // Markers positions are cumulative and we only see markers who have a different percentage.
             matrix::MATRIX_COMP_TYPE_KNOWLEDGE => [
                 '5' => 4.5 / 28.5,
                 '6' => (4.5 + 1.5) / 28.5,
@@ -179,8 +186,8 @@ class chartingutils_test extends competvetsuivi_tests {
                 '10' => (3 + 1 + 2.5 + 3) / 20,
                 '11' => (3 + 1 + 2.5 + 3 + 6.5) / 20,
                 '12' => (3 + 1 + 2.5 + 3 + 6.5 + 4) / 20,
-            ]
-        );
+            ],
+        ];
         $this->assert_competencies_results_marker($computedresults, $markers, $data);
     }
 
@@ -194,26 +201,33 @@ class chartingutils_test extends competvetsuivi_tests {
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_KNOWLEDGE], $data[0]->result->value);
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_ABILITY], $data[1]->result->value);
         foreach ($markers as $strandid => $results) {
-            $markersforsemester = array_filter($data, function($d) use ($strandid) {
+            $markersforsemester = array_filter($data, function ($d) use ($strandid) {
                 return $d->result->type == $strandid;
             });
             $markersforsemester = reset($markersforsemester);
 
             foreach ($results as $semesterlabel => $cumulativeresult) {
-                $currentmarker = array_filter($markersforsemester->markers, function($m) use ($semesterlabel) {
+                $currentmarker = array_filter($markersforsemester->markers, function ($m) use ($semesterlabel) {
                     return $m->label == $semesterlabel;
                 });
                 $currentmarker = reset($currentmarker);
-                $this->assertEquals($cumulativeresult, $currentmarker->value,
+                $this->assertEquals(
+                    $cumulativeresult,
+                    $currentmarker->value,
                     "Current marker {$currentmarker->label} within strand({$strandid}), should have a value
-                        of {$cumulativeresult} but has a value of {$currentmarker->value}");
+                        of {$cumulativeresult} but has a value of {$currentmarker->value}"
+                );
                 $shouldbeactive = ($currentmarker->label) > 5; // User is currently looking at UC55.
                 if ($shouldbeactive) {
-                    $this->assertTrue($currentmarker->active,
-                        "Current marker {$currentmarker->label} within strand({$strandid}) should be active.");
+                    $this->assertTrue(
+                        $currentmarker->active,
+                        "Current marker {$currentmarker->label} within strand({$strandid}) should be active."
+                    );
                 } else {
-                    $this->assertFalse($currentmarker->active,
-                        "Current marker {$currentmarker->label} within strand({$strandid}) should be inactive.");
+                    $this->assertFalse(
+                        $currentmarker->active,
+                        "Current marker {$currentmarker->label} within strand({$strandid}) should be inactive."
+                    );
                 }
             }
         }

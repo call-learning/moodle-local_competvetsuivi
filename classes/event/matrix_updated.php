@@ -24,8 +24,6 @@
 
 namespace local_competvetsuivi\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class matrix_updated
  *
@@ -71,7 +69,6 @@ class matrix_updated extends \core\event\base {
      * @return string
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'cvs_matrix', 'restore' => 'cvs_matrix');
+        return ['db' => 'cvs_matrix', 'restore' => 'cvs_matrix'];
     }
-
 }

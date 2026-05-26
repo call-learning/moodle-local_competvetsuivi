@@ -28,11 +28,11 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 
 // Get the cli options.
-list($options, $unrecognised) = cli_get_params([
+[$options, $unrecognised] = cli_get_params([
     'help' => false,
     'filename' => null,
 ], [
-    'h' => 'help'
+    'h' => 'help',
 ]);
 
 $usage = "Upload user data manually. Same process as the scheduled task
@@ -57,7 +57,7 @@ if ($options['help']) {
 }
 
 if ($options['filename'] === null || !file_exists($options['filename'])) {
-    $a = (object) array('option' => 'filename', 'value' => $options['filename']);
+    $a = (object) ['option' => 'filename', 'value' => $options['filename']];
     cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
 }
 

@@ -50,10 +50,13 @@ setup_page($header, $pageurl, $returnurl);
 $userdata = local_competvetsuivi\userdata::get_user_data($user->email);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('matrixviewdatatitle', 'local_competvetsuivi',
-    array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
+echo $OUTPUT->heading(get_string(
+    'matrixviewdatatitle',
+    'local_competvetsuivi',
+    ['matrixname' => $matrix->shortname, 'username' => fullname($user)]
+), 3);
 
-$strandlist = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY);
+$strandlist = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY];
 $lastseenue = local_competvetsuivi\userdata::get_user_last_ue_name($user->email);
 $currentsemester = ueutils::get_current_semester_index($lastseenue, $matrix);
 

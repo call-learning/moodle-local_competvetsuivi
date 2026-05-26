@@ -25,8 +25,6 @@
 
 namespace local_competvetsuivi\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 use context_system;
 use local_competvetsuivi\userdata;
 use moodle_url;
@@ -39,7 +37,6 @@ use core_user;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userdata_csv_upload extends \core\task\scheduled_task {
-
     /**
      * Return the task's name as shown in admin screens.
      *
@@ -56,7 +53,7 @@ class userdata_csv_upload extends \core\task\scheduled_task {
     public function execute() {
         global $CFG;
         if ($CFG->enablecompetvetsuivi) {
-            // TODO: send a message to admin when uploading completed.
+            // TOFIX: send a message to admin when uploading completed.
             static::process_userdata_csv();
         }
     }
@@ -86,4 +83,3 @@ class userdata_csv_upload extends \core\task\scheduled_task {
         }
     }
 }
-

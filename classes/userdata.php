@@ -23,7 +23,6 @@
  */
 
 namespace local_competvetsuivi;
-defined('MOODLE_INTERNAL') || die();
 
 use csv_import_reader;
 use local_competvetsuivi\matrix\matrix;
@@ -36,15 +35,14 @@ use local_competvetsuivi\matrix\matrix;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userdata {
-
     /**
      * The name of the email column in the csv
      */
-    const MAIL_COLUMN_NAME = 'Mail'; // TODO add this as a plugin parameter.
+    const MAIL_COLUMN_NAME = 'Mail'; // TOFIX add this as a plugin parameter.
     /**
      * The name of the column if present in CSV
      */
-    const LAST_UNIT_SEEN = 'LastUnitSeen'; // TODO This will be the new column if we need to check for last seen unit.
+    const LAST_UNIT_SEEN = 'LastUnitSeen'; // TOFIX This will be the new column if we need to check for last seen unit.
 
     /**
      * Do a couple of checks on the file at hand to see if it contains the right data
@@ -54,7 +52,7 @@ class userdata {
      */
     public static function check_file_valid($filename) {
         $fileexists = file_exists($filename);
-        $filemimetypecheck = $fileexists && in_array(mime_content_type($filename), array('text/csv', 'text/plain'));
+        $filemimetypecheck = $fileexists && in_array(mime_content_type($filename), ['text/csv', 'text/plain']);
         return $fileexists && $filemimetypecheck;
     }
 
@@ -83,21 +81,18 @@ class userdata {
 
         // If there are no import errors then proceed.
         if (empty($importer->get_error())) {
-
             // Get header (field names).
             $headers = $importer->get_columns();
             if (!is_array($headers) || count($headers) < 2) {
-                $returnvalue = array('errormsg' => get_string('csvinvalidcols', 'error'));
-
+                $returnvalue = ['errormsg' => get_string('csvinvalidcols', 'error')];
             } else {
                 self::trim_headers($headers);
                 if (($columnerror = self::check_columns($headers)) === true) {
-
                     $importer->init();
                     $emailcolumnindex = array_search(static::MAIL_COLUMN_NAME, $headers);
                     $useddataheaders = array_splice($headers, $emailcolumnindex + 1);
-                    // TODO: This is a hack: We either need to change the header in the user data source or the matrix.
-                    $useddataheaders = array_map(function($label) {
+                    // TOFIX: This is a hack: We either need to change the header in the user data source or the matrix.
+                    $useddataheaders = array_map(function ($label) {
                         return matrix::normalize_uc_name($label);
                     }, $useddataheaders);
 
@@ -126,7 +121,7 @@ class userdata {
                         // We combine the two array and render a json.
                         $userdata->userdata = json_encode(array_combine($useddataheaders, $userdatarow));
 
-                        $toupdate = $DB->get_field('cvs_userdata', 'id', array('useremail' => $useremail));
+                        $toupdate = $DB->get_field('cvs_userdata', 'id', ['useremail' => $useremail]);
                         if ($toupdate) {
                             $userdata->id = $toupdate;
                             $DB->update_record('cvs_userdata', $userdata);
@@ -138,16 +133,16 @@ class userdata {
                     }
 
                     // Send an event after importation.
-                    $eventparams = array('context' => \context_system::instance(),
-                        'other' => array('filename' => $filename, 'inserted' => $inserteduser, 'updated' => $updateduser));
+                    $eventparams = ['context' => \context_system::instance(),
+                        'other' => ['filename' => $filename, 'inserted' => $inserteduser, 'updated' => $updateduser]];
                     $event = \local_competvetsuivi\event\userdata_imported::create($eventparams);
                     $event->trigger();
                 } else {
-                    $returnvalue = array('errormsg' => get_string('csvloaderror', 'error', $columnerror));
+                    $returnvalue = ['errormsg' => get_string('csvloaderror', 'error', $columnerror)];
                 }
             }
         } else {
-            $returnvalue = array('errormsg' => $importer->get_error());
+            $returnvalue = ['errormsg' => $importer->get_error()];
         }
 
         $importer->cleanup();
@@ -175,7 +170,7 @@ class userdata {
      */
     public static function get_user_data($useremail) {
         global $DB;
-        $data = $DB->get_record('cvs_userdata', array('useremail' => $useremail));
+        $data = $DB->get_record('cvs_userdata', ['useremail' => $useremail]);
         if ($data) {
             return json_decode($data->userdata, true);
         }
@@ -191,7 +186,7 @@ class userdata {
      */
     public static function get_user_last_ue_name($useremail) {
         global $DB;
-        $data = $DB->get_record('cvs_userdata', array('useremail' => $useremail));
+        $data = $DB->get_record('cvs_userdata', ['useremail' => $useremail]);
 
         if ($data) {
             return $data->lastseenunit;
@@ -212,5 +207,4 @@ class userdata {
             $columnheaders[$i] = $h;
         }
     }
-
 }

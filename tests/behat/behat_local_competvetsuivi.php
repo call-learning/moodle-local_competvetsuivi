@@ -22,8 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use Behat\Behat\Tester\Exception\PendingException as PendingException;
-use Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');

@@ -52,20 +52,19 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('matrixviewtitle', 'local_competvetsuivi', $matrix->fullname), 3);
 $table = new html_table();
 $table->attributes['class'] = 'generaltable boxaligncenter flexible-wrap';
-$uenames = array_map(function($ue) {
+$uenames = array_map(function ($ue) {
     return $ue->fullname;
 }, $matrix->get_matrix_ues());
-$arrayheader = array(get_string('competencies', 'local_competvetsuivi'),
-    get_string('competencyfullname', 'local_competvetsuivi'));
+$arrayheader = [get_string('competencies', 'local_competvetsuivi'),
+    get_string('competencyfullname', 'local_competvetsuivi')];
 $arrayheader = array_merge($arrayheader, $uenames);
 $table->head = $arrayheader;
 
 $competencies = $matrix->get_matrix_competencies();
 foreach ($competencies as $comp) {
-
-    $cells = array(new html_table_cell($comp->shortname), new html_table_cell($comp->fullname));
+    $cells = [new html_table_cell($comp->shortname), new html_table_cell($comp->fullname)];
     foreach ($matrix->get_matrix_ues() as $ue) {
-        $values = array();
+        $values = [];
         foreach ($matrix->get_values_for_ue_and_competency($ue->id, $comp->id) as $compsue) {
             $values[] = matrix::comptype_to_string($compsue->type) . ':' . $compsue->value;
         }

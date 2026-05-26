@@ -22,7 +22,6 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Compet vet suivi generator
@@ -33,7 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_competvetsuivi_generator extends testing_module_generator {
-
     /**
      * Create and insert default data
      *
@@ -48,16 +46,16 @@ class local_competvetsuivi_generator extends testing_module_generator {
         global $DB;
         $record = (array) $record;
         if (!empty($record['ue'])) {
-            $record['ueid'] = $DB->get_field('cvs_matrix_ue', 'id', array('shortname' => $record['ue']));
+            $record['ueid'] = $DB->get_field('cvs_matrix_ue', 'id', ['shortname' => $record['ue']]);
         }
         if (!empty($record['matrix'])) {
-            $record['matrixid'] = $DB->get_field('cvs_matrix', 'id', array('shortname' => $record['matrix']));
+            $record['matrixid'] = $DB->get_field('cvs_matrix', 'id', ['shortname' => $record['matrix']]);
         }
         if (!empty($record['comp'])) {
-            $record['compid'] = $DB->get_field('cvs_matrix_comp', 'id', array('shortname' => $record['comp']));
+            $record['compid'] = $DB->get_field('cvs_matrix_comp', 'id', ['shortname' => $record['comp']]);
         }
         if (!empty($record['cohort'])) {
-            $record['cohortid'] = $DB->get_field('cohort', 'id', array('idnumber' => $record['cohort']));
+            $record['cohortid'] = $DB->get_field('cohort', 'id', ['idnumber' => $record['cohort']]);
         }
         $record = array_merge(
             $defaultvalue,
@@ -70,11 +68,13 @@ class local_competvetsuivi_generator extends testing_module_generator {
             if ($allpathitem) {
                 array_shift($allpathitem); // Remove the first empty entry.
             }
-            list($sqlwherein, $paramsin) = $DB->get_in_or_equal($allpathitem);
+            [$sqlwherein, $paramsin] = $DB->get_in_or_equal($allpathitem);
             $martrixmatches =
-                $DB->get_records_sql_menu('SELECT id, shortname FROM {cvs_matrix_comp} WHERE shortname ' . $sqlwherein .
+                $DB->get_records_sql_menu(
+                    'SELECT id, shortname FROM {cvs_matrix_comp} WHERE shortname ' . $sqlwherein .
                     ' ORDER BY path ASC',
-                    $paramsin);
+                    $paramsin
+                );
             $matchedcompids = array_combine($allpathitem, array_flip($martrixmatches));
             $record['path'] = '/' . join('/', $matchedcompids);
             $record['id'] = $returnedid;
@@ -91,13 +91,13 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function create_matrix($record = null, array $options = null) {
-        $defaultsettings = array(
+    public function create_matrix($record = null, ?array $options = null) {
+        $defaultsettings = [
             'fullname' => "",
             'shortname' => "",
             'timemodified' => time(),
             'hash' => sha1(random_string(255)),
-        );
+        ];
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix');
     }
 
@@ -109,12 +109,12 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function create_matrix_ue($record = null, array $options = null) {
-        $defaultsettings = array(
+    public function create_matrix_ue($record = null, ?array $options = null) {
+        $defaultsettings = [
             'fullname' => "",
             'shortname' => "",
             'matrixid' => 0,
-        );
+        ];
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix_ue');
     }
 
@@ -126,15 +126,15 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function create_matrix_comp($record = null, array $options = null) {
-        $defaultsettings = array(
+    public function create_matrix_comp($record = null, ?array $options = null) {
+        $defaultsettings = [
             'fullname' => "",
             'shortname' => "",
             'description' => "",
             'descriptionformat' => FORMAT_HTML,
             'path' => "",
             'matrixid' => 0,
-        );
+        ];
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix_comp');
     }
 
@@ -146,13 +146,13 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function create_matrix_comp_ue($record = null, array $options = null) {
-        $defaultsettings = array(
+    public function create_matrix_comp_ue($record = null, ?array $options = null) {
+        $defaultsettings = [
             'ueid' => 0,
             'compid' => 0,
             'type' => local_competvetsuivi\matrix\matrix::MATRIX_COMP_TYPE_KNOWLEDGE,
             'value' => 0,
-        );
+        ];
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix_comp_ue');
     }
 
@@ -168,32 +168,32 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function create_matrix_comp_ue_bulk($records = null, array $options = null) {
+    public function create_matrix_comp_ue_bulk($records = null, ?array $options = null) {
         global $DB;
 
         $ueidnames = array_map(
-            function($r) {
+            function ($r) {
                 return key_exists('ue', $r) ? $r['ue'] : "";
             },
             $records
         );
         $compidnames = array_map(
-            function($r) {
+            function ($r) {
                 return key_exists('comp', $r) ? $r['comp'] : "";
             },
             $records
         );
-        $compidnames = array_filter(array_unique($compidnames), function($r) {
+        $compidnames = array_filter(array_unique($compidnames), function ($r) {
             return $r;
         });
-        $ueidnames = array_filter(array_unique($ueidnames), function($r) {
+        $ueidnames = array_filter(array_unique($ueidnames), function ($r) {
             return $r;
         });
 
-        list($sqlin, $paramin) = $DB->get_in_or_equal($compidnames);
+        [$sqlin, $paramin] = $DB->get_in_or_equal($compidnames);
         $compmatcher = $DB->get_records_select_menu("cvs_matrix_comp", "shortname " . $sqlin, $paramin, '', "id, shortname");
         $compmatcher = array_flip($compmatcher);
-        list($sqlin, $paramin) = $DB->get_in_or_equal($ueidnames);
+        [$sqlin, $paramin] = $DB->get_in_or_equal($ueidnames);
         $uematcher = $DB->get_records_select_menu("cvs_matrix_ue", "shortname " . $sqlin, $paramin, '', "id, shortname");
         $uematcher = array_flip($uematcher);
 
@@ -216,12 +216,12 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function create_userdata($record = null, array $options = null) {
-        $defaultsettings = array(
+    public function create_userdata($record = null, ?array $options = null) {
+        $defaultsettings = [
             'useremail' => "",
             'userdata' => "",
-            'lastseenunit' => ""
-        );
+            'lastseenunit' => "",
+        ];
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_userdata');
     }
 
@@ -233,11 +233,11 @@ class local_competvetsuivi_generator extends testing_module_generator {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function create_matrix_cohorts($record = null, array $options = null) {
-        $defaultsettings = array(
+    public function create_matrix_cohorts($record = null, ?array $options = null) {
+        $defaultsettings = [
             'matrixid' => 0,
             'cohortid' => 0,
-        );
+        ];
         return $this->create_and_insert_data($record, $defaultsettings, 'cvs_matrix_cohorts');
     }
 }

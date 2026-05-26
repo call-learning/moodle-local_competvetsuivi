@@ -23,7 +23,6 @@
  */
 
 namespace local_competvetsuivi\renderable;
-defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
 use stdClass;
@@ -60,7 +59,8 @@ class chart_item implements \renderable, templatable {
     public function __construct(
         $data,
         $charttype = 'progress',
-        $options = array()) {
+        $options = []
+    ) {
         $this->type = $charttype;
         $this->data = $data;
         $this->options = $options;
@@ -87,13 +87,13 @@ class chart_item implements \renderable, templatable {
             case 'progress':
                 $sizeparams = [
                     "size" => ["height" =>
-                        get_config('local_competvetsuivi', 'progresschartheight')]
+                        get_config('local_competvetsuivi', 'progresschartheight')],
                 ];
                 break;
             case 'ring':
                 $sizeparams = [
                     "size" => ["height" =>
-                        get_config('local_competvetsuivi', 'doghnutchartheight')]
+                        get_config('local_competvetsuivi', 'doghnutchartheight')],
                 ];
                 break;
         }

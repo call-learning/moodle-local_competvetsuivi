@@ -32,9 +32,10 @@ use local_competvetsuivi\tests\competvetsuivi_tests;
  * @package    local_competvetsuivi
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_competvetsuivi\utils
  */
-class utils_test extends competvetsuivi_tests {
-    public function test_get_matrixid_for_user() {
+final class utils_test extends competvetsuivi_tests {
+    public function test_get_matrixid_for_user(): void {
         global $DB;
         $this->resetAfterTest();
         $matrixid = utils::get_matrixid_for_user($this->user->id);
@@ -42,33 +43,35 @@ class utils_test extends competvetsuivi_tests {
 
         cohort_add_member($this->cohort1->id, $this->user->id);
         cohort_add_member($this->cohort2->id, $this->user->id);
-        $matrix1id = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
+        $matrix1id = $DB->get_field('cvs_matrix', 'id', ['shortname' => 'MATRIX1']);
         $matrixid = utils::get_matrixid_for_user($this->user->id);
         $this->assertEquals($matrix1id, $matrixid);
     }
 
-    public function test_assign_matrix_cohort() {
+    public function test_assign_matrix_cohort(): void {
         global $DB;
         $this->resetAfterTest();
-        $matrix1id = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
-        $cohortid = $DB->get_field('cohort', 'id', array('idnumber' => 'COHORT1'));
+        $matrix1id = $DB->get_field('cvs_matrix', 'id', ['shortname' => 'MATRIX1']);
+        $cohortid = $DB->get_field('cohort', 'id', ['idnumber' => 'COHORT1']);
         utils::assign_matrix_cohort($matrix1id, $cohortid);
-        $this->assertCount(1, $DB->get_records('cvs_matrix_cohorts',
-            array('matrixid' => $matrix1id, 'cohortid' => $cohortid)));
+        $this->assertCount(1, $DB->get_records(
+            'cvs_matrix_cohorts',
+            ['matrixid' => $matrix1id, 'cohortid' => $cohortid]
+        ));
     }
 
-    public function test_get_possible_vs_actual_values() {
+    public function test_get_possible_vs_actual_values(): void {
         global $DB;
         $this->resetAfterTest();
-        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
-        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+        $matrixid = $DB->get_field('cvs_matrix', 'id', ['shortname' => 'MATRIX1']);
+        $matrix = new matrix($matrixid);
         $matrix->load_data();
         $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1.1');
-        $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
+        $userdata = userdata::get_user_data("Etudiant-145@ecole.fr");
         $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $comp, $userdata);
         $uc55vals = [];
         foreach ($possiblevsactual as $type => $vals) {
-            $uc55vals[$type] = array_values(array_filter($vals, function($u) {
+            $uc55vals[$type] = array_values(array_filter($vals, function ($u) {
                 return $u->ue == 'UC55';
             }))[0];
         }
@@ -90,20 +93,20 @@ class utils_test extends competvetsuivi_tests {
         }
     }
 
-    public function test_get_possible_vs_actual_values_aggregated() {
+    public function test_get_possible_vs_actual_values_aggregated(): void {
         global $DB;
         $this->resetAfterTest();
-        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
-        $matrix = new local_competvetsuivi\matrix\matrix($matrixid);
+        $matrixid = $DB->get_field('cvs_matrix', 'id', ['shortname' => 'MATRIX1']);
+        $matrix = new matrix($matrixid);
         $matrix->load_data();
         $comp = $matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
-        $userdata = local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
+        $userdata = userdata::get_user_data("Etudiant-145@ecole.fr");
         $ueselection = ueutils::get_ues_for_semester(1, $matrix);
         $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $comp, $userdata, $ueselection, true);
 
         $sumvalues = [];
         foreach ($possiblevsactual as $type => $vals) {
-            $sumvalues[$type] = array_sum(array_map(function($v) {
+            $sumvalues[$type] = array_sum(array_map(function ($v) {
                 return $v->possibleval * $v->userval;
             }, $vals));
         }
@@ -115,7 +118,7 @@ class utils_test extends competvetsuivi_tests {
         $this->assertEquals(2.5, $sumvalues[matrix::MATRIX_COMP_TYPE_EVALUATION]);
     }
 
-    public function test_get_default_question_bank_category_name() {
+    public function test_get_default_question_bank_category_name(): void {
         $this->resetAfterTest();
 
         $categoryname = utils::get_default_question_bank_category_name();
@@ -124,6 +127,5 @@ class utils_test extends competvetsuivi_tests {
         set_config('cvsquestionbankdefaultcategoryname', 'AAAAAAAAAA', 'local_competvetsuivi');
         $categoryname = utils::get_default_question_bank_category_name();
         $this->assertEquals('AAAAAAAAAA', $categoryname);
-
     }
 }

@@ -34,7 +34,6 @@ global $CFG;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cohort_assign_form extends moodleform {
-
     /**
      * The form definition.
      */
@@ -52,7 +51,8 @@ class cohort_assign_form extends moodleform {
             'select',
             'matrixcohortsassignment',
             get_string('matrixcohortsassignment', 'local_competvetsuivi'),
-            $cohorts);
+            $cohorts
+        );
         $element->setMultiple(true);
         $mform->addHelpButton('matrixcohortsassignment', 'matrixcohortsassignment', 'local_competvetsuivi');
         $mform->setType('matrixcohortsassignment', PARAM_RAW);

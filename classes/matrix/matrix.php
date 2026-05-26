@@ -24,8 +24,6 @@
 
 namespace local_competvetsuivi\matrix;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class to represent a matrix
  *
@@ -67,12 +65,12 @@ class matrix {
     /**
      * Array of all the name associated with shortname
      */
-    const MATRIX_COMP_TYPE_NAMES = array(
+    const MATRIX_COMP_TYPE_NAMES = [
         self::MATRIX_COMP_TYPE_KNOWLEDGE => 'knowledge',
         self::MATRIX_COMP_TYPE_ABILITY => 'ability',
         self::MATRIX_COMP_TYPE_OBJECTIVES => 'objective',
         self::MATRIX_COMP_TYPE_EVALUATION => 'evaluation',
-    );
+    ];
 
     /**
      * Array of possible strands and associated values
@@ -83,7 +81,7 @@ class matrix {
         self::MATRIX_COMP_TYPE_KNOWLEDGE => 3, // This is the maximum value possible.
         self::MATRIX_COMP_TYPE_ABILITY => 30,
         self::MATRIX_COMP_TYPE_OBJECTIVES => 300,
-        self::MATRIX_COMP_TYPE_EVALUATION => 3000
+        self::MATRIX_COMP_TYPE_EVALUATION => 3000,
     ];
 
     /**
@@ -91,7 +89,7 @@ class matrix {
      */
     const CLASS_TABLE = 'cvs_matrix';
 
-    /** @var integer */
+    /** @var int */
     public $id;
 
     /** @var char (255) */
@@ -103,7 +101,7 @@ class matrix {
     /** @var char (255) */
     public $hash;
 
-    /** @var integer */
+    /** @var int */
     public $timemodified;
 
     /** @var array of ue (see cvs_matrix_ue) */
@@ -139,7 +137,7 @@ class matrix {
      */
     public function __construct($matrixid) {
         global $DB;
-        $matrix = $DB->get_record(self::CLASS_TABLE, array('id' => $matrixid));
+        $matrix = $DB->get_record(self::CLASS_TABLE, ['id' => $matrixid]);
         $this->id = $matrix->id;
         $this->fullname = $matrix->fullname;
         $this->shortname = $matrix->shortname;
@@ -158,7 +156,7 @@ class matrix {
         global $DB;
         // Start a delegated transation here so it is all or nothing.
         $delegatedtransaction = $DB->start_delegated_transaction();
-        $DB->delete_records(self::CLASS_TABLE, array('id' => $this->id));
+        $DB->delete_records(self::CLASS_TABLE, ['id' => $this->id]);
         if ($withdependencies) {
             $this->delete_matrix_dependencies();
         }
@@ -184,17 +182,21 @@ class matrix {
      */
     protected function delete_matrix_dependencies() {
         global $DB;
-        $DB->delete_records_select('cvs_matrix_comp_ue',
+        $DB->delete_records_select(
+            'cvs_matrix_comp_ue',
             'compid IN (SELECT DISTINCT id FROM {cvs_matrix_comp} WHERE matrixid= :cmatrixid) OR
                     ueid IN (SELECT DISTINCT id FROM {cvs_matrix_ue} WHERE matrixid= :umatrixid)',
-            array('cmatrixid' => $this->id, 'umatrixid' => $this->id));
+            ['cmatrixid' => $this->id, 'umatrixid' => $this->id]
+        );
         // Then fully delete the rest.
-        $DB->delete_records('cvs_matrix_ue', array('matrixid' => $this->id));
-        $DB->delete_records_select('cvs_matrix_comp_ue',
+        $DB->delete_records('cvs_matrix_ue', ['matrixid' => $this->id]);
+        $DB->delete_records_select(
+            'cvs_matrix_comp_ue',
             'compid IN (SELECT c.id FROM {cvs_matrix_comp} c WHERE c.matrixid = :matrixid)',
-            array('matrixid' => $this->id));
-        $DB->delete_records('cvs_matrix_comp', array('matrixid' => $this->id));
-        $DB->delete_records('cvs_matrix_cohorts', array('matrixid' => $this->id));
+            ['matrixid' => $this->id]
+        );
+        $DB->delete_records('cvs_matrix_comp', ['matrixid' => $this->id]);
+        $DB->delete_records('cvs_matrix_cohorts', ['matrixid' => $this->id]);
     }
 
     /**
@@ -216,8 +218,8 @@ class matrix {
      */
     public function load_data() {
         global $DB;
-        $this->ues = $DB->get_records('cvs_matrix_ue', array('matrixid' => $this->id), 'id ASC');
-        $this->comp = $DB->get_records('cvs_matrix_comp', array('matrixid' => $this->id), 'path ASC');
+        $this->ues = $DB->get_records('cvs_matrix_ue', ['matrixid' => $this->id], 'id ASC');
+        $this->comp = $DB->get_records('cvs_matrix_comp', ['matrixid' => $this->id], 'path ASC');
         $compuesql = "SELECT compue.id AS id, compue.ueid AS ueid, compue.compid AS compid, compue.type AS type, compue.value
         AS value
         FROM {cvs_matrix_comp_ue} compue
@@ -226,12 +228,12 @@ class matrix {
         WHERE ue.matrixid = :matrixid_1  AND comp.matrixid = :matrixid_2
         ORDER BY comp.path ASC
         ";
-        $companduesvals = $DB->get_records_sql($compuesql, array('matrixid_1' => $this->id, 'matrixid_2' => $this->id));
-        $this->compuevalues = array();
+        $companduesvals = $DB->get_records_sql($compuesql, ['matrixid_1' => $this->id, 'matrixid_2' => $this->id]);
+        $this->compuevalues = [];
         raise_memory_limit(MEMORY_EXTRA);
         foreach ($companduesvals as $cuv) {
             if (empty($this->compuevalues[$cuv->ueid])) {
-                $this->compuevalues[$cuv->ueid] = array();
+                $this->compuevalues[$cuv->ueid] = [];
             }
             $value = new \stdClass();
             $value->type = $cuv->type;
@@ -239,7 +241,7 @@ class matrix {
                 self::MAX_VALUE_PER_STRAND[$cuv->type] : intval($cuv->value); // Normalize value.
 
             if (empty($this->compuevalues[$cuv->ueid][$cuv->compid])) {
-                $this->compuevalues[$cuv->ueid][$cuv->compid] = array();
+                $this->compuevalues[$cuv->ueid][$cuv->compid] = [];
             }
             $this->compuevalues[$cuv->ueid][$cuv->compid][] = $value;
         }
@@ -287,13 +289,13 @@ class matrix {
         }
         if ($propertyname == 'shortname') {
             $propertyvalue = self::normalize_uc_name($propertyvalue);
-            $matchingues = array_filter($this->ues, function($ue) use ($propertyname, $propertyvalue) {
+            $matchingues = array_filter($this->ues, function ($ue) use ($propertyname, $propertyvalue) {
                 $currentvalue = $ue->$propertyname;
                 $currentvalue = self::normalize_uc_name($currentvalue);
                 return $currentvalue == $propertyvalue;
             });
         } else {
-            $matchingues = array_filter($this->ues, function($ue) use ($propertyname, $propertyvalue) {
+            $matchingues = array_filter($this->ues, function ($ue) use ($propertyname, $propertyvalue) {
                 return $ue->$propertyname == $propertyvalue;
             });
         }
@@ -331,7 +333,7 @@ class matrix {
         if (!$this->dataloaded) {
             throw new matrix_exception('matrixnotloaded', 'local_competvetsuivi');
         }
-        $matchingcomp = array_filter($this->comp, function($comp) use ($propertyname, $propertyvalue) {
+        $matchingcomp = array_filter($this->comp, function ($comp) use ($propertyname, $propertyvalue) {
             return $comp->$propertyname == $propertyvalue;
         });
         if (!$matchingcomp) {
@@ -450,7 +452,6 @@ class matrix {
                     $currentvalue[$key]->value = min($currentvalue[$key]->value, $cv->value);
                     $currentvalue[$key]->totalvalue += $cv->totalvalue;
                 }
-
             }
             if (!isset($totalvalues[$ueid])) {
                 $totalvalues[$ueid] = [];
@@ -471,7 +472,7 @@ class matrix {
         $value = 0;
         $strandfactor = $currentval / (self::MAX_VALUE_PER_STRAND[$comptypeid] / 3);
         switch ($strandfactor) {
-            case 1 :
+            case 1:
                 $value = 1;
                 break;
             case 2:
@@ -527,7 +528,7 @@ class matrix {
             return $this->compdirectchildarray[$compid];
         }
 
-        // Usual case
+        // Usual case.
         $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded.
         if ($compid && key_exists($compid, $complist)) {
             $rootcomp = $complist[$compid];
@@ -576,7 +577,7 @@ class matrix {
         }
 
         $complist = $this->get_matrix_competencies(); // Make sure competencies are loaded.
-        $comps = array_filter($complist, function($comp) {
+        $comps = array_filter($complist, function ($comp) {
             return substr_count($comp->path, '/') == 1;
         });
         $rootcompetency = reset($comps);
@@ -590,7 +591,7 @@ class matrix {
      * @return \lang_string|string
      * @throws \coding_exception
      */
-    static public function comptype_to_string($comptypeid) {
+    public static function comptype_to_string($comptypeid) {
         return get_string('matrixcomptype:' . self::MATRIX_COMP_TYPE_NAMES[$comptypeid], 'local_competvetsuivi');
     }
 
@@ -654,18 +655,20 @@ class matrix {
         // Start a delegated transation here so it is all or nothing.
         $delegatedtransaction = $DB->start_delegated_transaction();
 
-        list($firstuecolumn, $lastuecolumn, $uecount) =
+        [$firstuecolumn, $lastuecolumn, $uecount] =
             self::get_matrix_layout_from_file($rowiterator->current(), $matrixobject, $columnsvsue);
         $logcontent->uecount = $uecount;
 
-        // Then we iterate through the rest of the worksheet
-        $rowiterator->seek(4); // We start at row 4
+        // Then we iterate through the rest of the worksheet.
+        $rowiterator->seek(4); // We start at row 4.
         while ($rowiterator->valid()) { // We don't use foreach as it will call rewind on the iterator.
             $row = $rowiterator->current();
             $celliterator = $row->getCellIterator();
             // Get the competency first column.
-            $compref = rtrim(strtoupper($celliterator->current()->getValue()),
-                '.'); // First column is the reference for the competency.
+            $compref = rtrim(
+                strtoupper($celliterator->current()->getValue()),
+                '.'
+            ); // First column is the reference for the competency.
             if (!$compref) {
                 break; // We finished.
             }
@@ -677,8 +680,10 @@ class matrix {
             // We need to search for parent's shortname in the database so we obtain the real path.
             $seachparentshortname = join('.', array_slice($competencypath, 0, count($competencypath) - 1));
 
-            $parentcomp = $DB->get_record('cvs_matrix_comp',
-                array('shortname' => $seachparentshortname, 'matrixid' => $matrixobject->id));
+            $parentcomp = $DB->get_record(
+                'cvs_matrix_comp',
+                ['shortname' => $seachparentshortname, 'matrixid' => $matrixobject->id]
+            );
 
             // Now get the next column value for description.
             $celliterator->seek('B');
@@ -728,8 +733,7 @@ class matrix {
         $DB->commit_delegated_transaction($delegatedtransaction);
 
         $logmessage = get_string('matrixaddedlog', 'local_competvetsuivi', $logcontent);
-        return array($matrixobject, $logmessage);
-
+        return [$matrixobject, $logmessage];
     }
 
     /**
@@ -783,18 +787,18 @@ class matrix {
                 $ue->shortname = self::normalize_uc_name($previousuename);
                 // Make sure we normalize data here, especially shortname.
                 $ue->matrixid = $matrixobject->id;
-                $existingue = $DB->get_record('cvs_matrix_ue', array('matrixid' => $matrixobject->id, 'fullname' => $ue->fullname));
+                $existingue = $DB->get_record('cvs_matrix_ue', ['matrixid' => $matrixobject->id, 'fullname' => $ue->fullname]);
                 if (!$existingue) {
                     $ue->id = $DB->insert_record('cvs_matrix_ue', $ue);
                     $uecount++;
                 } else {
                     $ue = $existingue; // We don't insert the UE twice.
                 }
-                $columnsvsue[$cellheader->getColumn()] = array('ue' => $ue, 'type' => $comptypecolums[$currentypecol]);
+                $columnsvsue[$cellheader->getColumn()] = ['ue' => $ue, 'type' => $comptypecolums[$currentypecol]];
                 $currentypecol++;
             }
         }
-        return array($firstuecolumn, $lastuecolumn, $uecount);
+        return [$firstuecolumn, $lastuecolumn, $uecount];
     }
 
     /**
@@ -827,6 +831,3 @@ class matrix {
         return $comptypename;
     }
 }
-
-
-

@@ -23,7 +23,6 @@
  */
 
 namespace local_competvetsuivi\matrix;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class matrix_exception

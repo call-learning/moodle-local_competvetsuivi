@@ -40,7 +40,6 @@ use moodle_url;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix_list_renderable implements renderable, templatable {
-
     /**
      * Constructor.
      *
@@ -61,29 +60,31 @@ class matrix_list_renderable implements renderable, templatable {
         $context->matrix = [];
         if ($allmatrix) {
             foreach ($allmatrix as $matrix) {
-                $cohorts = $DB->get_records_sql_menu('SELECT c.id, c.name
+                $cohorts = $DB->get_records_sql_menu(
+                    'SELECT c.id, c.name
                             FROM {cvs_matrix_cohorts} cm
                             LEFT JOIN {cohort} c ON c.id = cm.cohortid
                             WHERE cm.matrixid = :matrixid',
-                    array('matrixid' => $matrix->id));
+                    ['matrixid' => $matrix->id]
+                );
 
                 $matrix->cohortsnames = join(',', $cohorts);
                 $matrix->lastmodified = $matrix->timemodified;
                 $matrix->editurl = new moodle_url(
                     $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/edit.php',
-                    array('id' => $matrix->id)
+                    ['id' => $matrix->id]
                 );
                 $matrix->deleteurl = new moodle_url(
                     $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/delete.php',
-                    array('id' => $matrix->id)
+                    ['id' => $matrix->id]
                 );
                 $matrix->viewurl = new moodle_url(
                     $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/view.php',
-                    array('id' => $matrix->id)
+                    ['id' => $matrix->id]
                 );
                 $matrix->assignurl = new moodle_url(
                     $CFG->wwwroot . '/local/competvetsuivi/admin/matrix/assigncohort.php',
-                    array('id' => $matrix->id)
+                    ['id' => $matrix->id]
                 );
 
                 $context->matrix[] = $matrix;

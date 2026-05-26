@@ -49,8 +49,8 @@ $PAGE->navbar->add($header, null);
 
 $matrix = new matrix($id);
 
-$matrixdata = array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id);
-$mform = new add_edit_form(null, array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id));
+$matrixdata = ['fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id];
+$mform = new add_edit_form(null, ['fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id]);
 $mform->set_data($matrixdata);
 
 $listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
@@ -60,7 +60,6 @@ if ($mform->is_cancelled()) {
 
 echo $OUTPUT->header();
 if ($data = $mform->get_data()) {
-
     $filename = $mform->get_new_filename('matrixfile');
 
     $matrix->shortname = $data->shortname;
@@ -72,19 +71,21 @@ if ($data = $mform->get_data()) {
         $filename = $mform->get_new_filename('matrixfile');
         $tempfile = $mform->save_temp_file('matrixfile');
         $hash = file_storage::hash_from_string($mform->get_file_content('matrixfile'));
-        list($matrixobject, $logmessage) =
-            matrix::import_from_file($tempfile,
+        [$matrixobject, $logmessage] =
+            matrix::import_from_file(
+                $tempfile,
                 $hash,
                 $data->fullname,
                 $data->shortname,
-                $matrix);
+                $matrix
+            );
 
         $action = get_string('matrixupdated', 'local_competvetsuivi', $logmessage);
     }
     $matrix->save(); // Save shortname, fullname but also hash.
-    $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => array(
-        'actions' => $action
-    ));
+    $eventparams = ['objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => [
+        'actions' => $action,
+    ]];
     $event = matrix_updated::create($eventparams);
     $event->trigger();
 

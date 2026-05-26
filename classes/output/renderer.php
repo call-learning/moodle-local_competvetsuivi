@@ -23,8 +23,6 @@
  */
 namespace local_competvetsuivi\output;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Class renderer
  *

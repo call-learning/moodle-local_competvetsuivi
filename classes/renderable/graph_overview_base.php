@@ -23,7 +23,6 @@
  */
 
 namespace local_competvetsuivi\renderable;
-defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
 use renderer_base;
@@ -55,7 +54,7 @@ abstract class graph_overview_base {
     /**
      * @var array Children competences
      */
-    public $childrencomps = array();
+    public $childrencomps = [];
     /**
      * @var array all strnads
      */
@@ -67,7 +66,7 @@ abstract class graph_overview_base {
     /**
      * @var array array of charts
      */
-    public $charts = array();
+    public $charts = [];
 
     /**
      * Init the bar chart from values
@@ -90,9 +89,9 @@ abstract class graph_overview_base {
         $this->matrix = $matrix;
         $urlparam = static::PARAM_COMPID;
 
-        $defaultlinkbuilder = function($competency) use ($urlparam) {
+        $defaultlinkbuilder = function ($competency) use ($urlparam) {
             global $FULLME;
-            return new \moodle_url($FULLME, array($urlparam => $competency->id));
+            return new \moodle_url($FULLME, [$urlparam => $competency->id]);
         };
         $this->linkbuilder = $linkbuildercallback ? $linkbuildercallback : $defaultlinkbuilder;
         $this->childrencomps = $matrix->get_child_competencies($rootcomp ? $rootcomp->id : 0, $issubset);
@@ -104,7 +103,7 @@ abstract class graph_overview_base {
      * @param \stdClass $exportablecontext
      */
     protected function export_strand_list(&$exportablecontext) {
-        $exportablecontext->comp_types = array_map(function($comptypeid) {
+        $exportablecontext->comp_types = array_map(function ($comptypeid) {
             return (object) ['comp_type_id' => $comptypeid, 'comp_type_name' => matrix::get_competency_type_name($comptypeid)];
         }, $this->strandlist);
     }
@@ -119,22 +118,22 @@ abstract class graph_overview_base {
      */
     protected function get_bar_chart_exportable_context(renderer_base $output) {
         global $FULLME;
-        // TODO : fix this, we should have a way to override.
+        // TOFIX : fix this, we should have a way to override.
         $exportablecontext = new \stdClass();
         $exportablecontext->graph_title = get_string('graphtitle:level0', 'local_competvetsuivi');
         $this->export_strand_list($exportablecontext);
         $exportablecontext->competency_desc = $this->rootcomp ?
             format_text($this->rootcomp->description, $this->rootcomp->descriptionformat) : "";
 
-        $exportablecontext->breadcrumbs = array();
+        $exportablecontext->breadcrumbs = [];
 
         $allcomps = $this->matrix->get_matrix_competencies();
 
         // We build a numeric array of macro competences (from 1 to 8 but can be more).
-        $allmacrocomps = array_filter($allcomps, function($c) {
+        $allmacrocomps = array_filter($allcomps, function ($c) {
             return substr_count($c->path, '/') < 2;
         });
-        $allmacrocompsid = array_values(array_map(function($c) {
+        $allmacrocompsid = array_values(array_map(function ($c) {
             return $c->id;
         }, $allmacrocomps));
 
@@ -142,13 +141,13 @@ abstract class graph_overview_base {
         if ($this->rootcomp) {
             $allcompsid = explode('/', $this->rootcomp->path);
             // Here array_values is necessary if not the json transformation will think breadcrumbs is an object and not an array.
-            $allcompsid = array_values(array_filter($allcompsid, function($val) {
+            $allcompsid = array_values(array_filter($allcompsid, function ($val) {
                 return $val != "";
             }));
             $linkbuilder = $this->linkbuilder;
 
             $exportablecontext->breadcrumbs = array_map(
-                function($compid) use ($allcomps, $linkbuilder) {
+                function ($compid) use ($allcomps, $linkbuilder) {
                     $comp = $allcomps[$compid];
                     return (object) [
                         'name' => $comp->shortname,
@@ -157,7 +156,7 @@ abstract class graph_overview_base {
                 },
                 $allcompsid
             );
-            // TODO we rely on a parameter competencyid that could be different in different context/
+            // TOFIX we rely on a parameter competencyid that could be different in different context/
             // we need to abstract this.
             $homeurl = new  \moodle_url($FULLME);
             $homeurl->remove_params(static::PARAM_COMPID);
@@ -169,7 +168,8 @@ abstract class graph_overview_base {
             // Set the right title.
 
             $level = min(count($allcompsid), 2);
-            $exportablecontext->graph_title = get_string("graphtitle:level$level", 'local_competvetsuivi');;
+            $exportablecontext->graph_title = get_string("graphtitle:level$level", 'local_competvetsuivi');
+            ;
         }
         foreach ($this->childrencomps as $c) {
             if (empty($this->charts[$c->id])) {
@@ -186,7 +186,7 @@ abstract class graph_overview_base {
             if ($this->matrix->has_children($c)) {
                 $compitem->competency_link = ($this->linkbuilder)($c)->out(false);
             }
-            list($macrocompid) = sscanf($c->path, '/%d/%s');
+            [$macrocompid] = sscanf($c->path, '/%d/%s');
 
             $compitem->competency_mcompindex = array_search($macrocompid, $allmacrocompsid);
             $compitem->graphdata = $this->charts[$c->id]->export_for_template($output);

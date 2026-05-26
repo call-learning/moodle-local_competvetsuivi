@@ -49,20 +49,23 @@ setup_page($header, $pageurl, $returnurl);
 $userdata = local_competvetsuivi\userdata::get_user_data($user->email);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('matrixviewdatatitle', 'local_competvetsuivi',
-    array('matrixname' => $matrix->shortname, 'username' => fullname($user))), 3);
+echo $OUTPUT->heading(get_string(
+    'matrixviewdatatitle',
+    'local_competvetsuivi',
+    ['matrixname' => $matrix->shortname, 'username' => fullname($user)]
+), 3);
 $table = new html_table();
 $table->attributes['class'] = 'generaltable boxaligncenter flexible-wrap';
 
 $matrixues = $matrix->get_matrix_ues();
-$uenames = array_map(function($ue) {
+$uenames = array_map(function ($ue) {
     return $ue->fullname;
 }, $matrixues);
 $uenamexues =
     array_combine($uenames, $matrixues); // We have now an array with UE names => ue, it is now easier to get info from each ue.
 
-$arrayheader = array(get_string('competencies', 'local_competvetsuivi'),
-    get_string('competencyfullname', 'local_competvetsuivi'));
+$arrayheader = [get_string('competencies', 'local_competvetsuivi'),
+    get_string('competencyfullname', 'local_competvetsuivi')];
 foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypname) {
     $arrayheader[] = get_string('matrixcomptype:' . $comptypname, 'local_competvetsuivi');
 }
@@ -73,11 +76,11 @@ $competencies = $matrix->get_matrix_competencies();
 foreach ($competencies as $comp) {
     // For each competency regroup all finished ues and values.
     $possiblevsactual = utils::get_possible_vs_actual_values($matrix, $comp, $userdata);
-    $cells = array(new html_table_cell($comp->shortname), new html_table_cell($comp->fullname));
+    $cells = [new html_table_cell($comp->shortname), new html_table_cell($comp->fullname)];
     foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypeid => $comptypname) {
         $celltext = "";
         if (key_exists($comptypeid, $possiblevsactual)) {
-            $currentuserdata = array_map(function($val) {
+            $currentuserdata = array_map(function ($val) {
                 return intval($val->userval) * intval($val->possibleval);
             }, $possiblevsactual[$comptypeid]);
             $celltext = join(',', $currentuserdata);

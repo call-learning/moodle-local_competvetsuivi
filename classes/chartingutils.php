@@ -24,8 +24,6 @@
 
 namespace local_competvetsuivi;
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_competvetsuivi\matrix\matrix;
 use stdClass;
 
@@ -48,7 +46,7 @@ class chartingutils {
      * @return array
      * @throws \coding_exception
      */
-    public static function get_comp_progress($matrix, $currentcomp, $userdata, $strands = array(), $ueselection = null) {
+    public static function get_comp_progress($matrix, $currentcomp, $userdata, $strands = [], $ueselection = null) {
 
         // Deal with cache.
         $hash = cacheutils::get_comp_progress_hash($matrix, $currentcomp, $userdata, $strands, $ueselection);
@@ -63,23 +61,29 @@ class chartingutils {
         $progressperstrand = [];
         $maxperstrand = [];
         foreach (matrix::MATRIX_COMP_TYPE_NAMES as $comptypeid => $comptypname) {
-            if (key_exists($comptypeid, $possiblevsactual)
+            if (
+                key_exists($comptypeid, $possiblevsactual)
                 && (in_array($comptypeid, $strands)
-                    || empty($strands))) {
-                $progressperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
-                    function($acc, $val) use ($comptypeid) {
+                    || empty($strands))
+            ) {
+                $progressperstrand[$comptypeid] = array_reduce(
+                    $possiblevsactual[$comptypeid],
+                    function ($acc, $val) use ($comptypeid) {
                         return $acc + $val->possibleval * $val->userval; // Previous value.
                     },
-                    0);
+                    0
+                );
 
-                $maxperstrand[$comptypeid] = array_reduce($possiblevsactual[$comptypeid],
-                    function($acc, $val) use ($comptypeid) {
+                $maxperstrand[$comptypeid] = array_reduce(
+                    $possiblevsactual[$comptypeid],
+                    function ($acc, $val) use ($comptypeid) {
                         return $acc + $val->possibleval; // Previous value.
                     },
-                    0);
+                    0
+                );
             }
         }
-        $returnvalue = array($progressperstrand, $maxperstrand);
+        $returnvalue = [$progressperstrand, $maxperstrand];
         // Deal with cache.
         cacheutils::set('comp_progress', $hash, $returnvalue);
         // Deal with cache.
@@ -104,19 +108,26 @@ class chartingutils {
      * @return array
      * @throws \coding_exception
      */
-    public static function get_data_for_progressbar($matrix, $comp, $strandlist, $userdata, $currentsemester,
-        $userselftestresults = null) {
+    public static function get_data_for_progressbar(
+        $matrix,
+        $comp,
+        $strandlist,
+        $userdata,
+        $currentsemester,
+        $userselftestresults = null
+    ) {
         $alldata = [];
 
         // Init array.
         $userprogress = array_fill_keys($strandlist, []);
-        $maxprogress = array_fill_keys($strandlist, []);;
+        $maxprogress = array_fill_keys($strandlist, []);
+        ;
         $semestercount = ueutils::get_semester_count($matrix);
         // We get the cumulated progress for each semester
         // (if they have any progress) with a marker for the maximum possible progress.
         for ($semester = 1; $semester <= $semestercount; $semester++) {
             $ueselection = ueutils::get_ues_for_semester($semester, $matrix);
-            list($progressspertrand, $maxperstrand) =
+            [$progressspertrand, $maxperstrand] =
                 self::get_comp_progress($matrix, $comp, $userdata, $strandlist, $ueselection);
             foreach ($strandlist as $comptypeid) {
                 $userprogress[$comptypeid][$semester] = $progressspertrand[$comptypeid];
@@ -156,9 +167,11 @@ class chartingutils {
                 }
             }
             // Add self test results.
-            if ($userselftestresults
+            if (
+                $userselftestresults
                 && key_exists($comptypeid, $userselftestresults)
-                && key_exists($comp->id, $userselftestresults[$comptypeid])) {
+                && key_exists($comp->id, $userselftestresults[$comptypeid])
+            ) {
                 $data->starmarkers = [$userselftestresults[$comptypeid][$comp->id]];
             }
             $alldata[] = $data;

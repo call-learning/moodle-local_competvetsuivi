@@ -29,11 +29,11 @@ require_once($CFG->libdir . '/clilib.php');
 require_once(__DIR__ . '/../lib.php');
 
 // Get the cli options.
-list($options, $unrecognised) = cli_get_params([
+[$options, $unrecognised] = cli_get_params([
     'help' => false,
     'name' => null,
 ], [
-    'h' => 'help'
+    'h' => 'help',
 ]);
 
 $usage = "Run different setup script for testing purpose
@@ -55,7 +55,7 @@ if ($options['help']) {
     cli_writeln($usage);
     exit(2);
 }
-$possiblefunctions = array('');
+$possiblefunctions = [''];
 
 if ($options['name'] === null) {
     $options['name'] = $possiblefunctions[0];

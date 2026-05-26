@@ -24,8 +24,6 @@
 
 namespace local_competvetsuivi;
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_competvetsuivi\matrix\matrix;
 
 /**
@@ -47,14 +45,19 @@ class utils {
      * @return array
      * @throws matrix\matrix_exception
      */
-    public static function get_possible_vs_actual_values(matrix $matrix, $comp, $userdata, $ueselection = null,
-            $recursive = false) {
+    public static function get_possible_vs_actual_values(
+        matrix $matrix,
+        $comp,
+        $userdata,
+        $ueselection = null,
+        $recursive = false
+    ) {
         if (!$ueselection) {
             $matrixues = $matrix->get_matrix_ues();
         } else {
             $matrixues = $ueselection;
         }
-        $possiblevsactual = array();
+        $possiblevsactual = [];
         foreach ($matrixues as $ue) {
             $values = $matrix->get_total_values_for_ue_and_competency($ue->id, $comp->id, $recursive);
 
@@ -68,7 +71,7 @@ class utils {
                     $data->userval = $userdata[$ue->shortname];
                 }
                 if (empty($possiblevsactual[$ueval->type])) {
-                    $possiblevsactual[$ueval->type] = array();
+                    $possiblevsactual[$ueval->type] = [];
                 }
                 $possiblevsactual[$ueval->type][] = $data;
             }
@@ -93,12 +96,14 @@ class utils {
         $matrixid = false;
         if ($cohorts) {
             global $DB;
-            $cohortsid = array_map(function($c) {
+            $cohortsid = array_map(function ($c) {
                 return $c->id;
             }, $cohorts);
-            list($insql, $inparams) = $DB->get_in_or_equal($cohortsid);
-            $matrixid = $DB->get_field_sql('SELECT matrixid FROM {cvs_matrix_cohorts} WHERE cohortid ' . $insql . ' LIMIT 1',
-                    $inparams);
+            [$insql, $inparams] = $DB->get_in_or_equal($cohortsid);
+            $matrixid = $DB->get_field_sql(
+                'SELECT matrixid FROM {cvs_matrix_cohorts} WHERE cohortid ' . $insql . ' LIMIT 1',
+                $inparams
+            );
 
             $matrixexists = $DB->record_exists('cvs_matrix', ['id' => $matrixid]);
             if (!$matrixexists) {
@@ -121,7 +126,7 @@ class utils {
         $assignment = new \stdClass();
         $assignment->matrixid = $matrixid;
         $assignment->cohortid = $cohortid;
-        if (!$DB->record_exists('cvs_matrix_cohorts', array('matrixid' => $matrixid, 'cohortid' => $cohortid))) {
+        if (!$DB->record_exists('cvs_matrix_cohorts', ['matrixid' => $matrixid, 'cohortid' => $cohortid])) {
             $DB->insert_record('cvs_matrix_cohorts', $assignment);
         }
     }

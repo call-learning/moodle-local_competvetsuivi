@@ -24,8 +24,6 @@
 
 namespace local_competvetsuivi;
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_competvetsuivi\matrix\matrix;
 
 /**
@@ -36,7 +34,6 @@ use local_competvetsuivi\matrix\matrix;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ueutils {
-
     /**
      * Get the first UE
      *
@@ -76,7 +73,7 @@ class ueutils {
      */
     public static function get_ues_for_semester($semester, $matrix) {
         $uelist = $matrix->ues;
-        return array_filter($uelist, function($ue) use ($semester, $matrix) {
+        return array_filter($uelist, function ($ue) use ($semester, $matrix) {
             // For now it is a guess work but it should be coming from the database as a group of UEs.
             return self::get_semester_for_ue($ue, $matrix) == $semester;
         });
@@ -90,7 +87,7 @@ class ueutils {
      */
     public static function get_semester_count($matrix) {
         $uelist = $matrix->ues;
-        $mapsemester = array_map(function($ue) use ($matrix) {
+        $mapsemester = array_map(function ($ue) use ($matrix) {
             return self::get_semester_for_ue($ue, $matrix);
         }, $uelist);
         return count(array_unique($mapsemester));
@@ -124,7 +121,6 @@ class ueutils {
             if ($foundue) {
                 $semester = self::get_semester_for_ue($ue, $matrix);
             }
-
         }
         return $semester;
     }
@@ -150,7 +146,7 @@ class ueutils {
         foreach ($resultsdoghtnut->compsvalues as $compid => $res) {
             $strands = [];
             foreach ($res->strandvals as $strandid => $st) {
-                $strands [$strandid] = $st->val * $res->val;
+                $strands[$strandid] = $st->val * $res->val;
             }
             $resultsmarkers[$compid] = $strands;
         }
@@ -206,11 +202,11 @@ class ueutils {
                 $compuevalues[$comp->id][$strandval->type] += $strandval->totalvalue;
             }
         }
-        // Now calculate the results for each competency
+        // Now calculate the results for each competency.
         /*
             The way we go about it:
             - We want to obtain a percentage of contribution to the competency ref. the total : so val is this percentage
-            - within each competency, we want to obtain the contribution of each strand
+            - within each competency, we want to obtain the contribution of each strand.
         */
 
         $results = new \stdClass();

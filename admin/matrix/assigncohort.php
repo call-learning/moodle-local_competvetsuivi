@@ -49,15 +49,14 @@ $PAGE->navbar->add($header, null);
 
 $matrix = new matrix($id);
 
-$matrixdata = array('fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id);
-$mform = new cohort_assign_form(null, array(
+$matrixdata = ['fullname' => $matrix->fullname, 'shortname' => $matrix->shortname, 'id' => $matrix->id];
+$mform = new cohort_assign_form(null, [
         'fullname' => $matrix->fullname,
         'shortname' => $matrix->shortname,
-        'id' => $matrix->id)
-);
-$currendata = array();
+        'id' => $matrix->id]);
+$currendata = [];
 $currendata['matrixcohortsassignment'] =
-    $DB->get_fieldset_select('cvs_matrix_cohorts', 'cohortid', 'matrixid = :matrixid', array('matrixid' => $matrix->id));
+    $DB->get_fieldset_select('cvs_matrix_cohorts', 'cohortid', 'matrixid = :matrixid', ['matrixid' => $matrix->id]);
 $mform->set_data($currendata);
 
 $listpageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
@@ -70,15 +69,15 @@ if ($data = $mform->get_data()) {
     global $DB;
     // First delete all assignments for this matrix.
 
-    $DB->delete_records('cvs_matrix_cohorts', array('matrixid' => $matrix->id));
+    $DB->delete_records('cvs_matrix_cohorts', ['matrixid' => $matrix->id]);
 
     foreach ($data->matrixcohortsassignment as $cohortid) {
         utils::assign_matrix_cohort($matrix->id, $cohortid);
     }
     $action = get_string('cohortassigned', 'local_competvetsuivi');
-    $eventparams = array('objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => array(
-        'actions' => $action
-    ));
+    $eventparams = ['objectid' => $matrix->id, 'context' => context_system::instance(), 'other' => [
+        'actions' => $action,
+    ]];
     $event = matrix_updated::create($eventparams);
     $event->trigger();
 

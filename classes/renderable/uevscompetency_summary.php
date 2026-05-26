@@ -23,7 +23,6 @@
  */
 
 namespace local_competvetsuivi\renderable;
-defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\ueutils;
@@ -67,9 +66,9 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
      * @throws \dml_exception
      */
     public function __construct(
-            $matrix,
-            $ueid,
-            $rootcomp = null
+        $matrix,
+        $ueid,
+        $rootcomp = null
     ) {
         $this->strandlist = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY];
         $this->init_bar_chart($matrix, $this->strandlist, $rootcomp, null);
@@ -119,7 +118,7 @@ class uevscompetency_summary extends graph_overview_base implements \renderable,
             $legendvals[] = $newval;
         }
         $exportablecontext->comps_legend = $legendvals;
-        $exportablecontext->comp_strandlist_string = join(',', array_map(function($comptypeid) {
+        $exportablecontext->comp_strandlist_string = join(',', array_map(function ($comptypeid) {
             return matrix::get_competency_type_name($comptypeid);
         }, $this->strandlist));
         return $exportablecontext;

@@ -67,9 +67,12 @@ if ($mform->is_cancelled()) {
                 $errormsg = $status['errormsg'];
             }
 
-            $message = $OUTPUT->notification(get_string('importerror',
-                'local_competvetsuivi',
-                $errormsg),
+            $message = $OUTPUT->notification(
+                get_string(
+                    'importerror',
+                    'local_competvetsuivi',
+                    $errormsg
+                ),
                 'notifyfailure'
             );
         }

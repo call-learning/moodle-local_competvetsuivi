@@ -24,8 +24,6 @@
 
 use local_competvetsuivi\utils;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Setup page header
  * @param string $header
@@ -42,8 +40,10 @@ function setup_page($header, $pageurl, $returnurl) {
     $PAGE->set_pagelayout('standard');
     if ($returnurl) {
         $PAGE->set_button($OUTPUT->single_button(
-            new moodle_url($returnurl), get_string('back'), 'cvspage-backbtn')
-        );
+            new moodle_url($returnurl),
+            get_string('back'),
+            'cvspage-backbtn'
+        ));
     }
     $PAGE->set_url($pageurl);
 }
@@ -60,7 +60,7 @@ function get_matrix($matrixid, $user) {
     if (!$matrixid) {
         $matrixid = utils::get_matrixid_for_user($user->id);
         if (empty($matrixid)) {
-            print_error('nocohortforuser');
+            throw new moodle_exception('nocohortforuser');
         }
     }
     $matrix = new \local_competvetsuivi\matrix\matrix($matrixid);

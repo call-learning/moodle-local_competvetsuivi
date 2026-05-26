@@ -36,7 +36,6 @@ global $CFG;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_data_form extends moodleform {
-
     /** @var string default directory for csv upload */
     const DEFAULT_USERDATA_DIR = '/tmp/usermatrix/';
 
@@ -46,9 +45,11 @@ class user_data_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('text',
+        $mform->addElement(
+            'text',
             'userdatafilepath',
-            get_string('userdatafilepath', 'local_competvetsuivi'));
+            get_string('userdatafilepath', 'local_competvetsuivi')
+        );
 
         $mform->addHelpButton('userdatafilepath', 'userdatafilepath', 'local_competvetsuivi');
         $mform->setType('userdatafilepath', PARAM_RAW);
@@ -57,11 +58,13 @@ class user_data_form extends moodleform {
         $instructions = get_string('userdatadirectupload', 'local_competvetsuivi');
         $mform->addElement('static', '', html_writer::div($instructions));
 
-        $mform->addElement('filepicker',
+        $mform->addElement(
+            'filepicker',
             'filetoupload',
             get_string('userdatafile', 'local_competvetsuivi'),
             '',
-            array('accepted_types' => array('text/csv'))); // See lib/classes/filetypes.php.
+            ['accepted_types' => ['text/csv']]
+        ); // See lib/classes/filetypes.php.
 
         $mform->addHelpButton('filetoupload', 'userdatafile', 'local_competvetsuivi');
         $mform->setType('filetoupload', PARAM_FILE);

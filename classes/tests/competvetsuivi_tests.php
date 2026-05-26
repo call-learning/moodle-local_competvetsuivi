@@ -60,8 +60,8 @@ abstract class competvetsuivi_tests extends advanced_testcase {
      */
     public function presetup_data() {
         $this->user = static::getDataGenerator()->create_user();
-        $this->cohort1 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT1'));
-        $this->cohort2 = static::getDataGenerator()->create_cohort(array('idnumber' => 'COHORT2'));
+        $this->cohort1 = static::getDataGenerator()->create_cohort(['idnumber' => 'COHORT1']);
+        $this->cohort2 = static::getDataGenerator()->create_cohort(['idnumber' => 'COHORT2']);
     }
 
     /**
@@ -76,7 +76,7 @@ abstract class competvetsuivi_tests extends advanced_testcase {
         $this->load_data_from_json_fixtures($CFG->dirroot . $this->fixturepath);
 
         // Setup Matrix as it is used often in tests.
-        $matrixid = $DB->get_field('cvs_matrix', 'id', array('shortname' => 'MATRIX1'));
+        $matrixid = $DB->get_field('cvs_matrix', 'id', ['shortname' => 'MATRIX1']);
         $matrix = new \local_competvetsuivi\matrix\matrix($matrixid);
 
         $matrix->load_data();
@@ -91,7 +91,7 @@ abstract class competvetsuivi_tests extends advanced_testcase {
      */
     private function load_data_from_json_fixtures($fixturepath) {
         $generator = $this->getDataGenerator()->get_plugin_generator('local_competvetsuivi');
-        $tables = array('matrix', 'matrix_cohorts', 'matrix_ue', 'matrix_comp', 'matrix_comp_ue', 'userdata');
+        $tables = ['matrix', 'matrix_cohorts', 'matrix_ue', 'matrix_comp', 'matrix_comp_ue', 'userdata'];
         foreach ($tables as $tablename) {
             $filename = $fixturepath . '/' . $tablename . '.json';
             if (file_exists($filename)) {
@@ -107,7 +107,6 @@ abstract class competvetsuivi_tests extends advanced_testcase {
             }
         }
     }
-
 }
 /*
  * Generate the comp_ue table:

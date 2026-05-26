@@ -23,10 +23,8 @@
  */
 
 namespace local_competvetsuivi\renderable;
-defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\autoevalutils;
-
 use renderer_base;
 use stdClass;
 use templatable;
@@ -72,7 +70,7 @@ class competency_progress_overview extends graph_overview_base implements \rende
         $currentsemester,
         $userid,
         $linkbuildercallback = null,
-        $issubset=true
+        $issubset = true
     ) {
         $this->init_bar_chart($matrix, $strandlist, $rootcomp, $linkbuildercallback, $issubset);
         $autoevalresults = autoevalutils::get_student_results($userid, $matrix, $rootcomp);
@@ -85,15 +83,16 @@ class competency_progress_overview extends graph_overview_base implements \rende
         foreach ($this->childrencomps as $comp) {
             $this->charts[$comp->id] =
                 new chart_item(
-                    chartingutils::get_data_for_progressbar($matrix,
+                    chartingutils::get_data_for_progressbar(
+                        $matrix,
                         $comp,
                         $strandlist,
                         $userdata,
                         $currentsemester,
-                        $this->studentautoevalresults)
+                        $this->studentautoevalresults
+                    )
                 );
         }
-
     }
 
     /**

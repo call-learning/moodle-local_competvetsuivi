@@ -42,13 +42,16 @@ $matrix = get_matrix($matrixid, $USER);
 $ue = $matrix->get_matrix_ue_by_criteria('id', $ueid);
 
 // Override pagetype to show blocks properly.
-$header = get_string('matrixuevscomptitle', 'local_competvetsuivi',
-    array('matrixname' => $matrix->shortname, 'uename' => $ue->fullname));
+$header = get_string(
+    'matrixuevscomptitle',
+    'local_competvetsuivi',
+    ['matrixname' => $matrix->shortname, 'uename' => $ue->fullname]
+);
 $pageurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/pages/ucdetails.php');
 
 setup_page($header, $pageurl, $returnurl);
 
-$strandlist = array(matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY);
+$strandlist = [matrix::MATRIX_COMP_TYPE_KNOWLEDGE, matrix::MATRIX_COMP_TYPE_ABILITY];
 
 echo $OUTPUT->header();
 

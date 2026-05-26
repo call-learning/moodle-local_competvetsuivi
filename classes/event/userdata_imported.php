@@ -26,8 +26,6 @@ namespace local_competvetsuivi\event;
 
 use core\event\base;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class userdata_imported
  *

@@ -23,6 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi;
+use advanced_testcase;
 use local_competvetsuivi\matrix\matrix;
 
 /**
@@ -32,24 +33,29 @@ use local_competvetsuivi\matrix\matrix;
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_test extends advanced_testcase {
-
-    public function test_import_matrix() {
+final class import_test extends advanced_testcase {
+    /**
+     * Test importing a matrix from a file.
+     *
+     * @covers \local_competvetsuivi\matrix\matrix::import_from_file
+     */
+    public function test_import_matrix(): void {
         $this->resetAfterTest();
         $filename = dirname(__FILE__) . '/fixtures/matrix_sample.xlsx';
         $content = file_get_contents($filename);
         $hash = sha1($content);
-        list($matrixobject, $logmessage) = matrix::import_from_file(
+        [$matrixobject, $logmessage] = matrix::import_from_file(
             $filename,
             $hash,
             'TestMatrix',
-            'TESTMATRIX');
+            'TESTMATRIX'
+        );
 
         $matrix = new matrix($matrixobject->id);
         $matrix->load_data();
         $comps = array_values($matrix->get_matrix_competencies());
-        $mastercomp = $comps[0]; // COPREV
-        $childcomp = $comps[1]; // COPREV.1
+        $mastercomp = $comps[0]; // COPREV.
+        $childcomp = $comps[1]; // COPREV.1.
         $leafcomp = $comps[4]; // COPREV.1.2.
         $this->assertEquals('COPREV', $mastercomp->shortname);
         $this->assertEquals("/{$mastercomp->id}", $mastercomp->path);
@@ -58,16 +64,20 @@ class import_test extends advanced_testcase {
         $this->assertEquals('COPREV.1.2', $leafcomp->shortname);
         $this->assertEquals("/{$mastercomp->id}/{$childcomp->id}/{$leafcomp->id}", $leafcomp->path);
         $this->assertEquals("Competencies loaded 73, Macrocompetencies 2, UC/UE number 50.", $logmessage);
-
     }
 
-    public function test_import_users() {
+    /**
+     * Test importing user data from a file.
+     *
+     * @covers \local_competvetsuivi\userdata::import_user_data_from_file
+     */
+    public function test_import_users(): void {
         global $DB;
         $this->resetAfterTest();
         // With UE.
         $filename = dirname(__FILE__) . '/fixtures/userdata_sample.csv';
         $status = userdata::import_user_data_from_file($filename);
-        $user = $DB->get_record('cvs_userdata', array('useremail' => 'Etudiant-143@ecole.fr'));
+        $user = $DB->get_record('cvs_userdata', ['useremail' => 'Etudiant-143@ecole.fr']);
         $userdata = json_decode($user->userdata);
         $this->assertEquals(1, $userdata->UC53);
         $this->assertEquals(0, $userdata->UC52);
@@ -75,7 +85,7 @@ class import_test extends advanced_testcase {
         // Now with UC.
         $filename = dirname(__FILE__) . '/fixtures/userdata_sample_uc.csv';
         $status = userdata::import_user_data_from_file($filename);
-        $user = $DB->get_record('cvs_userdata', array('useremail' => 'Etudiant-143@ecole.fr'));
+        $user = $DB->get_record('cvs_userdata', ['useremail' => 'Etudiant-143@ecole.fr']);
         $userdata = json_decode($user->userdata);
         $this->assertEquals(1, $userdata->UC53);
         $this->assertEquals(0, $userdata->UC52);

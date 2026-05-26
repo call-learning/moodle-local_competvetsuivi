@@ -24,6 +24,7 @@
  */
 namespace local_competvetsuivi;
 use local_competvetsuivi\matrix\matrix;
+use local_competvetsuivi\tests\competvetsuivi_tests;
 
 /**
  * The chartingutils_test test class.
@@ -31,10 +32,10 @@ use local_competvetsuivi\matrix\matrix;
  * @package    local_competvetsuivi
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_competvetsuivi\cacheutils
  */
-class cacheutils_test extends competvetsuivi_tests {
-
-    public function test_get_ue_vs_competencie_hash() {
+final class cacheutils_test extends competvetsuivi_tests {
+    public function test_get_ue_vs_competencie_hash(): void {
         $this->resetAfterTest();
         $currentue = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $rootcomp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
@@ -51,7 +52,7 @@ class cacheutils_test extends competvetsuivi_tests {
         $this->assertNotEquals($hash, $hashdiff); // Current ue change.
     }
 
-    public function test_get_ue_vs_competencies_percent_hash() {
+    public function test_get_ue_vs_competencies_percent_hash(): void {
         $this->resetAfterTest();
         $currentue = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $rootcomp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
@@ -61,23 +62,26 @@ class cacheutils_test extends competvetsuivi_tests {
         $hash = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, $strandids, $rootcomp->id);
         $hashsame = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, $strandids, $rootcomp->id);
         $this->assertEquals($hash, $hashsame); // Assert hash is the same twice.
-        $hashdiff = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, [matrix::MATRIX_COMP_TYPE_ABILITY],
-            $rootcomp->id);
+        $hashdiff = cacheutils::get_ue_vs_competencies_percent_hash(
+            $this->matrix,
+            $currentue,
+            [matrix::MATRIX_COMP_TYPE_ABILITY],
+            $rootcomp->id
+        );
         $this->assertNotEquals($hash, $hashdiff); // Not same strand.
         $hashdiff = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue2, $strandids, $rootcomp->id);
         $this->assertNotEquals($hash, $hashdiff); // Not same ue.
         $hashdiff = cacheutils::get_ue_vs_competencies_percent_hash($this->matrix, $currentue, $strandids, $rootcomp2->id);
         $this->assertNotEquals($hash, $hashdiff); // Not same comp.
-
     }
 
-    public function test_get_comp_progress_hash() {
+    public function test_get_comp_progress_hash(): void {
         $this->resetAfterTest();
         $rootcomp = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
         $rootcomp2 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
         $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
         $useremail = "Etudiant-145@ecole.fr";
-        $userdata = local_competvetsuivi\userdata::get_user_data($useremail);
+        $userdata = userdata::get_user_data($useremail);
         $ueselection = ueutils::get_ues_for_semester(1, $this->matrix);
         $hash = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp, $userdata, $strands, $ueselection);
         $hashsame = cacheutils::get_comp_progress_hash($this->matrix, $rootcomp, $userdata, $strands, $ueselection);

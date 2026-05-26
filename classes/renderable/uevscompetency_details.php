@@ -23,7 +23,6 @@
  */
 
 namespace local_competvetsuivi\renderable;
-defined('MOODLE_INTERNAL') || die();
 
 use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\ueutils;
@@ -84,7 +83,7 @@ class uevscompetency_details extends graph_overview_base implements \renderable,
                 $data->markers = [];
                 $data->result = $res;
                 $nullvalues += ($res->value > 0) ? 0 : 1;
-                $chartdata [] = $data;
+                $chartdata[] = $data;
             }
             if (!empty($chartdata) && $nullvalues != count($this->strandlist)) {
                 $this->charts[$compid] = new chart_item($chartdata);

@@ -24,20 +24,20 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$definitions = array(
+$definitions = [
     // Cache for uc vs ue graph definition.
-    'comp_progress' => array(
+    'comp_progress' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // A hash is used.
-    ),
+    ],
     // Cache for get_ue_vs_competencies_percent.
-    'ue_vs_comp_pc' => array(
+    'ue_vs_comp_pc' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // A hash is used.
-    ),
+    ],
     // Cache for get_ue_vs_competencies.
-    'ue_vs_comp' => array(
+    'ue_vs_comp' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // A hash is used.
-    ),
-);
+    ],
+];

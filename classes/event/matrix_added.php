@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Matrix Added event
  *
@@ -23,8 +22,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi\event;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class matrix_added
@@ -69,6 +66,6 @@ class matrix_added extends \core\event\base {
      * @return string
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'cvs_matrix', 'restore' => 'cvs_matrix');
+        return ['db' => 'cvs_matrix', 'restore' => 'cvs_matrix'];
     }
 }

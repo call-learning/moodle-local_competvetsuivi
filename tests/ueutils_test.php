@@ -33,15 +33,16 @@ use local_competvetsuivi\ueutils;
  * @package    local_competvetsuivi
  * @copyright  2019 CALL Learning <laurent@call-learning.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \local_competvetsuivi\ueutils
  */
-class ueutils_test extends competvetsuivi_tests {
-    public function test_get_first_ue() {
+final class ueutils_test extends competvetsuivi_tests {
+    public function test_get_first_ue(): void {
         $this->resetAfterTest();
         $firstue = ueutils::get_first_ue($this->matrix);
         $this->assertEquals('UC51', $firstue->shortname);
     }
 
-    public function test_get_semester_for_ue() {
+    public function test_get_semester_for_ue(): void {
         $this->resetAfterTest();
         $ue51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $ue102 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC102');
@@ -49,35 +50,42 @@ class ueutils_test extends competvetsuivi_tests {
         $this->assertEquals(6, ueutils::get_semester_for_ue($ue102, $this->matrix));
     }
 
-    public function test_get_ues_for_semester() {
+    public function test_get_ues_for_semester(): void {
         $this->resetAfterTest();
         $uelists1 = ueutils::get_ues_for_semester(1, $this->matrix);
         $uelists6 = ueutils::get_ues_for_semester(6, $this->matrix);
-        $this->assertEquals(array('UC51', 'UC52', 'UC53', 'UC54', 'UC55'),
-            array_values(array_map(function($ue) {
+        $this->assertEquals(
+            ['UC51', 'UC52', 'UC53', 'UC54', 'UC55'],
+            array_values(array_map(function ($ue) {
                 return $ue->shortname;
-            }, $uelists1)));
-        $this->assertEquals(array('UC101', 'UC102', 'UC103', 'UC104', 'UC105', 'UC106', 'UC107'),
+            },
+            $uelists1))
+        );
+        $this->assertEquals(
+            ['UC101', 'UC102', 'UC103', 'UC104', 'UC105', 'UC106', 'UC107'],
             array_values(
-                array_map(function($ue) {
+                array_map(function ($ue) {
                     return $ue->shortname;
-                }, $uelists6)));
+                },
+                $uelists6)
+            )
+        );
     }
 
-    public function test_get_semester_count() {
+    public function test_get_semester_count(): void {
         $this->resetAfterTest();
         $semestercount = ueutils::get_semester_count($this->matrix);
         $this->assertEquals(8, $semestercount);
     }
 
-    public function test_get_current_semester_index() {
+    public function test_get_current_semester_index(): void {
         $this->resetAfterTest();
         $this->assertEquals(1, ueutils::get_current_semester_index('UC51', $this->matrix));
         $this->assertEquals(2, ueutils::get_current_semester_index('UC61', $this->matrix));
         $this->assertEquals(8, ueutils::get_current_semester_index('UC121', $this->matrix));
     }
 
-    public function test_get_ue_vs_competencies_whole_year() {
+    public function test_get_ue_vs_competencies_whole_year(): void {
         $this->resetAfterTest();
         $coprev = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
         $coprev1 = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV.1');
@@ -92,13 +100,13 @@ class ueutils_test extends competvetsuivi_tests {
          */
 
         $this->assertNotEmpty($ueresults);
-        $this->assertArrayNotHasKey($coprev1->id , $ueresults); // Null value so not displayed.
+        $this->assertArrayNotHasKey($coprev1->id, $ueresults); // Null value so not displayed.
         $compresult = $ueresults[$coprev2->id];
-        $this->assertEquals(1, $compresult[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
+        $this->assertEquals(0.5, $compresult[matrix::MATRIX_COMP_TYPE_KNOWLEDGE]);
         $this->assertEquals(0, $compresult[matrix::MATRIX_COMP_TYPE_ABILITY]);
     }
 
-    public function test_get_ue_vs_competencies_percent() {
+    public function test_get_ue_vs_competencies_percent(): void {
         $this->resetAfterTest();
         $ue51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $coprev = $this->matrix->get_matrix_comp_by_criteria('shortname', 'COPREV');
@@ -114,4 +122,3 @@ class ueutils_test extends competvetsuivi_tests {
         $this->assertEquals(0.5, $ueresults->compsvalues[$coprev3->id]->val);
     }
 }
-

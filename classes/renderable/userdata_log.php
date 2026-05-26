@@ -23,7 +23,6 @@
  */
 
 namespace local_competvetsuivi\renderable;
-defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use renderer_base;
@@ -37,7 +36,6 @@ use templatable;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userdata_log implements renderable, templatable {
-
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
@@ -50,9 +48,13 @@ class userdata_log implements renderable, templatable {
         $logmanager = get_log_manager();
         $readers = $logmanager->get_readers();
         $store = $readers['logstore_standard'];
-        $allevents = $store->get_events_select('eventname = :eventname',
-            array('eventname' => '\\local_competvetsuivi\\event\\userdata_imported'), 'timecreated DESC',
-            0, 0);
+        $allevents = $store->get_events_select(
+            'eventname = :eventname',
+            ['eventname' => '\\local_competvetsuivi\\event\\userdata_imported'],
+            'timecreated DESC',
+            0,
+            0
+        );
 
         foreach ($allevents as $evt) {
             $data = $evt->get_data();

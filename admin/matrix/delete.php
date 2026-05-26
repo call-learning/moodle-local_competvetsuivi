@@ -50,7 +50,7 @@ $PAGE->set_url($pageurl);
 
 echo $OUTPUT->header();
 if (!$confirm) {
-    $confirmurl = new moodle_url($pageurl, array('confirm' => true, 'id' => $id, 'sesskey' => sesskey()));
+    $confirmurl = new moodle_url($pageurl, ['confirm' => true, 'id' => $id, 'sesskey' => sesskey()]);
     $cancelurl = new moodle_url($CFG->wwwroot . '/local/competvetsuivi/admin/matrix/list.php');
     echo $OUTPUT->confirm(get_string('matrix:delete', 'local_competvetsuivi'), $confirmurl, $listpageurl);
 } else {

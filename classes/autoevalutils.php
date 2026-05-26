@@ -24,8 +24,6 @@
 
 namespace local_competvetsuivi;
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_competvetsuivi\matrix\matrix;
 use mod_quiz\question\qubaids_for_users_attempts;
 use qbank_usage\helper;
@@ -39,7 +37,6 @@ use qbank_usage\tables\question_usage_table;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class autoevalutils {
-
     /**
      * Get all question from a specific category shortname. The shortname is trimmed and put to upper
      * case letter before comparison
@@ -53,9 +50,11 @@ class autoevalutils {
 
         $defaultcategoryname = trim(strtoupper(utils::get_default_question_bank_category_name()));
         // Get all relevant questions.
-        $params = array('defaultbanksn' => $defaultcategoryname);
+        $params = ['defaultbanksn' => $defaultcategoryname];
         $categoryid = $DB->get_field_sql(
-            "SELECT id FROM {question_categories} WHERE UPPER(name)=:defaultbanksn", $params);
+            "SELECT id FROM {question_categories} WHERE UPPER(name)=:defaultbanksn",
+            $params
+        );
         $categoryids = [$categoryid];
         $questionsid = \question_bank::get_finder()->get_questions_from_categories($categoryids, '');
         $quizquestions = [];
@@ -110,9 +109,9 @@ class autoevalutils {
      * @return float|int
      */
     public static function get_question_mark($qa) {
-        $markfract = $qa->get_fraction(); // Question fraction is the percentage for this question
-        $coef = $qa->get_max_mark(); // This is really the question weight, not the max, the max mark is
-        // obtained using max_fraction/min_fraction.
+        $markfract = $qa->get_fraction(); // Question fraction is the percentage for this question.
+        $coef = $qa->get_max_mark(); // This is really the question weight, not the max, the max mark is.
+        // Obtained using max_fraction/min_fraction.
         $minmark = $qa->get_min_fraction();
         $maxmark = $qa->get_max_fraction();
         return ($markfract - $minmark) / ($maxmark - $minmark) * $coef;
@@ -122,7 +121,7 @@ class autoevalutils {
      * Get student results
      * This will compute the result for each competency in the matrix. We compute the average result of the
      * children competencies. If the question is asked twice we take the best result.
-     * TODO : Implements Caching
+     * TOFIX : Implements Caching.
      *
      * @param int $userid
      * @param matrix $matrix
@@ -136,7 +135,7 @@ class autoevalutils {
         include_once($CFG->dirroot . '/mod/quiz/locallib.php'); // Yeah, if not quiz_attempt not defined.
 
         $allquestions = static::get_all_question_from_qbank_category($matrix);
-        $allquestionsid = array_map(function($q) {
+        $allquestionsid = array_map(function ($q) {
             return $q->questionid;
         }, $allquestions);
 
@@ -146,15 +145,18 @@ class autoevalutils {
         $questionresults = [];
         $allquizid = array_reduce(
             $allquestions,
-            function($carry, $item) {
+            function ($carry, $item) {
                 if (!in_array($item->quizid, $carry)) {
                     $carry[] = $item->quizid;
                 }
                 return $carry;
-            }, []);
+            },
+            []
+        );
         foreach ($allquizid as $qid) {
             $qubas = $dm->load_questions_usages_by_activity(
-                new qubaids_for_users_attempts($qid, $userid));
+                new qubaids_for_users_attempts($qid, $userid)
+            );
             foreach ($qubas as $quba) {
                 foreach ($quba->get_attempt_iterator() as $qa) {
                     $question = $qa->get_question();

@@ -33,7 +33,6 @@ global $CFG;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_edit_form extends moodleform {
-
     /**
      * The form definition.
      */
@@ -60,7 +59,8 @@ class add_edit_form extends moodleform {
             'matrixfile',
             get_string('matrixfileadd', 'local_competvetsuivi'),
             null,
-            array('accepted_types' => array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')));
+            ['accepted_types' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']]
+        );
         // See lib/classes/filetypes.php.
         $mform->addHelpButton('matrixfile', 'matrixfileadd', 'local_competvetsuivi');
         $mform->setType('matrixfile', PARAM_FILE);

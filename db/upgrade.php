@@ -23,8 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Execute local_competvetsuivi upgrade from the given old version.
  *
@@ -48,7 +46,6 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
     // https://docs.moodle.org/dev/XMLDB_editor.
 
     if ($oldversion < 2019080109) {
-
         // Define table cvs_matrix_cohorts to be created.
         $table = new xmldb_table('cvs_matrix_cohorts');
 
@@ -74,14 +71,16 @@ function xmldb_local_competvetsuivi_upgrade($oldversion) {
 
     if ($oldversion < 2019080110) {
         $table = new xmldb_table('cvs_userdata');
-        $field = new xmldb_field('lastseenunit',
+        $field = new xmldb_field(
+            'lastseenunit',
             XMLDB_TYPE_TEXT,
             '255',
             null,
             null,
             null,
             null,
-            'userdata');
+            'userdata'
+        );
 
         // Conditionally launch add field currentueid.
         if (!$dbman->field_exists($table, $field)) {
