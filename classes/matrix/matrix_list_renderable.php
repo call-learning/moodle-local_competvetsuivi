@@ -63,7 +63,7 @@ class matrix_list_renderable implements renderable, templatable {
                 $cohorts = $DB->get_records_sql_menu(
                     'SELECT c.id, c.name
                             FROM {cvs_matrix_cohorts} cm
-                            LEFT JOIN {cohort} c ON c.id = cm.cohortid
+                            JOIN {cohort} c ON c.id = cm.cohortid
                             WHERE cm.matrixid = :matrixid',
                     ['matrixid' => $matrix->id]
                 );

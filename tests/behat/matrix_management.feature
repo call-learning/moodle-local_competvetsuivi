@@ -11,11 +11,11 @@ Feature: As an admin I can upload a new matrix and refresh its data
     And I log in as "admin"
     And I set the following administration settings values:
       | enablecompetvetsuivi | 0 |
-    Then I navigate to "Site administration" in site administration
+    Then I click on "Site administration" "link"
     And I should not see "Compet Vetsuivi"
     Then I set the following administration settings values:
       | enablecompetvetsuivi | 1 |
-    Then I navigate to "Site administration" in site administration
+    Then I click on "Site administration" "link"
     And I should see "Compet Vetsuivi"
 
 

@@ -609,14 +609,13 @@ class matrix {
      * @param string $shortname
      * @param \stdClass $matrixobject existing matrix object as a generic stdClass
      * @return array  a tuple (matrix, errors)
-     * @throws \PHPExcel_Reader_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      * @throws \dml_exception
      * @throws \dml_transaction_exception
      * @throws matrix_exception
      */
     public static function import_from_file($filepath, $hash, $fullname, $shortname, &$matrixobject = null) {
         global $CFG, $DB;
-        require_once("$CFG->dirroot/local/competvetsuivi/lib/phpexcel/PHPExcel/IOFactory.php");
         raise_memory_limit(MEMORY_HUGE);
 
         // Log for later.
@@ -625,7 +624,7 @@ class matrix {
         $logcontent->macrocompcount = 0;
         $logcontent->uecount = 0;
         // END Log for later.
-        $reader = \PHPExcel_IOFactory::createReaderForFile($filepath);
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($filepath);
         $reader->setReadDataOnly(true);
         $allsheetsnames = $reader->listWorksheetNames($filepath);
         $matrixsheet = null;
@@ -739,7 +738,7 @@ class matrix {
     /**
      * Build up UE information and return the first column where an UE is found
      *
-     * @param \stdClass $firstrow (PHPExcel_Worksheet_RowIterator)
+     * @param \stdClass $firstrow (PhpSpreadsheet RowIterator)
      * @param \stdclass $matrixobject
      * @param array $columnsvsue
      * @return array
