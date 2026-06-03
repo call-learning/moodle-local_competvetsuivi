@@ -18,7 +18,6 @@ Feature: As an admin I can upload a new matrix and refresh its data
     Then I click on "Site administration" "link"
     And I should see "Compet Vetsuivi"
 
-
   @javascript @_file_upload
   Scenario: As an admin I upload a new matrix
     Given I am on site homepage

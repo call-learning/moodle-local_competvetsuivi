@@ -20,7 +20,7 @@
  */
 // See https://docs.moodle.org/dev/Guide_to_adding_third_party_jQuery_for_AMD.
 // With some modifications for 3.8
-define(['core/config'], function (config) {
+define(['core/config'], function(config) {
     require.config({
         paths: {
             "d3-progress": config.wwwroot
@@ -54,5 +54,3 @@ define(['core/config'], function (config) {
         }
     });
 });
-
-
