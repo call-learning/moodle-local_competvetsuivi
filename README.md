@@ -1,6 +1,7 @@
 # Compet Vet Suivi Local Plugin
 
-[![Build Status](https://travis-ci.org/call-learning/moodle-local_competvetsuivi.svg?branch=master)](https://travis-ci.org/call-learning/moodle-local_competvetsuivi)
+[![Static code analysis tests](https://github.com/call-learning/moodle-local_competvetsuivi/actions/workflows/static-ci.yml/badge.svg)](https://github.com/call-learning/moodle-local_competvetsuivi/actions/workflows/static-ci.yml)
+[![PHP Unit and Behat tests](https://github.com/call-learning/moodle-local_competvetsuivi/actions/workflows/code-test.yml/badge.svg)](https://github.com/call-learning/moodle-local_competvetsuivi/actions/workflows/code-test.yml)
 
 Ce plugin permet de calculer les compétences acquises pour un utilisateur en fonction des UE complététees et d'une matrice de compétences.
 
