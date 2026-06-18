@@ -22,15 +22,6 @@
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * Compet vet suivi generator
- *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class local_competvetsuivi_generator extends testing_module_generator {
     /**
      * Create and insert default data

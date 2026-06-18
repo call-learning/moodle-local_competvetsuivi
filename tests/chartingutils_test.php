@@ -17,10 +17,10 @@
 /**
  * File containing tests for chartingutils_test.
  *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi;
 
@@ -30,18 +30,19 @@ use local_competvetsuivi\tests\competvetsuivi_tests;
 /**
  * The chartingutils_test test class.
  *
- * @package    local_competvetsuivi
- * @copyright  2019 CALL Learning <laurent@call-learning.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \local_competvetsuivi\chartingutils
+ * @package   local_competvetsuivi
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_competvetsuivi\chartingutils::class)]
 final class chartingutils_test extends competvetsuivi_tests {
     /**
-     * Check competencies results
+     * Check competencies results.
+     *
      * @param array $computedresults
      * @throws \local_competvetsuivi\matrix\matrix_exception
      */
-    protected function assert_competencies_results($computedresults) {
+    protected function assert_competencies_results(array $computedresults): void {
         foreach ($computedresults as $compname => $expectedresults) {
             $comp = $this->matrix->get_matrix_comp_by_criteria('shortname', $compname);
             $userdata = \local_competvetsuivi\userdata::get_user_data("Etudiant-145@ecole.fr");
@@ -192,12 +193,13 @@ final class chartingutils_test extends competvetsuivi_tests {
     }
 
     /**
-     * Assert that marker has the right position
+     * Assert that marker has the right position.
+     *
      * @param array $computedresults
      * @param array $markers
      * @param array $data
      */
-    protected function assert_competencies_results_marker($computedresults, $markers, $data) {
+    protected function assert_competencies_results_marker(array $computedresults, array $markers, array $data): void {
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_KNOWLEDGE], $data[0]->result->value);
         $this->assertEquals($computedresults[matrix::MATRIX_COMP_TYPE_ABILITY], $data[1]->result->value);
         foreach ($markers as $strandid => $results) {

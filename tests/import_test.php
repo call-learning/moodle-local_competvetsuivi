@@ -17,27 +17,29 @@
 /**
  * File containing tests for import_test.
  *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi;
+
 use advanced_testcase;
 use local_competvetsuivi\matrix\matrix;
 
 /**
- * The import_test test class.
+ * Tests for the import functionality.
  *
- * @package    local_competvetsuivi
- * @copyright  2019 CALL Learning <laurent@call-learning.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_competvetsuivi\matrix\matrix::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_competvetsuivi\userdata::class)]
 final class import_test extends advanced_testcase {
     /**
-     * Test importing a matrix from a file.
-     *
-     * @covers \local_competvetsuivi\matrix\matrix::import_from_file
+     * Test Import matrix
+     * @return void
      */
     public function test_import_matrix(): void {
         $this->resetAfterTest();
@@ -67,9 +69,9 @@ final class import_test extends advanced_testcase {
     }
 
     /**
-     * Test importing user data from a file.
+     * Test import users
      *
-     * @covers \local_competvetsuivi\userdata::import_user_data_from_file
+     * @return void
      */
     public function test_import_users(): void {
         global $DB;

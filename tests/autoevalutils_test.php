@@ -17,57 +17,54 @@
 /**
  * File containing tests for autoevalutils_test.
  *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi;
 
+use core_question_generator;
 use local_competvetsuivi\autoevalutils;
 use local_competvetsuivi\tests\competvetsuivi_tests;
-use question_bank;
-use question_engine;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
+use question_bank;
+use question_engine;
 use stdClass;
 use test_question_maker;
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 /**
  * The autoevalutils_test test class.
  *
- * @package    local_competvetsuivi
- * @copyright  2019 CALL Learning <laurent@call-learning.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \local_competvetsuivi\autoevalutils
+ * @package   local_competvetsuivi
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_competvetsuivi\autoevalutils::class)]
 final class autoevalutils_test extends competvetsuivi_tests {
     /**
-     * @var array $course sample courses
+     * @var stdClass[] Sample courses.
      */
     protected $course = [];
     /**
-     * @var array $courses sample quiz
+     * @var stdClass[] Sample quizzes.
      */
     protected $quizzes = [];
     /**
-     * @var array $courses sample questions
+     * @var stdClass[] Sample questions.
      */
     protected $questions = [];
 
     /**
-     * Number of question per quiz
+     * Number of quiz per course.
      */
-    const COURSE_QUIZ_NB = 2;
+    public const COURSE_QUIZ_NB = 2;
     /**
      * Responses to the questions quiz.
      */
-    const QBANK_QUESTION_COMP = ['COPREV' => 'One',
+    public const QBANK_QUESTION_COMP = [
+        'COPREV' => 'One',
         'COPREV.1.1' => 'Two',
         'COPREV.1.2' => 'Four',
         'COPREV.2' => 'Two',
@@ -77,17 +74,23 @@ final class autoevalutils_test extends competvetsuivi_tests {
         'COPREV.3.4' => 'Four',
     ];
     /**
-     * Possible answers
+     * Possible answers.
      */
-    const QUESTION_POSSIBLE_ANSWERS = ['One' => '1', 'Two' => '0.75', 'Three' => '0.5', 'Four' => '0.25', 'Five' => '0'];
+    public const QUESTION_POSSIBLE_ANSWERS = [
+        'One' => '1',
+        'Two' => '0.75',
+        'Three' => '0.5',
+        'Four' => '0.25',
+        'Five' => '0',
+    ];
 
     /**
-     * Get sample question data
+     * Get sample question data.
      *
-     * @param \stdClass $competency
+     * @param stdClass $competency
      * @return stdClass
      */
-    protected static function get_mc_question_data($competency) {
+    protected static function get_mc_question_data(stdClass $competency): stdClass {
         $qdata = new stdClass();
 
         $qdata->name = $competency->shortname;
@@ -172,16 +175,19 @@ final class autoevalutils_test extends competvetsuivi_tests {
     }
 
     /**
-     * Create question
+     * Create question.
      *
-     * @param \stdClass $questiongenerator
-     * @param \stdClass $competency
+     * @param core_question_generator $questiongenerator
+     * @param stdClass $competency
      * @param int $categoryid
-     * @return object
-     * @throws coding_exception
+     * @return stdClass
      */
-    protected function create_question($questiongenerator, $competency, $categoryid) {
-        $fromform = $this->get_mc_question_data($competency);
+    protected function create_question(
+        core_question_generator $questiongenerator,
+        stdClass $competency,
+        int $categoryid
+    ): stdClass {
+        $fromform = self::get_mc_question_data($competency);
 
         $question = new stdClass();
         $question->category = $categoryid;
@@ -198,13 +204,15 @@ final class autoevalutils_test extends competvetsuivi_tests {
     }
 
     /**
-     * Setup the test
+     * Setup the test.
+     *
      * @throws \local_competvetsuivi\matrix\matrix_exception
-     * @throws coding_exception
-     * @throws moodle_exception
      */
     public function setUp(): void {
+        global $CFG;
         parent::setUp();
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
         $generator = $this->getDataGenerator();
         /** @var core_question_generator $questiongenerator */

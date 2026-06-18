@@ -17,10 +17,10 @@
 /**
  * File containing tests for matrix_test.
  *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi;
 
@@ -28,14 +28,15 @@ use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\matrix\matrix_exception;
 use local_competvetsuivi\tests\competvetsuivi_tests;
 use local_competvetsuivi\ueutils;
+
 /**
  * The matrix_test test class.
  *
- * @package    local_competvetsuivi
- * @copyright  2019 CALL Learning <laurent@call-learning.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \local_competvetsuivi\matrix\matrix
+ * @package   local_competvetsuivi
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_competvetsuivi\matrix\matrix::class)]
 final class matrix_test extends competvetsuivi_tests {
     public function test_get_real_value_from_strand(): void {
         $this->resetAfterTest();

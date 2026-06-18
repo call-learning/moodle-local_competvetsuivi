@@ -15,50 +15,56 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing common function for tests
+ * File containing common function for tests.
  *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_competvetsuivi\tests;
+
 use advanced_testcase;
 
 /**
- * The matrix_test test class.
+ * Base test class for local_competvetsuivi tests.
  *
- * @package    local_competvetsuivi
- * @copyright  2019 CALL Learning <laurent@call-learning.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class competvetsuivi_tests extends advanced_testcase {
     /**
-     * @var \stdClass $user user to be created
+     * @var \stdClass
      */
     protected $user;
     /**
-     * @var \stdClass $cohort1 cohort to be created
+     * @var \stdClass
      */
     protected $cohort1;
     /**
-     * @var \stdClass $cohort1 cohort to be created
+     * @var \stdClass
      */
     protected $cohort2;
     /**
-     * @var string path of the fixture
+     * Path of the fixture.
+     *
+     * @var string
      */
     protected $fixturepath = '/local/competvetsuivi/tests/fixtures/basic';
     /**
-     * @var \local_competvetsuivi\matrix\matrix Sample matrix
+     * Sample matrix.
+     *
+     * @var \local_competvetsuivi\matrix\matrix
      */
     public $matrix;
 
     /**
-     * Setup the data
+     * Setup the data.
      */
-    public function presetup_data() {
+    protected function presetup_data(): void {
         $this->user = static::getDataGenerator()->create_user();
         $this->cohort1 = static::getDataGenerator()->create_cohort(['idnumber' => 'COHORT1']);
         $this->cohort2 = static::getDataGenerator()->create_cohort(['idnumber' => 'COHORT2']);
@@ -84,12 +90,12 @@ abstract class competvetsuivi_tests extends advanced_testcase {
     }
 
     /**
-     * Load data from a series of JSON representing the table data
+     * Load data from a series of JSON representing the table data.
      *
      * @param string $fixturepath
      * @throws coding_exception
      */
-    private function load_data_from_json_fixtures($fixturepath) {
+    private function load_data_from_json_fixtures(string $fixturepath): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('local_competvetsuivi');
         $tables = ['matrix', 'matrix_cohorts', 'matrix_ue', 'matrix_comp', 'matrix_comp_ue', 'userdata'];
         foreach ($tables as $tablename) {
@@ -108,14 +114,3 @@ abstract class competvetsuivi_tests extends advanced_testcase {
         }
     }
 }
-/*
- * Generate the comp_ue table:
- * SELECT ue.shortname AS ue, comp.shortname AS comp, cue.type as type, cue.value as value
- * FROM mdl_cvs_matrix_comp_ue AS cue
- * LEFT JOIN mdl_cvs_matrix_ue ue ON cue.ueid = ue.id
- * LEFT JOIN mdl_cvs_matrix_comp comp ON cue.compid = comp.id
- * WHERE comp.matrixid = 4 AND ue.matrixid = 4 AND comp.shortname like '%COPREV%'
- *
- *
- *
- */

@@ -15,25 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File containing tests for chartingutils_test.
+ * File containing tests for cacheutils_test.
  *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi;
+
 use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\tests\competvetsuivi_tests;
 
 /**
- * The chartingutils_test test class.
+ * The cacheutils_test test class.
  *
- * @package    local_competvetsuivi
- * @copyright  2019 CALL Learning <laurent@call-learning.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \local_competvetsuivi\cacheutils
+ * @package   local_competvetsuivi
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_competvetsuivi\cacheutils::class)]
 final class cacheutils_test extends competvetsuivi_tests {
     public function test_get_ue_vs_competencie_hash(): void {
         $this->resetAfterTest();

@@ -17,24 +17,25 @@
 /**
  * File containing tests for ueutils_test.
  *
- * @package     local_competvetsuivi
- * @category    test
- * @copyright   2019 CALL Learning <laurent@call-learning.fr>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_competvetsuivi
+ * @category  test
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_competvetsuivi;
 
 use local_competvetsuivi\matrix\matrix;
 use local_competvetsuivi\tests\competvetsuivi_tests;
 use local_competvetsuivi\ueutils;
+
 /**
  * The ueutils_test test class.
  *
- * @package    local_competvetsuivi
- * @copyright  2019 CALL Learning <laurent@call-learning.fr>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \local_competvetsuivi\ueutils
+ * @package   local_competvetsuivi
+ * @copyright 2019 CALL Learning <laurent@call-learning.fr>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_competvetsuivi\ueutils::class)]
 final class ueutils_test extends competvetsuivi_tests {
     public function test_get_first_ue(): void {
         $this->resetAfterTest();
@@ -94,11 +95,8 @@ final class ueutils_test extends competvetsuivi_tests {
         $ue51 = $this->matrix->get_matrix_ue_by_criteria('shortname', 'UC51');
         $strands = [matrix::MATRIX_COMP_TYPE_ABILITY, matrix::MATRIX_COMP_TYPE_KNOWLEDGE];
         $ueresults = ueutils::get_ue_vs_competencies($this->matrix, $ue51, $strands, $coprev->id);
-        /*
-         * Here we expect: For the semester => (Knowledge=>6.5, Capability => 4, ...)
-         *  UC54 contributes (Knowledge=>1, Capability => 0...)
-         */
-
+        // We expect for the semester: Knowledge=>6.5, Capability => 4.
+        // UC54 contributes (Knowledge=>1, Capability => 0).
         $this->assertNotEmpty($ueresults);
         $this->assertArrayNotHasKey($coprev1->id, $ueresults); // Null value so not displayed.
         $compresult = $ueresults[$coprev2->id];
